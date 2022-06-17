@@ -220,12 +220,18 @@ namespace Nop.Web.Controllers
             {
                 try
                 {
-                    var contentType = uploadedFile.ContentType;
-                    var vendorPictureBinary = await _downloadService.GetDownloadBitsAsync(uploadedFile);
-                    var picture = await _pictureService.InsertPictureAsync(vendorPictureBinary, contentType, null);
+                    var contentType = uploadedFile.ContentType.ToLowerInvariant();
 
-                    if (picture != null)
-                        pictureId = picture.Id;
+                    if(!contentType.StartsWith("image/"))
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Vendors.ApplyAccount.Picture.ErrorMessage"));
+                    else
+                    {
+                        var vendorPictureBinary = await _downloadService.GetDownloadBitsAsync(uploadedFile);
+                        var picture = await _pictureService.InsertPictureAsync(vendorPictureBinary, contentType, null);
+
+                        if (picture != null)
+                            pictureId = picture.Id;
+                    }
                 }
                 catch (Exception)
                 {
@@ -314,9 +320,15 @@ namespace Nop.Web.Controllers
             {
                 try
                 {
-                    var contentType = uploadedFile.ContentType;
-                    var vendorPictureBinary = await _downloadService.GetDownloadBitsAsync(uploadedFile);
-                    picture = await _pictureService.InsertPictureAsync(vendorPictureBinary, contentType, null);
+                    var contentType = uploadedFile.ContentType.ToLowerInvariant();
+
+                    if (!contentType.StartsWith("image/"))
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.VendorInfo.Picture.ErrorMessage"));
+                    else
+                    {
+                        var vendorPictureBinary = await _downloadService.GetDownloadBitsAsync(uploadedFile);
+                        picture = await _pictureService.InsertPictureAsync(vendorPictureBinary, contentType, null);
+                    }
                 }
                 catch (Exception)
                 {
@@ -338,6 +350,15 @@ namespace Nop.Web.Controllers
                 vendor.Name = model.Name;
                 vendor.Email = model.Email;
                 vendor.Description = description;
+                vendor.IsWholeCitySupply = model.IsWholeCitySupply;
+                vendor.Latitude = model.Latitude;
+                vendor.Longitude = model.Longitude;
+                vendor.CityUptoPrice = model.CityUptoPrice;
+                vendor.CityFromPrice = model.CityFromPrice;
+                vendor.Citys = model.Citys;
+                vendor.CityFromWeight = model.CityFromWeight;
+                vendor.CityUptoWeight = model.CityUptoWeight;
+                vendor.ZipCodes = model.ZipCodes;
 
                 if (picture != null)
                 {

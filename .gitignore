@@ -200,3 +200,5 @@ src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/*
 !src/Presentation/Nop.Web/wwwroot/lib_npm/cldr-data/main/main.zip
 src/packages/*
 src/Tests/Nop.Tests/Connections.resx
+/src/Presentation/Nop.Web/wwwroot/images
+/src/Presentation/Nop.Web/aws-beanstalk-tools-defaults.json

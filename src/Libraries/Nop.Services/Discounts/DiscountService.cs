@@ -290,6 +290,9 @@ namespace Nop.Services.Discounts
             else
                 result = discount.DiscountAmount;
 
+            if (result < decimal.Zero)
+               return result;
+
             //validate maximum discount amount
             if (discount.UsePercentage &&
                 discount.MaximumDiscountAmount.HasValue &&
@@ -319,17 +322,17 @@ namespace Nop.Services.Discounts
             discountAmount = decimal.Zero;
             if (!discounts.Any())
                 return result;
-
+            //TODO: updated to add all type of commissions together, wch might go wrong for discount flow
             //first we check simple discounts
             foreach (var discount in discounts)
             {
                 var currentDiscountValue = GetDiscountAmount(discount, amount);
-                if (currentDiscountValue <= discountAmount)
-                    continue;
+                //if (currentDiscountValue <= discountAmount)
+                //    continue;
+                //discountAmount = currentDiscountValue;
+                discountAmount = discountAmount + currentDiscountValue;
 
-                discountAmount = currentDiscountValue;
-
-                result.Clear();
+               // result.Clear();
                 result.Add(discount);
             }
             //now let's check cumulative discounts
