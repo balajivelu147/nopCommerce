@@ -79,13 +79,15 @@ namespace Nop.Web.Factories
         private readonly OrderSettings _orderSettings;
         private readonly SeoSettings _seoSettings;
         private readonly ShippingSettings _shippingSettings;
-        private readonly VendorSettings _vendorSettings;        
+        private readonly VendorSettings _vendorSettings;
+        private readonly IAddressService _addressService;
 
         #endregion
 
         #region Ctor
 
-        public ProductModelFactory(CaptchaSettings captchaSettings,
+        public ProductModelFactory(IAddressService addressService, 
+            CaptchaSettings captchaSettings,
             CatalogSettings catalogSettings,
             CustomerSettings customerSettings,
             ICategoryService categoryService,
@@ -162,7 +164,7 @@ namespace Nop.Web.Factories
             _shippingSettings = shippingSettings;
             _vendorSettings = vendorSettings;
             _videoService = videoService;
-
+            _addressService = addressService;
 
         }
 
@@ -693,7 +695,12 @@ namespace Nop.Web.Factories
             var category = await _categoryService.GetCategoryByIdAsync(productCategories[0].CategoryId);
             if (category == null)
                 return breadcrumbModel;
-
+            var vendorDetails = await _vendorService.GetVendorByIdAsync(product.VendorId);
+            if (vendorDetails != null)
+            {
+                var vendorAddress = await _addressService.GetAddressByIdAsync(vendorDetails.AddressId);
+                breadcrumbModel.ProductName += " " + vendorAddress.Company + " " + vendorAddress.City;
+            }
             foreach (var catBr in await _categoryService.GetCategoryBreadCrumbAsync(category))
             {
                 breadcrumbModel.CategoryBreadcrumb.Add(new CategorySimpleModel
@@ -703,7 +710,9 @@ namespace Nop.Web.Factories
                     SeName = await _urlRecordService.GetSeNameAsync(catBr),
                     IncludeInTopMenu = catBr.IncludeInTopMenu
                 });
+                            
             }
+           
 
             return breadcrumbModel;
         }
@@ -1355,8 +1364,10 @@ namespace Nop.Web.Factories
                 throw new ArgumentNullException(nameof(products));
 
             var models = new List<ProductOverviewModel>();
+            Vendor vendorDetails;
             foreach (var product in products)
             {
+                vendorDetails=await _vendorService.GetVendorByIdAsync(product.VendorId);
                 var model = new ProductOverviewModel
                 {
                     Id = product.Id,
@@ -1370,6 +1381,11 @@ namespace Nop.Web.Factories
                         (!product.MarkAsNewStartDateTimeUtc.HasValue || product.MarkAsNewStartDateTimeUtc.Value < DateTime.UtcNow) &&
                         (!product.MarkAsNewEndDateTimeUtc.HasValue || product.MarkAsNewEndDateTimeUtc.Value > DateTime.UtcNow)
                 };
+                if (vendorDetails != null)
+                {
+                    var vendorAddress = await _addressService.GetAddressByIdAsync(vendorDetails.AddressId);
+                    model.Name += " " + vendorAddress.Company + " " + vendorAddress.City;
+                }
 
                 //price
                 if (preparePriceModel)
@@ -1469,7 +1485,7 @@ namespace Nop.Web.Factories
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
-
+            var vendor = await _vendorService.GetVendorByIdAsync(product.VendorId);
             //standard properties
             var model = new ProductDetailsModel
             {
@@ -1497,6 +1513,11 @@ namespace Nop.Web.Factories
                 VisibleIndividually = product.VisibleIndividually,
                 AllowAddingOnlyExistingAttributeCombinations = product.AllowAddingOnlyExistingAttributeCombinations
             };
+            if (vendor != null)
+            {
+                var vendorDetails = await _addressService.GetAddressByIdAsync(vendor.AddressId);
+                model.Name += " " + vendorDetails.Company + " " + vendorDetails.City;
+            }
 
             //automatically generate product description?
             if (_seoSettings.GenerateProductMetaDescription && string.IsNullOrEmpty(model.MetaDescription))
@@ -1529,7 +1550,7 @@ namespace Nop.Web.Factories
             //vendor details
             if (_vendorSettings.ShowVendorOnProductDetailsPage)
             {
-                var vendor = await _vendorService.GetVendorByIdAsync(product.VendorId);
+                
                 if (vendor != null && !vendor.Deleted && vendor.Active)
                 {
                     model.ShowVendor = true;
