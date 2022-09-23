@@ -7,7 +7,6 @@
 {
     var controlId = $"{NopVendorDefaults.VendorAttributePrefix}{attribute.Id}";
     var textPrompt = attribute.Name;
-
     <div class="inputs vendor-attributes">
         <label>@textPrompt:</label>
         
@@ -64,6 +63,110 @@
             <textarea id="@(controlId)" name="@(controlId)">@(attribute.DefaultValue)</textarea>
                 }
                 break;
+
+            case AttributeControlType.DatepickerCalendar:
+                {
+                    <p>Select date</p>
+
+                                 <div class="attribute-data">
+                @*<input id="@(endDateControlId)" name="@(endDateControlId)" type="text" class="datepicker" value="@(Model.RentalEndDate.HasValue ? Model.RentalEndDate.Value.ToShortDateString() : null)" @if(isMobileDevice){<text>readonly</text>}/>*@
+                        <input class="form-control" name="@(controlId)" type="text" placeholder="Choose time" id="@(controlId)" value="@(attribute.DefaultValue)">
+
+                       <script asp-location="Footer">
+                       $(document).ready(function () {
+                                $("#@(controlId)").datepicker({ dateFormat: "m/d/yy", multidate: false });
+                        });
+                    </script>
+                </div>
+
+
+                }
+                break;
+
+
+            case AttributeControlType.TimepickerCalendar:
+                {
+                    <input class="form-control" id="@(controlId)" name="@(controlId)" value="@(attribute.DefaultValue)" type="text" placeholder="Choose time">
+
+                    //TODO: remove unused links
+                    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" />
+
+                    <link href="https://cdn.jsdelivr.net/gh/djibe/bootstrap-material-datetimepicker@6659d24c7d2a9c782dc2058dcf4267603934c863/css/bootstrap-material-datetimepicker-bs4.min.css" rel="stylesheet" />
+
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
+
+                    <script src="https://cdn.jsdelivr.net/gh/moment/moment@develop/min/moment-with-locales.min.js"></script>
+
+                    <script src="https://cdn.jsdelivr.net/gh/djibe/bootstrap-material-datetimepicker@83a10c38ee94dd27fd946ea137af6667c65a738f/js/bootstrap-material-datetimepicker-bs4.min.js"></script>
+
+
+                    <script asp-location="Footer">
+
+                        $(document).ready(function () {
+                        @*$(function () {*@
+                                                                        var $now = moment();
+                            var $dateMin = $now.subtract(3, 'days');
+                            console.log($now);
+                            console.log($dateMin);
+                            console.log($now.add('days', 5));
+
+                            $('#@(controlId)').bootstrapMaterialDatePicker({
+                                format: 'hh:mm A',
+                                shortTime: true,
+                               // minDate: new Date(),
+                               // maxDate: new Date(new Date().setDate(new Date().getDate() + 15)),
+                                //currentDate: new Date(),
+                                date: false,
+                                time: true,
+                                monthPicker: false,
+                                year: true,
+                                clearButton: false,
+                                nowButton: false,
+                                switchOnClick: true,
+                                cancelText: 'Cancel',
+                                //okText: 'VALIDER',
+                                //clearText: 'EFFACER',
+                                //nowText: 'MAINTENANT',
+                                //triggerEvent: 'focus',
+                                //lang: 'en',
+                                weekStart: 1,
+                            });
+
+                        });
+
+                    </script>
+                     <style>
+
+     :root{
+    --primary: #c09e6c !important;
+}
+.btn-outline-primary{
+  background-color: #c09e6c !important;
+  color: white !important;
+}
+         
+        </style>
+                }
+                break;
+
+            case AttributeControlType.MultiDatepickerCalendar:
+                {
+                    <p>MultiDatepickerCalendar</p>
+                    <div class="attribute-data">
+                        @*<input id="@(endDateControlId)" name="@(endDateControlId)" type="text" class="datepicker" value="@(Model.RentalEndDate.HasValue ? Model.RentalEndDate.Value.ToShortDateString() : null)" @if(isMobileDevice){<text>readonly</text>}/>*@
+                        <input class="form-control"  id="@(controlId)"   value="@(attribute.DefaultValue)" name="@(controlId)" type="text" placeholder="Choose time">
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+                        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet" />
+
+                        <script asp-location="Footer">
+                            $(document).ready(function () {
+                                $("#@(controlId)").datepicker({ dateFormat: "yy/m/d", multidate: true });
+                            });
+                        </script>
+                    </div>
+                }
+                break;
+
             case AttributeControlType.Datepicker:
             case AttributeControlType.FileUpload:
             case AttributeControlType.ColorSquares:

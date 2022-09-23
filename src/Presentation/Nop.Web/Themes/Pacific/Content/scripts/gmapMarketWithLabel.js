@@ -1324,9 +1324,6 @@ Object.keys = Object.keys || function (o) {
 
 
 var locations = [
-  { name: 'twilight traders', price: '350', lat: 13.033639, lng: 77.713195 },
-  { name: 'airport entrance', price: '150', lat: 13.033576, lng: 77.715459 },
-  { name: 'train station', price: '160', lat: 13.031497, lng: 77.714005 }
 ];
 
 var imgArr = [{
@@ -1341,13 +1338,17 @@ var imgArr = [{
 
 
 function initialize() {
-
-  var vendorDetails = JSON.parse(document.getElementById("vendorModel")?.value);
+ // console.log(document.getElementById("finalvendorprodCombo")?.value);
+  var data = document.getElementById("map2").innerHTML;
+  console.log(data);
+  console.log(JSON.parse(data));
+  locations = JSON.parse(data);
+ // var vendorDetails = JSON.parse(document.getElementById("finalvendorprodCombo")?.value);
   //var vendorModelsForMaps = JSON.parse(document.getElementById("vendorModelsForMaps")?.value);
  // var matchingProductsForMap = JSON.parse(document.getElementById("matchingProductsForMap")?.value);
 
   debugger;
-  console.log(vendorDetails);
+ // console.log(vendorDetails);
   //console.log(vendorModelsForMaps);
 
   //console.log(matchingProductsForMap);
@@ -1369,19 +1370,25 @@ function initialize() {
   var markersArr = [];
   for (var i = 0; i < locations.length; i++) {
     var item = locations[i];
+
+    item.Latitude = 13.033639;
+    item.Longitude = 77.715459;
+    console.log(item.VendorName)
+
+    console.log(item);
     var infowindow = new google.maps.InfoWindow();
     var marker = new MarkerWithLabel({
       draggable: false,
       raiseOnDrag: false,
       icon: ' ',
       map: map,
-      labelContent: '<span>' + item.name + '<br/>NT' + item.price + '</span>',
+      labelContent: '<span>' + item.VendorName + ' - ' + item.ProductName + '<br/>NT' + item.PriceValue + '</span>',
       labelAnchor: new google.maps.Point(40, 32),
       labelClass: "labels", // the CSS class for the label
       labelStyle: { opacity: 1 },
-      position: { lat: item.lat, lng: item.lng },
-      data: 'Go to ' + item.name + '<br/> Taxi price: Rs' + item.price,
-      dataPrice: item.price
+      position: { lat: item.Latitude, lng: item.Longitude },
+      data: 'Go to ' + item.VendorName + '<br/> price: Rs' + item.PriceValue,
+      dataPrice: item.PriceValue
     });
     markersArr.push(marker);
     marker.addListener('click', function () {

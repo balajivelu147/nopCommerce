@@ -787,19 +787,20 @@ namespace Nop.Services.Orders
                 attributes1 = attributes1.Where(x => !x.IsNonCombinable()).ToList();
             }
 
-            foreach (var attribute in attributes1)
-            {
-                if (attribute.ProductId == 0)
-                {
-                    warnings.Add("Attribute error");
-                    return warnings;
-                }
+            //TODO:  should be disabled only for appointment template (3)
+            //foreach (var attribute in attributes1)
+            //{
+                //if (attribute.ProductId == 0)
+                //{
+                //    warnings.Add("Attribute error");
+                //    return warnings;
+                //}
 
-                if (attribute.ProductId != product.Id)
-                {
-                    warnings.Add("Attribute error");
-                }
-            }
+                //if (attribute.ProductId != product.Id)
+                //{
+                //    warnings.Add("Attribute error");
+                //}
+            //}
 
             //validate required product attributes (whether they're chosen/selected/entered)
             var attributes2 = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);

@@ -76,7 +76,8 @@ namespace Nop.Web.Factories
         private readonly OrderSettings _orderSettings;
         private readonly SeoSettings _seoSettings;
         private readonly ShippingSettings _shippingSettings;
-        private readonly VendorSettings _vendorSettings;        
+        private readonly VendorSettings _vendorSettings;   
+        private readonly IVendorModelFactory _vendorModelFactory;
 
         #endregion
 
@@ -117,7 +118,9 @@ namespace Nop.Web.Factories
             OrderSettings orderSettings,
             SeoSettings seoSettings,
             ShippingSettings shippingSettings,
-            VendorSettings vendorSettings)
+            VendorSettings vendorSettings,
+            IVendorModelFactory vendorModelFactory
+            )
         {
             _captchaSettings = captchaSettings;
             _catalogSettings = catalogSettings;
@@ -155,23 +158,24 @@ namespace Nop.Web.Factories
             _seoSettings = seoSettings;
             _shippingSettings = shippingSettings;
             _vendorSettings = vendorSettings;
-            
-        }
+            _vendorModelFactory = vendorModelFactory;
 
-        #endregion
+    }
 
-        #region Utilities
+    #endregion
 
-        /// <summary>
-        /// Prepare the product specification models
-        /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="group">Specification attribute group</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation
-        /// The task result contains the list of product specification model
-        /// </returns>
-        protected virtual async Task<IList<ProductSpecificationAttributeModel>> PrepareProductSpecificationAttributeModelAsync(Product product, SpecificationAttributeGroup group)
+    #region Utilities
+
+    /// <summary>
+    /// Prepare the product specification models
+    /// </summary>
+    /// <param name="product">Product</param>
+    /// <param name="group">Specification attribute group</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the list of product specification model
+    /// </returns>
+    protected virtual async Task<IList<ProductSpecificationAttributeModel>> PrepareProductSpecificationAttributeModelAsync(Product product, SpecificationAttributeGroup group)
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
@@ -1419,6 +1423,7 @@ namespace Nop.Web.Factories
             if (_vendorSettings.ShowVendorOnProductDetailsPage)
             {
                 var vendor = await _vendorService.GetVendorByIdAsync(product.VendorId);
+                var overriddenVendorAttributesXml = product.VendorId == 0 ? null : await _genericAttributeService.GetAttributeAsync<string>(vendor, NopVendorDefaults.VendorAttributes);
                 if (vendor != null && !vendor.Deleted && vendor.Active)
                 {
                     model.ShowVendor = true;
@@ -1429,15 +1434,16 @@ namespace Nop.Web.Factories
                         Name = await _localizationService.GetLocalizedAsync(vendor, x => x.Name),
                         SeName = await _urlRecordService.GetSeNameAsync(vendor),
                         Latitude = vendor.Latitude,
-                        Longitude = vendor.Longitude
-                    };
+                        Longitude = vendor.Longitude,
+                        VendorAttributes = product.VendorId == 0 ? null : await _vendorModelFactory.PrepareVendorAttributesAsync(overriddenVendorAttributesXml)
+                };
                 }
             }
 
             //vendors lat long for mapping
             if (_vendorSettings.ShowVendorOnProductDetailsPage)
             {
-                model.VendorModelsForMaps = await _vendorService.GetVendorsByIdsAsync(modelNumberProducts);
+                model.VendorModelsForMaps = modelNumberProducts == null ? null : await _vendorService.GetVendorsByIdsAsync(modelNumberProducts);
                 //if (vendors != null)
                 //{
                 //    //model.ShowVendor = true;
@@ -1905,6 +1911,6 @@ namespace Nop.Web.Factories
             return model;
         }
 
-        #endregion
+#endregion
     }
 }

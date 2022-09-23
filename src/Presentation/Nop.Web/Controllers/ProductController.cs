@@ -162,22 +162,20 @@ namespace Nop.Web.Controllers
         public virtual async Task<IActionResult> ProductDetails(int productId, int updatecartitemid = 0)
         {
             var product = await _productService.GetProductByIdAsync(productId);
+               var  products = product.ManufacturerPartNumber != null ? await _productService.SearchProductsAsync(0,
 
-
-            var products = await _productService.SearchProductsAsync(0,
-                
-                //categoryIds: categoryIds,
-                //manufacturerIds: new List<int> { model.SearchManufacturerId },
-                //storeId: model.SearchStoreId,
-                //vendorId: model.SearchVendorId,
-                //warehouseId: model.SearchWarehouseId,
-                //productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
-                keywords: product.ManufacturerPartNumber,
-                searchManufacturerPartNumber: true,
-                showHidden: true
-                //overridePublished: overridePublished
-                );
-            var vendorIds = products.Select(x => x.VendorId).ToArray().Distinct();
+                    //categoryIds: categoryIds,
+                    //manufacturerIds: new List<int> { model.SearchManufacturerId },
+                    //storeId: model.SearchStoreId,
+                    //vendorId: model.SearchVendorId,
+                    //warehouseId: model.SearchWarehouseId,
+                    //productType: model.SearchProductTypeId > 0 ? (ProductType?)model.SearchProductTypeId : null,
+                    keywords: product.ManufacturerPartNumber,
+                    searchManufacturerPartNumber: true,
+                    showHidden: true
+                    //overridePublished: overridePublished
+                    ) : null;
+                var vendorIds = products!=null ?  products.Select(x => x.VendorId).ToArray().Distinct() : null;
             if (product == null || product.Deleted)
                 return InvokeHttp404();
 

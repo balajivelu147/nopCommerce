@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Nop.Web.Models.Vendors;
 
 namespace Nop.Web.Factories
@@ -8,6 +9,12 @@ namespace Nop.Web.Factories
     /// </summary>
     public partial interface IVendorModelFactory
     {
+
+        /// <summary>
+        /// Prepares Vendor attributes
+        /// </summary>
+        Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml);
+
         /// <summary>
         /// Prepare the apply vendor model
         /// </summary>

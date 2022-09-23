@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Nop.Web.Framework.Models;
+using Nop.Web.Models.Vendors;
 
 namespace Nop.Web.Models.Catalog
 {
@@ -25,5 +26,7 @@ namespace Nop.Web.Models.Catalog
 
         public double Longitude { get; set; }
 
-    }
+        public IList<VendorAttributeModel> VendorAttributes { get; set;}
+
+}
 }

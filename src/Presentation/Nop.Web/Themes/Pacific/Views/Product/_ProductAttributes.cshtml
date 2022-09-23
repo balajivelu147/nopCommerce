@@ -7,13 +7,15 @@
 @using Nop.Services.Media
 @inject IDownloadService downloadService
 @inject CatalogSettings catalogSettings
-@if (Model.ProductAttributes.Count > 0)
+//TODO: should check appointments template
+@if (true)
 {
     <div class="attributes">
         @foreach (var attribute in Model.ProductAttributes)
         {
         	var controlId = $"{NopCatalogDefaults.ProductAttributePrefix}{attribute.Id}";
             var textPrompt = !string.IsNullOrEmpty(attribute.TextPrompt) ? attribute.TextPrompt : attribute.Name;
+            var controlName = attribute.Name;
             <div class="attribute" id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")">
                 <div class="attribute-title">
                     <label class="text-prompt">

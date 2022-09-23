@@ -73,7 +73,7 @@ namespace Nop.Web.Factories
         /// A task that represents the asynchronous operation
         /// The task result contains the list of the vendor attribute model
         /// </returns>
-        protected virtual async Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml)
+        public virtual async Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml)
         {
             var result = new List<VendorAttributeModel>();
 
@@ -133,6 +133,9 @@ namespace Nop.Web.Factories
                         break;
                     case AttributeControlType.TextBox:
                     case AttributeControlType.MultilineTextbox:
+                    case AttributeControlType.MultiDatepickerCalendar:
+                    case AttributeControlType.DatepickerCalendar:
+                    case AttributeControlType.TimepickerCalendar:
                         {
                             if (!string.IsNullOrEmpty(vendorAttributesXml))
                             {

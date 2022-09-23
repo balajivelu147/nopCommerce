@@ -153,6 +153,9 @@ namespace Nop.Web.Controllers
                         }
                         break;
                     case AttributeControlType.TextBox:
+                    case AttributeControlType.MultiDatepickerCalendar:
+                    case AttributeControlType.DatepickerCalendar:
+                    case AttributeControlType.TimepickerCalendar:
                     case AttributeControlType.MultilineTextbox:
                         {
                             var ctrlAttributes = form[controlId];

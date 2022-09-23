@@ -341,4 +341,26 @@ namespace Nop.Web.Models.Catalog
 
         #endregion
     }
+
+
+    public class ProductMapModel {
+        public decimal PriceValue { get; set; }
+
+        public string VendorName { get; set; }
+
+        public string VendorSeName { get; set; }
+
+        public double Latitude { get; set; }
+
+        public double Longitude { get; set; }
+        public string ProductName { get; set; }
+
+        public string ProductSeName { get; set; }
+
+        public PictureModel ImageSquaresPictureModel { get; set; }
+
+        public ProductReviewOverviewModel ProductReviewOverview { get; set; }
+
+
+    }
 }

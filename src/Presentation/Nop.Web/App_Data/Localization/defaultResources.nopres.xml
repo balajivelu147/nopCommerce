@@ -18789,6 +18789,9 @@
   <LocaleResource Name="Products.RentalStartDate">
     <Value>Start date</Value>
   </LocaleResource>
+    <LocaleResource Name="Products.AppointmentStartDate">
+        <Value>Appointment date</Value>
+    </LocaleResource>
   <LocaleResource Name="Products.Sku">
     <Value>SKU</Value>
   </LocaleResource>

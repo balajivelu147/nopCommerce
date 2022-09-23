@@ -1,4 +1,4 @@
-namespace Nop.Core.Domain.Catalog
+﻿namespace Nop.Core.Domain.Catalog
 {
     /// <summary>
     /// Represents an attribute control type
@@ -34,6 +34,27 @@ namespace Nop.Core.Domain.Catalog
         /// Datepicker
         /// </summary>
         Datepicker = 20,
+
+        /// <summary>
+        /// DatepickerCalendar
+        /// </summary>
+        DatepickerCalendar = 101,
+
+        /// <summary>
+        /// TimepickerCalendar
+        /// </summary>
+        TimepickerCalendar = 102,
+
+        /// <summary>
+        /// MultiOptionSelect
+        /// </summary>
+        MultiOptionSelectInputBox = 103,
+
+
+        /// <summary>
+        /// MultiOptionSelect
+        /// </summary>
+        MultiDatepickerCalendar = 104,
 
         /// <summary>
         /// File upload control

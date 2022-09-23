@@ -182,6 +182,9 @@ namespace Nop.Web.Areas.Admin.Controllers
                         break;
                     case AttributeControlType.TextBox:
                     case AttributeControlType.MultilineTextbox:
+                    case AttributeControlType.MultiDatepickerCalendar:
+                    case AttributeControlType.DatepickerCalendar:
+                    case AttributeControlType.TimepickerCalendar:
                         ctrlAttributes = form[controlId];
                         if (!StringValues.IsNullOrEmpty(ctrlAttributes))
                         {

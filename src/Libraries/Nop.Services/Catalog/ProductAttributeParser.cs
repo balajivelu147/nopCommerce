@@ -278,7 +278,7 @@ namespace Nop.Services.Catalog
                                 attributesXml = AddProductAttribute(attributesXml, attribute, enteredText);
                             }
                         }
-                        break;
+                        break; 
                     case AttributeControlType.Datepicker:
                         {
                             var day = form[controlId + "_day"];
@@ -319,6 +319,25 @@ namespace Nop.Services.Catalog
                 {
                     attributesXml = RemoveProductAttribute(attributesXml, attribute);
                 }
+            }
+
+            if (product.ProductTemplateId == 3)
+            {
+                var time_slot_selected = $"{NopCatalogDefaults.ProductAttributePrefix}{15}";
+
+                if (attributesXml == "")
+                {
+                    attributesXml = "<Attributes><ProductAttribute ID=\"15\"><ProductAttributeValue><Value>" + form[time_slot_selected] + "</Value></ProductAttributeValue></ProductAttribute></Attributes>";
+                }
+                else
+                {
+                    attributesXml = attributesXml.Substring(0, 12) + "<ProductAttribute ID=\"15\"><ProductAttributeValue><Value>" + form[time_slot_selected] + "</Value></ProductAttributeValue></ProductAttribute>" + attributesXml.Substring(12);
+
+                }
+
+                var date_slot_selected = $"{NopCatalogDefaults.ProductAttributePrefix}{16}";
+
+                attributesXml = attributesXml.Substring(0, 12) + "<ProductAttribute ID=\"16\"><ProductAttributeValue><Value>" + form[date_slot_selected] + "</Value></ProductAttributeValue></ProductAttribute>" + attributesXml.Substring(12);
             }
             return attributesXml;
         }

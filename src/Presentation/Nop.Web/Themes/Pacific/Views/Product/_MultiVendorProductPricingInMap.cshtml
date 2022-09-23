@@ -1,7 +1,6 @@
 ﻿@model ProductDetailsModel
 @using Newtonsoft.Json;
 @using Nop.Core;
-
 @inject IWebHelper webHelper
 
 @{
@@ -10,9 +9,42 @@
     var vendorModel =  JsonConvert.SerializeObject(@allowedFileExtensions.VendorModel);
     var vendorModelsForMaps = JsonConvert.SerializeObject(" { mapper: "+@allowedFileExtensions.VendorModelsForMaps+"}");
     var matchingProductsForMap = JsonConvert.SerializeObject(" { mapper: "+@allowedFileExtensions.MatchingProductsForMap+"}");
+    var prdList = new List<ProductMapModel> ();
+    
+    //TODO: should set sename and images 
+    if(@allowedFileExtensions.MatchingProductsForMap != null)
+        foreach(var product in @allowedFileExtensions.MatchingProductsForMap){
+            var presentVendor = @allowedFileExtensions.VendorModelsForMaps.First(x => x.Id == product.VendorId);//product.VendorModel.Id);
+            prdList.Add(new ProductMapModel()
+    {
+       // PriceValue = product.ProductPrice.PriceValue,
+
+        VendorName = presentVendor.Name,
+
+
+        //VendorSeName = presentVendor.vendorsse
+
+        Latitude = presentVendor.Latitude,
+
+        Longitude = presentVendor.Longitude,
+        ProductName = product.Name,
+
+                        // ProductSeName = await _urlRecordService.GetSeNameAsync(product)//product.SeName,
+
+        //ImageSquaresPictureModel = product.picture
+
+        //ProductReviewOverview = product.productrev
+
+
+    });
+   }
+
+    var finalvendorprodCombo = JsonConvert.SerializeObject(prdList);
+
+
 }
 <div id="map"></div>
-<input type="hidden" id="vendorModel" value=@vendorModel>
+<div id="map2"  style="display: none">@finalvendorprodCombo</div>
 <input type="hidden" id="vendorModelsForMaps" value=@vendorModelsForMaps>
 <input type="hidden" id="matchingProductsForMap" value=@matchingProductsForMap>
 
