@@ -689,11 +689,11 @@
   </LocaleResource>
 
     <LocaleResource Name="Account.VendorInfo.Longitude">
-        <Value>Zipcodes that you wish to sell</Value>
+        <Value>Longitude</Value>
     </LocaleResource>
 
     <LocaleResource Name="Account.VendorInfo.Latitude">
-        <Value>Zipcodes that you wish to sell</Value>
+        <Value>Latitude</Value>
     </LocaleResource>
 
     <LocaleResource Name="Account.VendorInfo.IsWholeCitySupply">
@@ -716,6 +716,10 @@
     </LocaleResource>
     <LocaleResource Name="Account.VendorInfo.CityUptoWeight">
         <Value>sell to city only if product weight is below</Value>
+    </LocaleResource>
+
+    <LocaleResource Name="Account.VendorInfo.ProductTemplateTypes">
+        <Value>Business types that you wanna involve</Value>
     </LocaleResource>
 
     <!--<LocaleResource Name="Account.VendorInfo.PricePerKiloMeter">
@@ -15930,6 +15934,12 @@
   <LocaleResource Name="Admin.Vendors.VendorAttributes.Fields.DisplayOrder">
     <Value>Display order</Value>
   </LocaleResource>
+    <LocaleResource Name="Admin.Vendors.VendorAttributes.Fields.AttributeGroup">
+        <Value>Attribute Group</Value>
+    </LocaleResource>
+    <LocaleResource Name="Admin.Vendors.VendorAttributes.Fields.AttributeGroup.Hint">
+        <Value>groups the vendor attribute fields and shows in seperate popup</Value>
+    </LocaleResource>
   <LocaleResource Name="Admin.Vendors.VendorAttributes.Fields.DisplayOrder.Hint">
     <Value>The vendor attribute display order. 1 represents the first item in the list.</Value>
   </LocaleResource>

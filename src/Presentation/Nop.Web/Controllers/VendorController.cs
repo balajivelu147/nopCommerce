@@ -361,6 +361,7 @@ namespace Nop.Web.Controllers
                 vendor.Citys = model.Citys;
                 vendor.CityFromWeight = model.CityFromWeight;
                 vendor.CityUptoWeight = model.CityUptoWeight;
+                vendor.ProductTemplateTypes = model.ProductTemplateTypes;
                 vendor.ZipCodes = model.ZipCodes;
 
                 if (picture != null)

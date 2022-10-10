@@ -75,13 +75,17 @@
                                 }
                                 break;
                             case AttributeControlType.Datepicker:
-                            case AttributeControlType.FileUpload:
                             case AttributeControlType.ColorSquares:
                             case AttributeControlType.ImageSquares:
                                 {
                                     //not support attribute type
                                 }
                                 break;
+                        case AttributeControlType.FileUpload:
+                            {
+                                <input type="file" id="@(controlId)" name="@(controlId)" class="form-control" />
+                            }
+                            break;
                         }
                     </div>
                 </div>

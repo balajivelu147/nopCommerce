@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Nop.Web.Framework.Models;
 using Nop.Web.Models.Vendors;
 
@@ -22,9 +23,9 @@ namespace Nop.Web.Models.Catalog
 
         public string SeName { get; set; }
 
-        public double Latitude { get; set; }
+        public  decimal Latitude { get; set; }
 
-        public double Longitude { get; set; }
+        public decimal Longitude { get; set; }
 
         public IList<VendorAttributeModel> VendorAttributes { get; set;}
 

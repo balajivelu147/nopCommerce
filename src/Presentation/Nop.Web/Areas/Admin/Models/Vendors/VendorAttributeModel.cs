@@ -36,6 +36,9 @@ namespace Nop.Web.Areas.Admin.Models.Vendors
         [NopResourceDisplayName("Admin.Vendors.VendorAttributes.Fields.DisplayOrder")]
         public int DisplayOrder { get; set; }
 
+        [NopResourceDisplayName("Admin.Vendors.VendorAttributes.Fields.AttributeGroup")]
+        public string AttributeGroup { get; set; }
+
         public IList<VendorAttributeLocalizedModel> Locales { get; set; }
 
         public VendorAttributeValueSearchModel VendorAttributeValueSearchModel { get; set; }

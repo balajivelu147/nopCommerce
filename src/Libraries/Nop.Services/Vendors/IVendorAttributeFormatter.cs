@@ -17,6 +17,6 @@ namespace Nop.Services.Vendors
         /// A task that represents the asynchronous operation
         /// The task result contains the formatted attributes
         /// </returns>
-        Task<string> FormatAttributesAsync(string attributesXml, string separator = "<br />", bool htmlEncode = true);
+        Task<string> FormatAttributesAsync(string attributesXml, string separator = "<br />", bool htmlEncode = true, bool allowHyperlinks = true);
     }
 }

@@ -17,10 +17,52 @@
     <div class="page-title">
         <h1>@T("Account.MyAccount") - @T("Account.VendorInfo")</h1>
     </div>
-    <div class="page-body">
+@*    <div class="page-body">
         <form asp-route="CustomerVendorInfo" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="message-error"></div>
-            <div class="fieldset">
+         
+
+
+        </form>
+    </div>*@
+</div>
+<script>
+   $(function(){
+        console.log('new',document.getElementById("lat")?.value);
+        console.log('old',document.getElementById("geo-latitude")?.value);
+
+   // document.getElementById("lat").value = document.getElementById("geo-latitude")?.value;
+   // document.getElementById("long").value = document.getElementById("geo-longitude")?.value;
+   })
+</script>
+
+
+                <!-- MultiStep Form -->
+<div class="container-fluid" id="grad1">
+    <div class="row justify-content-center mt-0">
+        <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
+            <div class="card">
+                <div class="subcard">
+                    <h2><strong>Request for Technical Services</strong></h2>
+                    <p>Fill out this form to get your request going...</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mx-0">
+                        <form id="msform"  asp-route="CustomerVendorInfo" method="post" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly" class="message-error"></div>
+                            <!-- progressbar -->
+                            <ul id="progressbar">
+                            <li id="company"  class="active"><strong>Company</strong></li>
+                                <li id="contact"><strong>Contact</strong></li>
+                                <li id="require"><strong>Requirements</strong></li>
+                                <li id="require-2"><strong>Specs</strong></li>
+                                <li id="confirm"><strong>Info</strong></li>
+                                
+                            </ul> <!-- fieldsets -->
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Company Information</h2>
+                                     <div class="fieldset">
                 <div class="form-fields">
                     <div class="inputs">
                         <label asp-for="Name" asp-postfix=":"></label>
@@ -39,27 +81,6 @@
                         <textarea asp-for="Description"></textarea>
                         <span asp-validation-for="Description"></span>
                     </div>
-
-      @*                  public double Longitude { get; set; }
-        public double Latitude { get; set; }
-        public bool IsWholeCitySupply { get; set; }
-
-        public string Citys { get; set; }
-        public float CityFromPrice{ get; set; }
-        public float CityUptoPrice { get; set; }
-
-        public float CityFromWeight { get; set; }
-        public float CityUptoWeight { get; set; }
-
-       // public decimal PricePerKiloMeter { get; set; }
-       // public decimal PricePerWeight { get; set; }
-        public string ZipCodes { get; set; }
-
-                    <div class="inputs">
-                        <label asp-for="IsWholeCitySupply" asp-postfix=":"></label>
-                        <textarea asp-for="IsWholeCitySupply"></textarea>
-                        <span asp-validation-for="IsWholeCitySupply"></span>
-                    </div> *@
                     <div class="inputs">
                                 @*<label>@T("Account.VendorInfo.IsWholeCitySupply"):</label>*@
                                 <label>IsWholeCitySupply</label>
@@ -98,6 +119,25 @@
                         <input asp-for="CityUptoWeight"/>
                         <span asp-validation-for="CityUptoWeight"></span>
                     </div>
+                        <div class="inputs">
+                            <label asp-for="ProductTemplateTypes" asp-postfix=":"></label>
+                            <input asp-for="ProductTemplateTypes" />
+                            <span asp-validation-for="ProductTemplateTypes"></span>
+                        </div>
+                        <div class="inputs">
+                            @*<label asp-for="Latitude" asp-postfix=":2"></label>*@
+                            <label>Latitude:</label>
+
+                            <input asp-for="Latitude" id="long" />
+                            @*<span asp-validation-for="Latitude"></span>*@
+                        </div>
+                        <div class="inputs">
+                            @*<label asp-for="Longitude" asp-postfix=":3"></label>*@
+                            <label>Longitude: </label>
+                            <input asp-for="Longitude" id="lat"/>
+                            @*<span asp-validation-for="Longitude"></span>*@
+                        </div>
+
 @*                    <div class="inputs">
                         <label asp-for="PricePerKiloMeter" asp-postfix=":"></label>
                         <textarea asp-for="PricePerKiloMeter"></textarea>
@@ -108,11 +148,11 @@
                         <textarea asp-for="PricePerWeight"></textarea>
                         <span asp-validation-for="PricePerWeight"></span>
                     </div>*@
-                    <div class="inputs">
-                        <label asp-for="ZipCodes " asp-postfix=":"></label>
+          @*          <div class="inputs">
+                        <label asp-for="ZipCodes " asp-postfix=":4"></label>
                         <input asp-for="ZipCodes"/>
                         <span asp-validation-for="ZipCodes"></span>
-                    </div>
+                    </div>*@
 
 @*    <div class="form-group row"> 
         <div class="col-md-3">
@@ -125,13 +165,13 @@
     </div>*@
 
         <div class="form-group row advanced-setting)">
-        <div class="col-md-3">  
+       @* <div class="col-md-3">  
             <nop-label asp-for="ZipCodes" />
         </div>
         <div class="col-md-9">
             <nop-editor asp-for="ZipCodes" />
             <span asp-validation-for="ZipCodes"></span>
-        </div>
+        </div>*@
     </div>
 
 
@@ -150,17 +190,369 @@
                     </div>
                 </div>
             </div>
-        @if (Model.VendorAttributes.Count > 0)
-        {
+                                </div> 
+                                <input type="button" name="next" class="next action-button" value="Next Step" />
+                            </fieldset>
+                           @foreach(var item in Model.VendorAttributes.GroupBy(x=> x.AttributeGroup).Select(x=>x.ToList()).ToList()){
+                                 <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Contact Information</h2> 
+                                    
+
+@*                                       @if (Model.VendorAttributes.Count > 0)
+        {*@
             <div class="fieldset">
                 <div class="form-fields">
-                    @await Html.PartialAsync("_VendorAttributes", Model.VendorAttributes)
+                                                @await Html.PartialAsync("_VendorAttributes", item)
                 </div>
             </div>
-        }
-            <div class="buttons">
+        @*}*@
+
+
+
+
+
+
+                                </div> 
+                                <input type="button" name="previous" class="previous action-button" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" />
+                            </fieldset>
+                           }
+                          
+
+
+                                        <div class="buttons">
                 <button type="submit" name="save-info-button" class="button-1 save-vendorinfo-button">@T("Common.Save")</button>
             </div>
-        </form>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<style>
+
+    * {
+    margin: 0;
+    padding: 0
+}
+
+html {
+    height: 100%
+}
+
+#grad1 {
+    background-color: #DDD;
+}
+
+#msform {
+    text-align: center;
+    position: relative;
+    margin-top: 20px
+}
+
+#msform fieldset .form-card {
+     padding: 20px 40px 30px 40px;
+}
+
+#msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative
+}
+
+#msform fieldset:not(:first-of-type) {
+    display: none
+}
+
+#msform fieldset .form-card {
+    text-align: left;
+    color: #9E9E9E
+}
+
+#msform input.field,
+#msform textarea.field {
+    width: 100% !important;
+padding-left: 20px;
+font-size: 16px;
+height: 48px;
+line-height: 48px;
+background-color: rgb(234, 236, 238);
+border-radius: 25px;
+border: none;
+margin-bottom:20px;
+}
+
+#msform input.field:focus,
+#msform textarea.field:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: none;
+    font-weight: bold;
+    border: 1px solid #0099d8;
+    outline-width: 0;
+}
+
+#msform select.field {
+	width: 100% !important;
+	/* height: 47px; */
+	padding-left: 20px;
+	font-size: 16px;
+	height: 48px;
+	line-height: 48px;
+	background-color: rgb(234, 236, 238);
+	border-radius: 25px;
+	border: none;
+	background-image: url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3…c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E);
+	background-repeat: no-repeat,repeat;
+	background-position: right .7em top 50%,0 0;
+	background-size: .65em auto,100%;
+  margin-bottom:20px;
+}
+
+#msform textarea.field {
+  height:100px;
+}
+
+#msform .action-button {
+    color:#fff;
+    border: none;
+    padding: 0 35px;
+  font-size: 18px;
+height: 48px;
+line-height: 48px;
+background-color: #0099d8;
+background-image: none;
+border-radius: 24px;
+width:auto;
+}
+
+#msform .action-button:hover,
+#msform .action-button:focus {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #0099d8
+}
+
+#msform .action-button.previous {
+    background: #999;
+}
+#msform .action-button.next {
+    background: #616161;
+}
+
+select.list-dt {
+    border: none;
+    outline: 0;
+    border-bottom: 1px solid #ccc;
+    padding: 2px 5px 3px 5px;
+    margin: 2px
+}
+
+select.list-dt:focus {
+    border-bottom: 2px solid #0099d8
+}
+
+.card {
+    z-index: 0;
+    border: none;
+    border-radius: 0.5rem;
+    position: relative;
+    background: white;
+    border: 0 none;
+    border-radius: 0px;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    width: 94%;
+    margin: 0 3% 20px 3%;
+    position: relative;
+}
+
+.card .subcard {
+  padding:30px;
+}
+
+.fs-title {
+    font-size: 25px;
+    color: #2C3E50;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-align: left
+}
+
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey
+}
+
+#progressbar .active {
+    color: #000000
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 12px;
+    width: 20%;
+    float: left;
+    position: relative
+}
+
+#progressbar #company:before {
+    font-family: FontAwesome;
+    content: "\f044"
+}
+
+#progressbar #contact:before {
+    font-family: FontAwesome;
+    content: "\f007"
+}
+
+#progressbar #require:before {
+    font-family: FontAwesome;
+    content: "\f0ca"
+}
+#progressbar #require-2:before {
+    font-family: FontAwesome;
+    content: "\f09d"
+}
+
+#progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 18px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px
+}
+
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+    background: #0099d8
+}
+
+.radio-group {
+    position: relative;
+    margin-bottom: 25px
+}
+
+.radio {
+    display: inline-block;
+    width: 204;
+    height: 104;
+    border-radius: 0;
+    background: lightblue;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    cursor: pointer;
+    margin: 8px 2px
+}
+
+.radio:hover {
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3)
+}
+
+.radio.selected {
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1)
+}
+
+.fit-image {
+    width: 100%;
+    object-fit: cover
+}
+</style>
+<script asp-location="Footer">
+
+    $(document).ready(function(){
+
+var current_fs, next_fs, previous_fs; //fieldsets
+var opacity;
+
+$(".next").click(function(){
+
+current_fs = $(this).parent();
+next_fs = $(this).parent().next();
+
+//Add Class Active
+$("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+//show the next fieldset
+next_fs.show();
+//hide the current fieldset with style
+current_fs.animate({opacity: 0}, {
+step: function(now) {
+// for making fielset appear animation
+opacity = 1 - now;
+
+current_fs.css({
+'display': 'none',
+'position': 'relative'
+});
+next_fs.css({'opacity': opacity});
+},
+duration: 600
+});
+});
+
+$(".previous").click(function(){
+
+current_fs = $(this).parent();
+previous_fs = $(this).parent().prev();
+
+//Remove class active
+$("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+//show the previous fieldset
+previous_fs.show();
+
+//hide the current fieldset with style
+current_fs.animate({opacity: 0}, {
+step: function(now) {
+// for making fielset appear animation
+opacity = 1 - now;
+
+current_fs.css({
+'display': 'none',
+'position': 'relative'
+});
+previous_fs.css({'opacity': opacity});
+},
+duration: 600
+});
+});
+
+$('.radio-group .radio').click(function(){
+$(this).parent().find('.radio').removeClass('selected');
+$(this).addClass('selected');
+});
+
+$(".submit").click(function(){
+return false;
+})
+
+});
+</script>

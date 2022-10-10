@@ -16,16 +16,21 @@
             {
                 Title = T("Admin.Vendors.VendorAttributes.Fields.Name").Text,
                 Width = "300"
+            },   
+            new ColumnProperty(nameof(VendorAttributeModel.AttributeGroup))
+            {
+            Title = T("Admin.Vendors.VendorAttributes.Fields.AttributeControlType").Text,
+            Width = "130"
             },
             new ColumnProperty(nameof(VendorAttributeModel.AttributeControlTypeName))
             {
                 Title = T("Admin.Vendors.VendorAttributes.Fields.AttributeControlType").Text,
-                Width = "200"
+                Width = "120"
             },
             new ColumnProperty(nameof(VendorAttributeModel.IsRequired))
             {
                 Title = T("Admin.Vendors.VendorAttributes.Fields.IsRequired").Text,
-                Width = "100",
+                Width = "50",
                 ClassName =  NopColumnClassDefaults.CenterAll,
                 Render = new RenderBoolean()
             },

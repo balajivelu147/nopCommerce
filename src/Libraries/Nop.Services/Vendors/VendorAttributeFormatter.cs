@@ -1,10 +1,12 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Services.Html;
 using Nop.Services.Localization;
+using Nop.Services.Media;
 
 namespace Nop.Services.Vendors
 {
@@ -20,6 +22,8 @@ namespace Nop.Services.Vendors
         private readonly IVendorAttributeParser _vendorAttributeParser;
         private readonly IVendorAttributeService _vendorAttributeService;
         private readonly IWorkContext _workContext;
+        private readonly IWebHelper _webHelper;
+        private readonly IDownloadService _downloadService;
 
         #endregion
 
@@ -28,12 +32,16 @@ namespace Nop.Services.Vendors
         public VendorAttributeFormatter(IHtmlFormatter htmlFormatter,
             ILocalizationService localizationService,
             IVendorAttributeParser vendorAttributeParser,
+            IWebHelper webHelper,
+            IDownloadService downloadService,
             IVendorAttributeService vendorAttributeService,
             IWorkContext workContext)
         {
             _htmlFormatter = htmlFormatter;
             _localizationService = localizationService;
             _vendorAttributeParser = vendorAttributeParser;
+            _webHelper = webHelper;
+            _downloadService = downloadService;
             _vendorAttributeService = vendorAttributeService;
             _workContext = workContext;
         }
@@ -52,7 +60,8 @@ namespace Nop.Services.Vendors
         /// A task that represents the asynchronous operation
         /// The task result contains the formatted attributes
         /// </returns>
-        public virtual async Task<string> FormatAttributesAsync(string attributesXml, string separator = "<br />", bool htmlEncode = true)
+        public virtual async Task<string> FormatAttributesAsync(string attributesXml, string separator = "<br />", bool htmlEncode = true,
+            bool allowHyperlinks = true)
         {
             var result = new StringBuilder();
             var currentLanguage = await _workContext.GetWorkingLanguageAsync();
@@ -81,7 +90,34 @@ namespace Nop.Services.Vendors
                         else if (attribute.AttributeControlType == AttributeControlType.FileUpload)
                         {
                             //file upload
-                            //not supported for vendor attributes
+                            //file upload
+                            _ = Guid.TryParse(valueStr, out var downloadGuid);
+                            var download = await _downloadService.GetDownloadByGuidAsync(downloadGuid);
+                            if (download != null)
+                            {
+                                string attributeText;
+                                var fileName = $"{download.Filename ?? download.DownloadGuid.ToString()}{download.Extension}";
+                                //encode (if required)
+                                if (htmlEncode)
+                                    fileName = WebUtility.HtmlEncode(fileName);
+                                if (allowHyperlinks)
+                                {
+                                    //hyperlinks are allowed
+                                    var downloadLink = $"{_webHelper.GetStoreLocation()}download/getfileupload/?downloadId={download.DownloadGuid}";
+                                    attributeText = $"<a href=\"{downloadLink}\" class=\"fileuploadattribute\">{fileName}</a>";
+                                }
+                                else
+                                {
+                                    //hyperlinks aren't allowed
+                                    attributeText = fileName;
+                                }
+
+                                var attributeName = await _localizationService.GetLocalizedAsync(attribute, a => a.Name, currentLanguage.Id);
+                                //encode (if required)
+                                if (htmlEncode)
+                                    attributeName = WebUtility.HtmlEncode(attributeName);
+                                formattedAttribute = $"{attributeName}: {attributeText}";
+                            }
                         }
                         else
                         {

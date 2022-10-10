@@ -86,6 +86,7 @@ namespace Nop.Web.Factories
                     Name = await _localizationService.GetLocalizedAsync(attribute, x => x.Name),
                     IsRequired = attribute.IsRequired,
                     AttributeControlType = attribute.AttributeControlType,
+                    AttributeGroup = attribute.AttributeGroup,
                 };
 
                 if (attribute.ShouldHaveValues())
@@ -235,6 +236,7 @@ namespace Nop.Web.Factories
                 model.Citys = vendor.Citys;
                 model.CityFromWeight = vendor.CityFromWeight;
                 model.CityUptoWeight = vendor.CityUptoWeight;
+                model.ProductTemplateTypes = vendor.ProductTemplateTypes;
                 model.ZipCodes = vendor.ZipCodes;
             }
 

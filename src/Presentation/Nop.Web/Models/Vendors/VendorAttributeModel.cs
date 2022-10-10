@@ -24,6 +24,8 @@ namespace Nop.Web.Models.Vendors
 
         public IList<VendorAttributeValueModel> Values { get; set; }
 
+        public string AttributeGroup { get; set; }
+
     }
 
     public partial record VendorAttributeValueModel : BaseNopEntityModel

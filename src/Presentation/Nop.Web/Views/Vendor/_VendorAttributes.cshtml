@@ -1,7 +1,13 @@
 ﻿@model IList<VendorAttributeModel>
 
 @using Nop.Core.Domain.Catalog;
+@using Nop.Core.Domain.Media;
 @using Nop.Services.Vendors
+
+@using Nop.Core
+@using System.Text
+@using Nop.Services.Media
+@inject IDownloadService downloadService
 
 @foreach (var attribute in Model)
 {
@@ -9,58 +15,61 @@
     var textPrompt = attribute.Name;
     <div class="inputs vendor-attributes">
         <label>@textPrompt:</label>
-        
+
         @switch (attribute.AttributeControlType)
         {
             case AttributeControlType.DropdownList:
-            {
-            <select name="@(controlId)" id="@(controlId)">
-                @if (!attribute.IsRequired)
-                    {
-                    <option value="0">---</option>
-                    }
-                @foreach (var attributeValue in attribute.Values)
-                    {
-                    <option selected="@attributeValue.IsPreSelected" value="@attributeValue.Id">@attributeValue.Name</option>
-                    }
-            </select>
-            }
+                {
+                    <select name="@(controlId)" id="@(controlId)">
+                        @if (!attribute.IsRequired)
+                        {
+                            <option value="0">---</option>
+                        }
+                        @foreach (var attributeValue in attribute.Values)
+                        {
+                            <option selected="@attributeValue.IsPreSelected" value="@attributeValue.Id">@attributeValue.Name</option>
+                        }
+                    </select>
+                }
                 break;
             case AttributeControlType.RadioList:
-            {
-            <ul class="option-list">
-                @foreach (var attributeValue in attribute.Values)
-                    {
-                    <li>
-                        <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" />
-                        <label for="@(controlId)_@(attributeValue.Id)">@attributeValue.Name</label>
-                    </li>
-                    }
-            </ul>
-            }
+                {
+                    <ul class="option-list">
+                        @foreach (var attributeValue in attribute.Values)
+                        {
+                            <li>
+                                <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" />
+                                <label for="@(controlId)_@(attributeValue.Id)" title="@(attributeValue.Name?
+                        .Substring(attributeValue.Name.IndexOf("(")+1,-attributeValue.Name.IndexOf("(")-1+attributeValue.Name.IndexOf(")")))">
+                                    @(attributeValue.Name?.Substring(0, attributeValue.Name.IndexOf("(")))
+                                </label>
+                            </li>
+                        }
+                    </ul>
+                }
                 break;
             case AttributeControlType.Checkboxes:
             case AttributeControlType.ReadonlyCheckboxes:
-            {
-            <ul class="option-list">
-                @foreach (var attributeValue in attribute.Values)
-                    {
-                    <li>
-                        <input id="@(controlId)_@(attributeValue.Id)" type="checkbox" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attribute.AttributeControlType == AttributeControlType.ReadonlyCheckboxes ? Html.Raw(" disabled=\"disabled\"") : null) />
-                        <label for="@(controlId)_@(attributeValue.Id)">@attributeValue.Name</label>
-                    </li>
-                    }
-            </ul>
-            }
-            break;
+                {
+                    <ul class="option-list">
+                        @foreach (var attributeValue in attribute.Values)
+                        {
+                            <li>
+                                <input id="@(controlId)_@(attributeValue.Id)" type="checkbox" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attribute.AttributeControlType == AttributeControlType.ReadonlyCheckboxes ? Html.Raw(" disabled=\"disabled\"") : null) />
+                                <label for="@(controlId)_@(attributeValue.Id)">@attributeValue.Name</label>
+                            </li>
+                        }
+                    </ul>
+                }
+                break;
             case AttributeControlType.TextBox:
-            {
-                <input name="@(controlId)" type="text" class="textbox" id="@(controlId)" value="@(attribute.DefaultValue)" />
-            }
-            break;
+                {
+                    <input name="@(controlId)" type="text" class="textbox" id="@(controlId)" value="@(attribute.DefaultValue)" />
+                }
+                break;
             case AttributeControlType.MultilineTextbox:
-            {
-            <textarea id="@(controlId)" name="@(controlId)">@(attribute.DefaultValue)</textarea>
+                {
+                    <textarea id="@(controlId)" name="@(controlId)">@(attribute.DefaultValue)</textarea>
                 }
                 break;
 
@@ -68,16 +77,16 @@
                 {
                     <p>Select date</p>
 
-                                 <div class="attribute-data">
-                @*<input id="@(endDateControlId)" name="@(endDateControlId)" type="text" class="datepicker" value="@(Model.RentalEndDate.HasValue ? Model.RentalEndDate.Value.ToShortDateString() : null)" @if(isMobileDevice){<text>readonly</text>}/>*@
+                    <div class="attribute-data">
+                        @*<input id="@(endDateControlId)" name="@(endDateControlId)" type="text" class="datepicker" value="@(Model.RentalEndDate.HasValue ? Model.RentalEndDate.Value.ToShortDateString() : null)" @if(isMobileDevice){<text>readonly</text>}/>*@
                         <input class="form-control" name="@(controlId)" type="text" placeholder="Choose time" id="@(controlId)" value="@(attribute.DefaultValue)">
 
-                       <script asp-location="Footer">
-                       $(document).ready(function () {
+                        <script asp-location="Footer">
+                            $(document).ready(function () {
                                 $("#@(controlId)").datepicker({ dateFormat: "m/d/yy", multidate: false });
-                        });
-                    </script>
-                </div>
+                            });
+                        </script>
+                    </div>
 
 
                 }
@@ -104,7 +113,7 @@
 
                         $(document).ready(function () {
                         @*$(function () {*@
-                                                                        var $now = moment();
+                                                                                                                        var $now = moment();
                             var $dateMin = $now.subtract(3, 'days');
                             console.log($now);
                             console.log($dateMin);
@@ -113,8 +122,8 @@
                             $('#@(controlId)').bootstrapMaterialDatePicker({
                                 format: 'hh:mm A',
                                 shortTime: true,
-                               // minDate: new Date(),
-                               // maxDate: new Date(new Date().setDate(new Date().getDate() + 15)),
+                                // minDate: new Date(),
+                                // maxDate: new Date(new Date().setDate(new Date().getDate() + 15)),
                                 //currentDate: new Date(),
                                 date: false,
                                 time: true,
@@ -135,17 +144,17 @@
                         });
 
                     </script>
-                     <style>
+                    <style>
 
-     :root{
-    --primary: #c09e6c !important;
-}
-.btn-outline-primary{
-  background-color: #c09e6c !important;
-  color: white !important;
-}
-         
-        </style>
+                        :root {
+                            --primary: #c09e6c !important;
+                        }
+
+                        .btn-outline-primary {
+                            background-color: #c09e6c !important;
+                            color: white !important;
+                        }
+                    </style>
                 }
                 break;
 
@@ -154,7 +163,7 @@
                     <p>MultiDatepickerCalendar</p>
                     <div class="attribute-data">
                         @*<input id="@(endDateControlId)" name="@(endDateControlId)" type="text" class="datepicker" value="@(Model.RentalEndDate.HasValue ? Model.RentalEndDate.Value.ToShortDateString() : null)" @if(isMobileDevice){<text>readonly</text>}/>*@
-                        <input class="form-control"  id="@(controlId)"   value="@(attribute.DefaultValue)" name="@(controlId)" type="text" placeholder="Choose time">
+                        <input class="form-control" id="@(controlId)" value="@(attribute.DefaultValue)" name="@(controlId)" type="text" placeholder="Choose time">
                         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
                         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet" />
 
@@ -168,11 +177,115 @@
                 break;
 
             case AttributeControlType.Datepicker:
-            case AttributeControlType.FileUpload:
             case AttributeControlType.ColorSquares:
             case AttributeControlType.ImageSquares:
                 {
                     //not support attribute type
+                }
+                break;
+
+            case AttributeControlType.FileUpload:
+                {
+                    Download download = null;
+                    if (!string.IsNullOrEmpty(attribute.DefaultValue))
+                    {
+                        download = await downloadService.GetDownloadByGuidAsync(new Guid(attribute.DefaultValue));
+                    }
+
+                    @* register CSS and JS *@
+                    <link rel="stylesheet" href="~/lib_npm/fine-uploader/fine-uploader/fine-uploader.min.css" />
+                    <script asp-exclude-from-bundle="true" src="~/lib_npm/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.min.js" asp-location="Footer"></script>
+
+                    //ex. ['jpg', 'jpeg', 'png', 'gif'] or []
+                   // var allowedFileExtensions = null;// string.Join(", ", attribute.AllowedFileExtensions.Select(x => "'" + x.Trim() + "'").ToList());
+
+                    if (download != null)
+                    {
+                        <input id="@(controlId)" name="@(controlId)" type="hidden" value="@download.DownloadGuid" />
+                    }
+                    else
+                    {
+                        <input id="@(controlId)" name="@(controlId)" type="hidden" />
+                    }
+
+                    @*fine uploader container*@
+                    <div id="@(controlId)uploader"></div>
+                    @*fine uploader template (keep it synchronized to \Content\fineuploader\templates\default.html)*@
+                    <script type="text/template" asp-location="Footer" id="@(controlId)-qq-template">
+                        <div class="qq-uploader-selector qq-uploader">
+                            <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+                                <span>@T("Common.FileUploader.DropFiles")</span>
+                            </div>
+                            <div class="qq-upload-button-selector qq-upload-button">
+                                <div>@T("Common.FileUploader.Upload")</div>
+                            </div>
+                            <span class="qq-drop-processing-selector qq-drop-processing">
+                                <span>@T("Common.FileUploader.Processing")</span>
+                                <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+                            </span>
+                            <ul class="qq-upload-list-selector qq-upload-list">
+                                <li>
+                                    <div class="qq-progress-bar-container-selector">
+                                        <div class="qq-progress-bar-selector qq-progress-bar"></div>
+                                    </div>
+                                    <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                                    <span class="qq-edit-filename-icon-selector qq-edit-filename-icon"></span>
+                                    <span class="qq-upload-file-selector qq-upload-file"></span>
+                                    <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                                    <span class="qq-upload-size-selector qq-upload-size"></span>
+                                    <a class="qq-upload-cancel-selector qq-upload-cancel" href="#">@T("Common.FileUploader.Cancel")</a>
+                                    <a class="qq-upload-retry-selector qq-upload-retry" href="#">@T("Common.FileUploader.Retry")</a>
+                                    <a class="qq-upload-delete-selector qq-upload-delete" href="#">@T("Common.FileUploader.Delete")</a>
+                                    <span class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </script>
+                    <script asp-location="Footer">
+                        $(document).ready(function () {
+                            $("#@(controlId)uploader").fineUploader({
+                                request: {
+                                    endpoint: '@(Url.RouteUrl("UploadFileProductAttribute", new { attributeId = attribute.Id }))'
+                                },
+                                template: "@(controlId)-qq-template",
+                                multiple: false,
+                                validation: {
+                                }
+                            }).on("complete", function (event, id, name, responseJSON, xhr) {
+                                $("#@(controlId)").val(responseJSON.downloadGuid);
+                                if (responseJSON.success) {
+                                    $("#@(controlId + "downloadurl")").html("<a href='" + responseJSON.downloadUrl + "'>@T("Common.FileUploader.DownloadUploadedFile")</a>");
+                                    $("#@(controlId + "remove")").show();
+                                }
+                                if (responseJSON.message) {
+                                    alert(responseJSON.message);
+                                }
+                            });
+
+                            $("#@(controlId + "remove")").on('click', function (e) {
+                                $("#@(controlId + "downloadurl")").html("");
+                                $("#@(controlId)").val('');
+                                $(this).hide();
+                            });
+                        });
+                    </script>
+                    <div id="@(controlId + "downloadurl")">
+                        @if (download != null)
+                        {
+                            <a href="@(Url.Action("GetFileUpload", "Download", new {downloadId = download.DownloadGuid}))" class="download-uploaded-file">@T("Common.FileUploader.DownloadUploadedFile")</a>
+                        }
+                    </div>
+                    <div>
+                        @if (download != null)
+                        {
+                            <a id="@(controlId + "remove")" class="remove-download-button">@T("Common.FileUploader.RemoveDownload")</a>
+                        }
+                        else
+                        {
+                            <a id="@(controlId + "remove")" class="remove-download-buttonn" style="display: none;">@T("Common.FileUploader.RemoveDownload")</a>
+                        }
+                    </div>
+
                 }
                 break;
         }

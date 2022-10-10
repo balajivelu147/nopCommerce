@@ -3,10 +3,11 @@ using Nop.Core.Domain.Catalog;
 using Nop.Data.Mapping;
 using Nop.Data.Extensions;
 using Nop.Core.Domain.Vendors;
+using Nop.Core.Domain.Common;
 
 namespace Nop.Data.Migrations
 {
-    [NopMigration("2022/05/07 11:26:08:9037680", "Adding Zipcode pricing to vendor", UpdateMigrationType.Data, MigrationProcessType.Update)]
+    [NopMigration("2022/10/08 11:26:08:9937683", "Adding Zipcode pricing to vendor", UpdateMigrationType.Data, MigrationProcessType.Update)]
     public class ZipCodePricingMigration : AutoReversingMigration
     {
 
@@ -87,6 +88,54 @@ namespace Nop.Data.Migrations
                 Alter.Table(NameCompatibilityManager.GetTableName(typeof(Vendor)))
                     .AddColumn(nameof(Vendor.CityUptoWeight)).AsFloat().Nullable();
             }
+
+
+
+            if (Schema.Table(NameCompatibilityManager.GetTableName(typeof(Vendor))).Column(nameof(Vendor.Latitude)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(Vendor)))
+                    .AlterColumn(nameof(Vendor.Latitude)).AsDecimal().Nullable();
+            }
+
+            if (Schema.Table(NameCompatibilityManager.GetTableName(typeof(Vendor))).Column(nameof(Vendor.Longitude)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(Vendor)))
+                    .AlterColumn(nameof(Vendor.Longitude)).AsDecimal().Nullable();
+            }
+
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(Address))).Column(nameof(Address.Latitude)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(Address)))
+                    .AddColumn(nameof(Address.Latitude)).AsDecimal().Nullable();
+            }
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(Address))).Column(nameof(Address.Longitude)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(Address)))
+                    .AddColumn(nameof(Address.Longitude)).AsDecimal().Nullable();
+            }
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(Vendor))).Column(nameof(Vendor.ProductTemplateTypes)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(Vendor)))
+                    .AddColumn(nameof(Vendor.ProductTemplateTypes)).AsString().Nullable();
+            }
+
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute))).Column(nameof(VendorAttribute.AttributeGroup)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute)))
+                    .AddColumn(nameof(VendorAttribute.AttributeGroup)).AsString().Nullable();
+            }
+
+
 
         }
 

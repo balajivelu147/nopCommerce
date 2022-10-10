@@ -81,5 +81,16 @@ namespace Nop.Core.Domain.Common
         /// Gets or sets the date and time of instance creation
         /// </summary>
         public DateTime CreatedOnUtc { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets a latitude
+        /// </summary>
+        public decimal? Latitude { get; set; }
+
+        /// <summary>
+        /// Gets or sets a longitude
+        /// </summary>
+        public decimal? Longitude { get; set; }
     }
 }

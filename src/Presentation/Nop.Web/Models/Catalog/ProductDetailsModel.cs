@@ -350,9 +350,9 @@ namespace Nop.Web.Models.Catalog
 
         public string VendorSeName { get; set; }
 
-        public double Latitude { get; set; }
+        public decimal Latitude { get; set; }
 
-        public double Longitude { get; set; }
+        public decimal Longitude { get; set; }
         public string ProductName { get; set; }
 
         public string ProductSeName { get; set; }

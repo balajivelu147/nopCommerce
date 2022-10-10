@@ -1,4 +1,6 @@
-﻿using Nop.Core.Domain.Common;
+﻿using System;
+using Nop.Core.Configuration;
+using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Seo;
 
@@ -7,7 +9,7 @@ namespace Nop.Core.Domain.Vendors
     /// <summary>
     /// Represents a vendor
     /// </summary>
-    public partial class Vendor : BaseEntity, ILocalizedEntity, ISlugSupported, ISoftDeletedEntity
+    public partial class Vendor : BaseEntity, ILocalizedEntity, ISlugSupported, ISoftDeletedEntity, ISettings
     {
         /// <summary>
         /// Gets or sets the name
@@ -108,19 +110,20 @@ namespace Nop.Core.Domain.Vendors
 
 
         // public string Pancard { get; set; }
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        public decimal Longitude { get; set; }
+        public decimal Latitude { get; set; }
         public bool IsWholeCitySupply { get; set; }
 
         public string Citys { get; set; }
-        public float CityFromPrice{ get; set; }
-        public float CityUptoPrice { get; set; }
+        public decimal CityFromPrice{ get; set; }
+        public decimal CityUptoPrice { get; set; }
 
-        public float CityFromWeight { get; set; }
-        public float CityUptoWeight { get; set; }
+        public decimal CityFromWeight { get; set; }
+        public decimal CityUptoWeight { get; set; }
 
        // public decimal PricePerKiloMeter { get; set; }
        // public decimal PricePerWeight { get; set; }
         public string ZipCodes { get; set; }
+        public string ProductTemplateTypes { get; set; }
     }
 }

@@ -47,6 +47,77 @@
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
+
+    <div style="display: none" id="geolocationtag">
+        @*var finalvendorprodCombo = JsonConvert.SerializeObject(prdList);*@
+    </div>
+
+
+
+    <script class="qqqqqqqqqqqq">
+        getUserLocation();
+        /*Location functions here*/
+        function getUserLocation() {
+           // debugger;
+          //  console.log("getting location");
+            //check if the geolocation object is supported, if so get position
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(displayLocation, displayError);
+
+            } else {
+              //  document.getElementById("map").innerHTML = "Sorry - your browser doesn't support geolocation!";
+            }
+        };
+
+
+        var currentUserLat = "";
+        var currentUserLong = "";
+        function displayLocation(position) {
+           // console.log(position)
+
+            //console.log(JSON.stringify(position))
+            document.getElementById("geolocationtag").innerHTML = JSON.stringify(position);
+
+            //build text string including co-ordinate data passed in parameter
+            var displayText = "User latitude is " + position.coords.latitude + " and longitude is " + position.coords.longitude;
+            currentUserLat = position.coords.latitude;
+            currentUserLong = position.coords.longitude;
+            document.getElementById("geo-latitude").value = currentUserLat;
+            document.getElementById("geo-longitude").value = currentUserLong;
+            document.getElementById("geo-accuracy").value = position.coords.accuracy;
+
+          //  console.log(position)
+            //initialize();
+            //display the string for demonstration
+            //document.getElementById("locationData").innerHTML = displayText;
+        };
+
+        function displayError(error) {
+          //  console.log(error)
+            //get a reference to the HTML element for writing result
+            //var locationElement = document.getElementById("map");
+
+            ////find out which error we have, output message accordingly
+            //switch (error.code) {
+            //    case error.PERMISSION_DENIED:
+            //        locationElement.innerHTML = "Permission was denied";
+            //        break;
+            //    case error.POSITION_UNAVAILABLE:
+            //        locationElement.innerHTML = "Location data not available";
+            //        break;
+            //    case error.TIMEOUT:
+            //        locationElement.innerHTML = "Location request timeout";
+            //        break;
+            //    case error.UNKNOWN_ERROR:
+            //        locationElement.innerHTML = "An unspecified error occurred";
+            //        break;
+            //    default:
+            //        locationElement.innerHTML = "Who knows what happened...";
+            //        break;
+            //}
+        }
+
+    </script>
     <title>@NopHtml.GenerateTitle()</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="description" content="@NopHtml.GenerateMetaDescription()" />
@@ -81,4 +152,7 @@
     @NopHtml.GenerateScripts(ResourceLocation.Footer)
     @NopHtml.GenerateInlineScripts(ResourceLocation.Footer)
 </body>
+<input type="hidden" id="geo-latitude" >
+<input type="hidden" id="geo-longitude">
+<input type="hidden" id="geo-accuracy">
 </html>
