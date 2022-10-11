@@ -1,6 +1,7 @@
 ﻿@model ApplyVendorModel
 @{
     Layout = "_ColumnsOne";
+    var AttributeGroups = @Model.VendorAttributes.Select(x => x.AttributeGroup).ToList().Distinct();
 
     //title
     NopHtml.AddTitleParts(T("PageTitle.Vendors.Apply").Text);
@@ -22,81 +23,493 @@
         }
         else
         {
-            <form asp-route="ApplyVendorAccount" method="post" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="message-error"></div>
-                <div class="fieldset">
-                    <div class="form-fields">
-                        <div class="inputs">
-                            <label asp-for="Name" asp-postfix=":"></label>
-                            <input asp-for="Name" class="name" placeholder="@T("Vendors.ApplyAccount.Name.Hint")"/>
-                            <nop-required />
-                            <span asp-validation-for="Name"></span>
-                        </div>
-                        <div class="inputs">
-                            <label asp-for="Email" asp-postfix=":"></label>
-                            <input asp-for="Email" class="name" placeholder="@T("Vendors.ApplyAccount.Email.Hint")"/>
-                            <nop-required />
-                            <span asp-validation-for="Email"></span>
-                        </div>
-                        <div class="inputs">
-                            <label asp-for="Description" asp-postfix=":"></label>
-                            <textarea asp-for="Description" class="description"></textarea>
-                        </div>
-                        <div class="inputs">
-                            <label>@T("Vendors.ApplyAccount.Picture"):</label>
-                            <input name="uploadedFile" type="file" accept="image/*"/>
-                        </div>
-                        @await Html.PartialAsync("_VendorAttributes", Model.VendorAttributes)
-                        @if (Model.DisplayCaptcha)
-                        {
-                            <nop-captcha />
-                        }
-                        @if (Model.TermsOfServiceEnabled)
-                        {
-                            <script asp-location="Footer">
-                                $(document).ready(function() {
-                                    $('#apply-vendor').on('click', function() {
-                                        if ($('#termsofservice').is(':checked')) {
-                                            //do some stuff
-                                            return true;
-                                        } else {
-                                            //just show validation errors, dont post
-                                            alert('@Html.Raw(JavaScriptEncoder.Default.Encode(T("Vendors.ApplyAccount.AcceptTermsOfService.Required").Text))');
-                                            return false;
-                                        }
-                                    });
-                                });
-                            </script>
-                            <div class="terms-of-service">
-                                <input id="termsofservice" type="checkbox" name="termsofservice" />
-                                <label for="termsofservice">@T("Vendors.ApplyAccount.AcceptTermsOfService")</label>
-                                @if (Model.TermsOfServicePopup)
-                                {
-                                    <span class="read" id="read-acceptterms">@T("Vendors.ApplyAccount.AcceptTermsOfService.Read")</span>
-                                    <script asp-location="Footer">
-                                        $(document).ready(function() {
-                                            $('#read-acceptterms').on('click',
-                                                function (e) {
-                                                    displayPopupContentFromUrl(
-                                                        '@Url.RouteUrl("TopicPopup", new {SystemName = "VendorTermsOfService"})',
-                                                        '@T("Vendors.ApplyAccount.AcceptTermsOfService")');
-                                                });
-                                        });
-                                    </script>
-                                }
-                                else
-                                {
-                                    <a class="read" id="read-acceptterms" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("VendorTermsOfService") })">@T("Vendors.ApplyAccount.AcceptTermsOfService.Read")</a>
-                                }
+
+            <!-- MultiStep Form -->
+            <div class="container-fluid" id="grad1">
+                <div class="row justify-content-center mt-0">
+                    <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2" style="max-width:100% !important">
+                        <div class="card">
+                            <div class="subcard">
+                                <h2><strong>Request for Technical Services</strong></h2>
+                                <p>Fill out this form to get your request going...</p>
                             </div>
-                        }
+                            <div class="row">
+                                <div class="col-md-12 mx-0">
+                                    <form id="msform" asp-route="ApplyVendorAccount" method="post" enctype="multipart/form-data">
+                                        <div asp-validation-summary="ModelOnly" class="message-error"></div>
+                                        <ul id="progressbar">
+                                            <li id="company" class="active"><strong>Company</strong></li>
+                                            @*<li id="contact"><strong>Contact</strong></li>*@
+                                            @foreach (var item in AttributeGroups)
+                                            {
+                                                @if (!String.IsNullOrWhiteSpace(item))
+                                                {
+                                                    <li id="require_@item" class="pg-bar"><strong> @item</strong></li>
+
+                                                }
+                                                else
+                                                {
+                                                    <li id="require_@item" class="pg-bar"><strong>info</strong></li>
+
+                                                }
+
+                                            }
+                                            @*         <li id="require"><strong>Requirements</strong></li>
+                                        <li id="require-2"><strong>Specs</strong></li>
+                                        <li id="confirm"><strong>Info</strong></li>*@
+
+                                        </ul>
+                                        <fieldset>
+                                            <div class="form-card">
+                                                <h2 class="fs-title">Contact Information</h2>
+                                                <div class="fieldset">
+                                                    <div class="form-fields">
+                                                        <div class="inputs">
+                                                            <label asp-for="Name" asp-postfix=":"></label>
+                                                            <input asp-for="Name" class="name" placeholder="@T("Vendors.ApplyAccount.Name.Hint")" />
+                                                            <nop-required />
+                                                            <span asp-validation-for="Name"></span>
+                                                        </div>
+                                                        <div class="inputs">
+                                                            <label asp-for="Email" asp-postfix=":"></label>
+                                                            <input asp-for="Email" class="name" placeholder="@T("Vendors.ApplyAccount.Email.Hint")" />
+                                                            <nop-required />
+                                                            <span asp-validation-for="Email"></span>
+                                                        </div>
+                                                        <div class="inputs">
+                                                            <label asp-for="Description" asp-postfix=":"></label>
+                                                            <textarea asp-for="Description" class="description"></textarea>
+                                                        </div>
+                                                        <div class="inputs">
+                                                            <label>@T("Vendors.ApplyAccount.Picture"):</label>
+                                                            <input name="uploadedFile" type="file" accept="image/*" />
+                                                        </div>
+                                                        @if (Model.DisplayCaptcha)
+                                                        {
+                                                            <nop-captcha />
+                                                        }
+                                                    </div>
+
+
+
+                                                </div>
+                                            </div>
+                                            <input type="button" name="next" class="next action-button" value="Next Step" />
+                                        </fieldset>
+                                        @*@await Html.PartialAsync("_VendorAttributes", Model.VendorAttributes)*@
+                                        @{
+                                            var attributes =  Model.VendorAttributes.GroupBy(x => x.AttributeGroup).Select(x => x.ToList()).ToList(); int i = 1;
+                                        }
+                                        @foreach (var item in attributes)
+                                        {
+                                            i++;
+                                            <fieldset>
+                                                <div class="form-card">
+                                                    @*<h2 class="fs-title">Contact Information</h2>*@
+
+
+                                                    @*                                       @if (Model.VendorAttributes.Count > 0)
+                                            {*@
+                                                    <div class="fieldset">
+                                                        <div class="form-fields">
+                                                            @await Html.PartialAsync("_VendorAttributes", item)
+                                                        </div>
+                                                    </div>
+                                                    @*}*@
+                                                </div>
+                                                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                                                @if (i <= attributes.Count) { 
+                                                <input type="button" name="next" class="next action-button" value="Next Step" />
+                                                }
+                                            </fieldset>
+                                        }
+                                        <div class="buttons">
+                                            @if (Model.TermsOfServiceEnabled)
+                                            {
+                                                <script asp-location="Footer">
+                                                    $(document).ready(function () {
+                                                        $('#apply-vendor').on('click', function () {
+                                                            if ($('#termsofservice').is(':checked')) {
+                                                                //do some stuff
+                                                                return true;
+                                                            } else {
+                                                                //just show validation errors, dont post
+                                                                alert('@Html.Raw(JavaScriptEncoder.Default.Encode(T("Vendors.ApplyAccount.AcceptTermsOfService.Required").Text))');
+                                                                return false;
+                                                            }
+                                                        });
+                                                    });
+                                                </script>
+                                                <div class="terms-of-service">
+                                                    <input id="termsofservice" type="checkbox" name="termsofservice" />
+                                                    <label for="termsofservice">@T("Vendors.ApplyAccount.AcceptTermsOfService")</label>
+                                                    @if (Model.TermsOfServicePopup)
+                                                    {
+                                                        <span class="read" id="read-acceptterms">@T("Vendors.ApplyAccount.AcceptTermsOfService.Read")</span>
+                                                        <script asp-location="Footer">
+                                                            $(document).ready(function () {
+                                                                $('#read-acceptterms').on('click',
+                                                                    function (e) {
+                                                                        displayPopupContentFromUrl(
+                                                                            '@Url.RouteUrl("TopicPopup", new {SystemName = "VendorTermsOfService"})',
+                                                                            '@T("Vendors.ApplyAccount.AcceptTermsOfService")');
+                                                                    });
+                                                            });
+                                                        </script>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="read" id="read-acceptterms" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("VendorTermsOfService") })">@T("Vendors.ApplyAccount.AcceptTermsOfService.Read")</a>
+                                                    }
+                                                </div>
+                                            }
+
+                                            <button type="submit" id="apply-vendor" name="apply-vendor" class="button-1 apply-vendor-button">@T("Vendors.ApplyAccount.Button")</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="buttons">
-                    <button type="submit" id="apply-vendor" name="apply-vendor" class="button-1 apply-vendor-button">@T("Vendors.ApplyAccount.Button")</button>
-                </div>
-            </form>
+            </div>
         }
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ApplyVendorBottom, additionalData = Model })
     </div>
 </div>
+<style>
+
+    * {
+        margin: 0;
+        padding: 0
+    }
+
+    html {
+        height: 100%
+    }
+
+    #grad1 {
+        background-color: #DDD;
+    }
+
+    #msform {
+        text-align: center;
+        position: relative;
+        margin-top: 20px
+    }
+
+        #msform fieldset .form-card {
+            padding: 20px 40px 30px 40px;
+        }
+
+        #msform fieldset {
+            background: white;
+            border: 0 none;
+            border-radius: 0.5rem;
+            box-sizing: border-box;
+            width: 100%;
+            margin: 0;
+            padding-bottom: 20px;
+            position: relative
+        }
+
+            #msform fieldset:not(:first-of-type) {
+                display: none
+            }
+
+            #msform fieldset .form-card {
+                text-align: left;
+                color: #9E9E9E
+            }
+
+        #msform input.field,
+        #msform textarea.field {
+            width: 100% !important;
+            padding-left: 20px;
+            font-size: 16px;
+            height: 48px;
+            line-height: 48px;
+            background-color: rgb(234, 236, 238);
+            border-radius: 25px;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+            #msform input.field:focus,
+            #msform textarea.field:focus {
+                -moz-box-shadow: none !important;
+                -webkit-box-shadow: none !important;
+                box-shadow: none !important;
+                border: none;
+                font-weight: bold;
+                border: 1px solid #0099d8;
+                outline-width: 0;
+            }
+
+        #msform select.field {
+            width: 100% !important;
+            /* height: 47px; */
+            padding-left: 20px;
+            font-size: 16px;
+            height: 48px;
+            line-height: 48px;
+            background-color: rgb(234, 236, 238);
+            border-radius: 25px;
+            border: none;
+            background-image: url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3…c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E);
+            background-repeat: no-repeat,repeat;
+            background-position: right .7em top 50%,0 0;
+            background-size: .65em auto,100%;
+            margin-bottom: 20px;
+        }
+
+        #msform textarea.field {
+            height: 100px;
+        }
+
+        #msform .action-button {
+            color: #fff;
+            border: none;
+            padding: 0 35px;
+            font-size: 18px;
+            height: 48px;
+            line-height: 48px;
+            background-color: #0099d8;
+            background-image: none;
+            border-radius: 24px;
+            width: auto;
+        }
+
+            #msform .action-button:hover,
+            #msform .action-button:focus {
+                box-shadow: 0 0 0 2px white, 0 0 0 3px #0099d8
+            }
+
+            #msform .action-button.previous {
+                background: #999;
+            }
+
+            #msform .action-button.next {
+                background: #616161;
+            }
+
+    select.list-dt {
+        border: none;
+        outline: 0;
+        border-bottom: 1px solid #ccc;
+        padding: 2px 5px 3px 5px;
+        margin: 2px
+    }
+
+        select.list-dt:focus {
+            border-bottom: 2px solid #0099d8
+        }
+
+    .card {
+        z-index: 0;
+        border: none;
+        border-radius: 0.5rem;
+        position: relative;
+        background: white;
+        border: 0 none;
+        border-radius: 0px;
+        box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        width: 94%;
+        margin: 0 3% 20px 3%;
+        position: relative;
+    }
+
+        .card .subcard {
+            padding: 30px;
+        }
+
+    .fs-title {
+        font-size: 25px;
+        color: #2C3E50;
+        margin-bottom: 10px;
+        font-weight: bold;
+        text-align: left
+    }
+
+    #progressbar {
+        margin-bottom: 30px;
+        overflow: hidden;
+        color: lightgrey
+    }
+
+        #progressbar .active {
+            color: #000000
+        }
+
+        #progressbar li {
+            list-style-type: none;
+            font-size: 12px;
+            width: 20%;
+            float: left;
+            position: relative
+        }
+
+        #progressbar #company:before {
+            font-family: FontAwesome;
+            content: "\f044"
+        }
+
+        #progressbar #contact:before {
+            font-family: FontAwesome;
+            content: "\f007"
+        }
+
+        #progressbar .pg-bar:before {
+            font-family: FontAwesome;
+            content: "\f007"
+        }
+
+        #progressbar #require:before {
+            font-family: FontAwesome;
+            content: "\f0ca"
+        }
+
+        #progressbar #require-2:before {
+            font-family: FontAwesome;
+            content: "\f09d"
+        }
+
+        #progressbar #confirm:before {
+            font-family: FontAwesome;
+            content: "\f00c"
+        }
+
+        #progressbar li:before {
+            width: 50px;
+            height: 50px;
+            line-height: 45px;
+            display: block;
+            font-size: 18px;
+            color: #ffffff;
+            background: lightgray;
+            border-radius: 50%;
+            margin: 0 auto 10px auto;
+            padding: 2px
+        }
+
+        #progressbar li:after {
+            content: '';
+            width: 100%;
+            height: 2px;
+            background: lightgray;
+            position: absolute;
+            left: 0;
+            top: 25px;
+            z-index: -1
+        }
+
+        #progressbar li.active:before,
+        #progressbar li.active:after {
+            background: #0099d8
+        }
+
+    .radio-group {
+        position: relative;
+        margin-bottom: 25px
+    }
+
+    .radio {
+        display: inline-block;
+        width: 204;
+        height: 104;
+        border-radius: 0;
+        background: lightblue;
+        box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+        cursor: pointer;
+        margin: 8px 2px
+    }
+
+        .radio:hover {
+            box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3)
+        }
+
+        .radio.selected {
+            box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1)
+        }
+
+    .fit-image {
+        width: 100%;
+        object-fit: cover
+    }
+</style>
+<script asp-location="Footer">
+
+    $(document).ready(function () {
+
+        var current_fs, next_fs, previous_fs; //fieldsets
+        var opacity;
+
+        $(".next").click(function () {
+
+            current_fs = $(this).parent();
+            next_fs = $(this).parent().next();
+
+            //Add Class Active
+            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+            //show the next fieldset
+            next_fs.show();
+            //hide the current fieldset with style
+            current_fs.animate({ opacity: 0 }, {
+                step: function (now) {
+                    // for making fielset appear animation
+                    opacity = 1 - now;
+
+                    current_fs.css({
+                        'display': 'none',
+                        'position': 'relative'
+                    });
+                    next_fs.css({ 'opacity': opacity });
+                },
+                duration: 600
+            });
+           // $('#progressbar').scrollTop(0);
+
+        });
+
+        $(".previous").click(function () {
+
+            current_fs = $(this).parent();
+            previous_fs = $(this).parent().prev();
+
+            //Remove class active
+            $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+            //show the previous fieldset
+            previous_fs.show();
+
+            //hide the current fieldset with style
+            current_fs.animate({ opacity: 0 }, {
+                step: function (now) {
+                    // for making fielset appear animation
+                    opacity = 1 - now;
+
+                    current_fs.css({
+                        'display': 'none',
+                        'position': 'relative'
+                    });
+                    previous_fs.css({ 'opacity': opacity });
+                },
+                duration: 600
+            });
+          //  $('#progressbar').scrollTop(0);
+        });
+
+        $('.radio-group .radio').click(function () {
+            $(this).parent().find('.radio').removeClass('selected');
+            $(this).addClass('selected');
+        });
+
+        $(".submit").click(function () {
+            return false;
+        })
+
+    });
+</script>

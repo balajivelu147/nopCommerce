@@ -1,6 +1,7 @@
 ﻿@model VendorInfoModel
 @{
     Layout = "_ColumnsTwo";
+                                 var AttributeGroups = @Model.VendorAttributes.Select(x=> x.AttributeGroup).ToList().Distinct();
 
     //title
     NopHtml.AddTitleParts(T("PageTitle.VendorInfo").Text);
@@ -10,6 +11,7 @@
 }
 @section left
 {
+
     @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.VendorInfo })
 }
 
@@ -53,10 +55,20 @@
                             <!-- progressbar -->
                             <ul id="progressbar">
                             <li id="company"  class="active"><strong>Company</strong></li>
-                                <li id="contact"><strong>Contact</strong></li>
-                                <li id="require"><strong>Requirements</strong></li>
+                                @*<li id="contact"><strong>Contact</strong></li>*@
+                               @foreach(var item in AttributeGroups){
+                                   @if(!String.IsNullOrWhiteSpace( item)){
+                                <li id="require_@item" class="pg-bar"><strong> @item</strong></li>
+
+                                   }else{
+                                <li id="require_@item" class="pg-bar"><strong>info</strong></li>
+
+                                   }
+                               
+                               }
+                       @*         <li id="require"><strong>Requirements</strong></li>
                                 <li id="require-2"><strong>Specs</strong></li>
-                                <li id="confirm"><strong>Info</strong></li>
+                                <li id="confirm"><strong>Info</strong></li>*@
                                 
                             </ul> <!-- fieldsets -->
                             <fieldset>
@@ -409,6 +421,11 @@ select.list-dt:focus {
 
 #progressbar #contact:before {
     font-family: FontAwesome;
+    content: "\f007"
+}
+
+#progressbar  .pg-bar:before {
+         font-family: FontAwesome;
     content: "\f007"
 }
 
