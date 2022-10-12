@@ -520,6 +520,11 @@ namespace Nop.Web.Infrastructure
                 pattern: $"uploadfileproductattribute/{{attributeId:min(0)}}",
                 defaults: new { controller = "ShoppingCart", action = "UploadFileProductAttribute" });
 
+            //product attributes with "upload file" type (AJAX)
+            endpointRouteBuilder.MapControllerRoute(name: "UploadFileProductAttributeForVendor",
+                pattern: $"uploadfileproductattributeforvendor/{{attributeId:min(0)}}",
+                defaults: new { controller = "Vendor", action = "UploadFileProductAttributeForVendor" });
+
             //checkout attributes with "upload file" type (AJAX)
             endpointRouteBuilder.MapControllerRoute(name: "UploadFileCheckoutAttribute",
                 pattern: $"uploadfilecheckoutattribute/{{attributeId:min(0)}}",

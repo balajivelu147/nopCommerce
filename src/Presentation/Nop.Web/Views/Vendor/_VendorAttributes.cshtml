@@ -245,7 +245,7 @@
                         $(document).ready(function () {
                             $("#@(controlId)uploader").fineUploader({
                                 request: {
-                                    endpoint: '@(Url.RouteUrl("UploadFileProductAttribute", new { attributeId = attribute.Id }))'
+                                    endpoint: '@(Url.RouteUrl("UploadFileProductAttributeForVendor", new { attributeId = attribute.Id }))'
                                 },
                                 template: "@(controlId)-qq-template",
                                 multiple: false,
@@ -256,9 +256,6 @@
                                 if (responseJSON.success) {
                                     $("#@(controlId + "downloadurl")").html("<a href='" + responseJSON.downloadUrl + "'>@T("Common.FileUploader.DownloadUploadedFile")</a>");
                                     $("#@(controlId + "remove")").show();
-                                }
-                                if (responseJSON.message) {
-                                    alert(responseJSON.message);
                                 }
                             });
 

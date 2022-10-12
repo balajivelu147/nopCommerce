@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
@@ -10,6 +11,7 @@ using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Security;
 using Nop.Core.Domain.Vendors;
+using Nop.Core.Infrastructure;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Html;
@@ -45,6 +47,7 @@ namespace Nop.Web.Controllers
         private readonly IWorkContext _workContext;
         private readonly IWorkflowMessageService _workflowMessageService;
         private readonly LocalizationSettings _localizationSettings;
+        private readonly INopFileProvider _fileProvider;
         private readonly VendorSettings _vendorSettings;
 
         #endregion
@@ -66,6 +69,7 @@ namespace Nop.Web.Controllers
             IWorkContext workContext,
             IWorkflowMessageService workflowMessageService,
             LocalizationSettings localizationSettings,
+            INopFileProvider fileProvider,
             VendorSettings vendorSettings)
         {
             _captchaSettings = captchaSettings;
@@ -83,6 +87,7 @@ namespace Nop.Web.Controllers
             _workContext = workContext;
             _workflowMessageService = workflowMessageService;
             _localizationSettings = localizationSettings;
+            _fileProvider = fileProvider;
             _vendorSettings = vendorSettings;
         }
 
@@ -417,6 +422,92 @@ namespace Nop.Web.Controllers
 
             return RedirectToAction("Info");
         }
+
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public virtual async Task<IActionResult> UploadFileProductAttributeForVendor(int attributeId)
+        {
+            var attribute = await _vendorAttributeService.GetVendorAttributeByIdAsync(attributeId);
+            if (attribute == null || attribute.AttributeControlType != AttributeControlType.FileUpload)
+            {
+                return Json(new
+                {
+                    success = false,
+                    downloadGuid = Guid.Empty
+                });
+            }
+
+            var httpPostedFile = Request.Form.Files.FirstOrDefault();
+            if (httpPostedFile == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "No file uploaded",
+                    downloadGuid = Guid.Empty
+                });
+            }
+
+            var fileBinary = await _downloadService.GetDownloadBitsAsync(httpPostedFile);
+
+            var qqFileNameParameter = "qqfilename";
+            var fileName = httpPostedFile.FileName;
+            if (string.IsNullOrEmpty(fileName) && Request.Form.ContainsKey(qqFileNameParameter))
+                fileName = Request.Form[qqFileNameParameter].ToString();
+            //remove path (passed in IE)
+            fileName = _fileProvider.GetFileName(fileName);
+
+            var contentType = httpPostedFile.ContentType;
+
+            var fileExtension = _fileProvider.GetFileExtension(fileName);
+            if (!string.IsNullOrEmpty(fileExtension))
+                fileExtension = fileExtension.ToLowerInvariant();
+
+            //TODO: when we need validation for maximum file size
+            //if (attribute.ValidationFileMaximumSize.HasValue)
+            //{
+            //    //compare in bytes
+            //    var maxFileSizeBytes = attribute.ValidationFileMaximumSize.Value * 1024;
+            //    if (fileBinary.Length > maxFileSizeBytes)
+            //    {
+            //        //when returning JSON the mime-type must be set to text/plain
+            //        //otherwise some browsers will pop-up a "Save As" dialog.
+            //        return Json(new
+            //        {
+            //            success = false,
+            //            message = string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MaximumUploadedFileSize"), attribute.ValidationFileMaximumSize.Value),
+            //            downloadGuid = Guid.Empty
+            //        });
+            //    }
+            //}
+
+            var download = new Download
+            {
+                DownloadGuid = Guid.NewGuid(),
+                UseDownloadUrl = false,
+                DownloadUrl = string.Empty,
+                DownloadBinary = fileBinary,
+                ContentType = contentType,
+                //we store filename without extension for downloads
+                Filename = _fileProvider.GetFileNameWithoutExtension(fileName),
+                Extension = fileExtension,
+                IsNew = true
+            };
+            await _downloadService.InsertDownloadAsync(download);
+
+            //when returning JSON the mime-type must be set to text/plain
+            //otherwise some browsers will pop-up a "Save As" dialog.
+            return Json(new
+            {
+                success = true,
+                message = await _localizationService.GetResourceAsync("ShoppingCart.FileUploaded"),
+                downloadUrl = Url.Action("GetFileUpload", "Download", new { downloadId = download.DownloadGuid }),
+                downloadGuid = download.DownloadGuid
+            });
+        }
+
+
 
         #endregion
     }
