@@ -3794,7 +3794,14 @@ span[title~="White"] .attribute-square {
     margin: 0;
     padding: 15px;
 }
+.qq-upload-button, .qq-upload-button-hover {
+  background: #c09e6c!important;
+  color: black!important;
+}
 
+.inputs {
+  font-size: 14px!important;
+}	
 .overview .prices,
 .variant-overview .prices {
 	margin: 0 0 20px;

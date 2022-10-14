@@ -405,14 +405,14 @@ namespace Nop.Core.Domain.Catalog
         //public decimal _price { get; set; }
 
         private decimal price;
-        public decimal PriceWithCommission
-        {
+        //public decimal PriceWithCommission
+        //{
 
-            get => (decimal)ProductTypeId + (decimal)11.112;
-            set => price = value;
-            //get { return this.ProductCost * this.ProductCost; }
-            //set { this.Price = value; }
-        }
+        //    get => (decimal)ProductTypeId + (decimal)11.112;
+        //    set => price = value;
+        //    //get { return this.ProductCost * this.ProductCost; }
+        //    //set { this.Price = value; }
+        //}
 
         /// <summary>
         /// Gets or sets the old price
