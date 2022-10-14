@@ -3704,6 +3704,14 @@ span[title~="White"] .attribute-square {
     border: 1px solid #ccc;
     border-radius: 50%;
 }
+.qq-upload-button, .qq-upload-button-hover {
+  background: #c09e6c !important;
+  color: black !important;
+}
+
+.inputs {
+  font-size: 14px !important;
+}	
 .selected-value .attribute-square:after {
     content: "\e909";
     position: absolute;
