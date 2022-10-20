@@ -64,6 +64,19 @@ namespace Nop.Services.Configuration
             int storeId = 0, bool loadSharedValueIfNotFound = false);
 
         /// <summary>
+        /// Get setting value by key
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Key</param>
+        /// <param name="storeId">Store identifier</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the setting value
+        /// </returns>
+        Task<string> GetConfigSettingByKeyAsync<T>(string key,
+            int storeId = 0);
+
+        /// <summary>
         /// Set setting value
         /// </summary>
         /// <typeparam name="T">Type</typeparam>

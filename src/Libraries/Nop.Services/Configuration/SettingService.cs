@@ -229,8 +229,6 @@ namespace Nop.Services.Configuration
         /// <typeparam name="T">Type</typeparam>
         /// <param name="key">Key</param>
         /// <param name="defaultValue">Default value</param>
-        /// <param name="storeId">Store identifier</param>
-        /// <param name="loadSharedValueIfNotFound">A value indicating whether a shared (for all stores) value should be loaded if a value specific for a certain is not found</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the setting value
@@ -254,6 +252,39 @@ namespace Nop.Services.Configuration
                 setting = settingsByKey.FirstOrDefault(x => x.StoreId == 0);
 
             return setting != null ? CommonHelper.To<T>(setting.Value) : defaultValue;
+        }
+
+        /// <summary>
+        /// Get setting value by key
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Key</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <param name="storeId">Store identifier</param>
+        /// <param name="loadSharedValueIfNotFound">A value indicating whether a shared (for all stores) value should be loaded if a value specific for a certain is not found</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the setting value
+        /// </returns>
+        public virtual async Task<string> GetConfigSettingByKeyAsync<T>(string key, 
+            int storeId = 0)
+        {
+            if (string.IsNullOrEmpty(key))
+                return null;
+
+            var settings = await GetAllSettingsDictionaryAsync();
+            key = key.Trim().ToLowerInvariant();
+            if (!settings.ContainsKey(key))
+                return null;
+
+            var settingsByKey = settings[key];
+            var setting = settingsByKey.FirstOrDefault(x => x.StoreId == storeId);
+
+            //load shared value?
+            if (setting == null && storeId > 0 )
+                setting = settingsByKey.FirstOrDefault(x => x.StoreId == 0);
+
+            return setting.Value;
         }
 
         /// <summary>

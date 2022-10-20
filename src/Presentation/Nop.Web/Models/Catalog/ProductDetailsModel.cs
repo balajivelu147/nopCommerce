@@ -342,7 +342,12 @@ namespace Nop.Web.Models.Catalog
         #endregion
     }
 
+    public class FormItem
+    {
+        public string Name { get; set; }
+        public int Id { get; set; }
 
+    }
     public class ProductMapModel {
         public decimal PriceValue { get; set; }
 

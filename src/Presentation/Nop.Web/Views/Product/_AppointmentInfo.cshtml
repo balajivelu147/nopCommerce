@@ -1,23 +1,33 @@
 ﻿@model ProductDetailsModel
 
+@using Nop.Services.Configuration
 @using Nop.Core.Domain.Catalog
 @using Nop.Services.Helpers
+@using Nop.Core
+@using Newtonsoft.Json
+@using System.Dynamic
+
+@inject IStoreContext storeContext
+@inject ISettingService settingService
 @inject CatalogSettings catalogSettings
 @inject IUserAgentHelper userAgentHelper
+
+
 @if (true)
 {
-
-
-    var noService = Model.VendorModel.VendorAttributes.First(x => x.Id == 12)?.DefaultValue;
-    var futureAllowedDaysForBooking = Model.VendorModel.VendorAttributes.First(x => x.Id == 11)?.DefaultValue;
-    var lunchTimeEnd = Model.VendorModel.VendorAttributes.First(x => x.Id == 10)?.DefaultValue;
-    var lunchTimeStart = Model.VendorModel.VendorAttributes.First(x => x.Id == 9)?.DefaultValue;
-    var shopClosingTime = Model.VendorModel.VendorAttributes.First(x => x.Id == 08)?.DefaultValue;
-    var shopOpeningTime = Model.VendorModel.VendorAttributes.First(x => x.Id == 07)?.DefaultValue;
-    var appointmentType = Model.VendorModel.VendorAttributes?.First(x => x.Id == 6)?.Values?.First(x => x.IsPreSelected)?.Id;
-    var customHolidays = Model.VendorModel.VendorAttributes.First(x => x.Id == 5)?.DefaultValue;
-    var weekleaves = Model.VendorModel.VendorAttributes?.First(x => x.Id == 2)?.Values?.Where(x => x.IsPreSelected)?.Select(x => x.Id)?.ToList();
-    var productType = Model.VendorModel.VendorAttributes.First(x => x.Id == 1)?.DefaultValue;
+    var currentStoreId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var configSettings = JsonConvert.DeserializeObject(await settingService.GetConfigSettingByKeyAsync<string>("customsettings.vendor.appointment", currentStoreId), typeof(ExpandoObject));
+           
+    var noService = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).noService)?.DefaultValue;
+    var futureAllowedDaysForBooking = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).futureAllowedDaysForBooking)?.DefaultValue;
+    var lunchTimeEnd = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).lunchTimeEnd)?.DefaultValue;
+    var lunchTimeStart = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).lunchTimeStart)?.DefaultValue;
+    var shopClosingTime = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).shopClosingTime)?.DefaultValue;
+    var shopOpeningTime = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).shopOpeningTime)?.DefaultValue;
+    var appointmentType = Model.VendorModel.VendorAttributes?.First(x => x.Id == ((dynamic)configSettings).appointmentType)?.Values?.First(x => x.IsPreSelected)?.Id;
+    var customHolidays = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).customHolidays)?.DefaultValue;
+    var weekleaves = Model.VendorModel.VendorAttributes?.First(x => x.Id == ((dynamic)configSettings).weekleaves)?.Values?.Where(x => x.IsPreSelected)?.Select(x => x.Id)?.ToList();
+    var productType = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).producAtType)?.DefaultValue;
 
     //TODO: should cleanup unused links - performance tuning
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
@@ -26,187 +36,171 @@
 
     <link href="https://cdn.jsdelivr.net/gh/djibe/bootstrap-material-datetimepicker@6659d24c7d2a9c782dc2058dcf4267603934c863/css/bootstrap-material-datetimepicker-bs4.min.css" rel="stylesheet" />
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js	"></script>
+    <script  src="https://code.jquery.com/jquery-3.2.1.min.js	"></script>
 
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
+    <script  src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/gh/moment/moment@develop/min/moment-with-locales.min.js"></script>
+    <script  src="https://cdn.jsdelivr.net/gh/moment/moment@develop/min/moment-with-locales.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/gh/djibe/bootstrap-material-datetimepicker@83a10c38ee94dd27fd946ea137af6667c65a738f/js/bootstrap-material-datetimepicker-bs4.min.js"></script>
 
   
-    if (appointmentType == 6)
+    if (appointmentType == ((dynamic)configSettings)._valueSingleSlot)
     {
-<div class="attributes">
-    <div class="attribute" id="product_attribute_input_23">
-        <div class="attribute-title">
-            <label class="text-prompt">
-                available timings:
-            </label>
+        <div class="attributes">
+            <div class="attribute" id="product_attribute_input_23">
+                <div class="attribute-title">
+                    <label class="text-prompt">
+                        available timings:
+                    </label>
+                </div>
+                <input class="form-control" id="datetimepicker_@appointmentType" type="text" placeholder="Choose time" name="product_attribute_16">
+            </div>
+
+            <div class="attribute" id="product_attribute_input_22">
+                <div class="attribute-title">
+                    <label class="text-prompt">
+                        available timings:
+                    </label>
+                </div>
+                <div class="atribute-body">
+                    <ul id="wrapper" class="option-list radio-list"></ul>
+                </div>
+            </div>
         </div>
-
-        <input class="form-control" id="datetimepicker_@appointmentType" type="text" placeholder="Choose time" name="product_attribute_16">
-    </div>
-
-    <div class="attribute" id="product_attribute_input_22">
-        <div class="attribute-title">
-            <label class="text-prompt">
-                available timings:
-            </label>
-        </div>
-        <div class="atribute-body">
-            <ul id="wrapper" class="option-list radio-list"></ul>
-        </div>
-    </div>
-
-
-</div>
     <script>
-                        function showHideRadioQuantity(id) {
-                            console.log(id);
-                $('input[name=' + id + ']:radio').each(function () {
+         function showHideRadioQuantity(id) 
+         {
+             $('input[name=' + id + ']:radio').each(function () {
                     $('#' + $(this).attr('id') + '_qty_box').hide();
-                });
-                $('#' + id + '_' + $('input[name=' + id + ']:radio:checked').val() + '_qty_box').css('display', 'inline-block');
-            };
+             });
+             $('#' + id + '_' + $('input[name=' + id + ']:radio:checked').val() + '_qty_box').css('display', 'inline-block');
+         };
 
-            function parseTime(s) {
-  var c = s.split(':');
-  return parseInt(c[0]) * 60 + parseInt(c[1]);
-}
+         function parseTime(s) 
+         {
+            var c = s.split(':');
+            return parseInt(c[0]) * 60 + parseInt(c[1]);
+         }
 
-function convertHours(mins) {
-  var hour = Math.floor(mins / 60);
-  var mins = mins % 60;
-  var converted = pad(hour, 2) + ':' + pad(mins, 2);
-  return converted;
-}
+         function convertHours(mins) 
+         {
+            var hour = Math.floor(mins / 60);
+            var mins = mins % 60;
+            var converted = pad(hour, 2) + ':' + pad(mins, 2);
+            return converted;
+         }
 
+        function pad(str, max) 
+        {
+          str = str.toString();
+          return str.length < max ? pad("0" + str, max) : str;
+        }
+        let time_slots = [];
 
-function pad(str, max) {
-  str = str.toString();
-  return str.length < max ? pad("0" + str, max) : str;
-}
-let time_slots = [];
-function calculate_time_slot(start_time, end_time, interval = "30") {
-  let i, formatted_time;
+        function calculate_time_slot(start_time, end_time, interval = "30") 
+        {
+              let i, formatted_time;
 
+              for (let i = end_time - interval; i >= start_time; i = i - interval) 
+              {
+                    formatted_time = convertHours(i);
+                    if ((end_time - i) >= interval)
+                    time_slots.push(formatted_time);
+              }
+              for (let i = start_time; i <= end_time; i = i + interval) 
+              {
+                    formatted_time = convertHours(i);
+                    if ((end_time - i) >= interval)
+                    time_slots.push(formatted_time);
+              }
+              return time_slots;
+        }
 
-  for (let i = end_time - interval; i >= start_time; i = i - interval) {
-    formatted_time = convertHours(i);
+        var minTime =convertTime12to24("@shopOpeningTime");
+        var maxTime = convertTime12to24("@shopClosingTime");
 
-    if ((end_time - i) >= interval)
-      time_slots.push(formatted_time);
-  }
-  for (let i = start_time; i <= end_time; i = i + interval) {
-    formatted_time = convertHours(i);
-    if ((end_time - i) >= interval)
-      time_slots.push(formatted_time);
-  }
-  return time_slots;
-}
+        let currentAppointments = [
+          { start_time: convertTime12to24("@lunchTimeStart"), end_time:convertTime12to24("@lunchTimeEnd")  }
+        ];
 
-var minTime =convertTime12to24("@shopOpeningTime");
-var maxTime = convertTime12to24("@shopClosingTime");
+        function addMinMax() 
+        {
+            currentAppointments.unshift({ start_time: minTime, end_time: minTime });
+            currentAppointments.push({ start_time: maxTime, end_time: maxTime });
+            currentAppointments = currentAppointments.sort((a, b) => parseTime(a.start_time) - parseTime(b.start_time));
+        }
+        addMinMax();
+        available_times("30");//todo
 
-let currentAppointments = [
-  { start_time: convertTime12to24("@lunchTimeStart"), end_time:convertTime12to24("@lunchTimeEnd")  }
-];
-console.log("@shopClosingTime");
+        function available_times(interval) 
+        {
+            for (let i = 0; i < currentAppointments.length - 1; i++) 
+            {
+                calculate_time_slot(parseTime(currentAppointments[i].end_time), parseTime(currentAppointments[i + 1].start_time), interval)
+            }
+            var timeSlots = [...new Set(time_slots.sort((a, b) => parseTime(a) - parseTime(b)))];
+            var wrapper = document.getElementById('wrapper');
+            var elementsToInsert = [];
 
-console.log(maxTime);
+            timeSlots.forEach(x=> 
+            {
+                var value =convertTime24to12( x);
+                var radio = document.createElement('input');
+                var label = document.createElement('label');
+                var li = document.createElement('li');
+                let formatedValueDOM = value.replace(":","").replace(" ","");
 
+                radio.type = 'radio';
+                radio.name =  "product_attribute_15" ;//value;
+                radio.id = formatedValueDOM;
+                radio.value = value;
 
-function addMinMax() {
-// if(multiSlot){
-// currentAppointments.push();
-// }
-  currentAppointments.unshift({ start_time: minTime, end_time: minTime });
-  currentAppointments.push({ start_time: maxTime, end_time: maxTime });
-  currentAppointments = currentAppointments.sort((a, b) => parseTime(a.start_time) - parseTime(b.start_time));
-console.log(currentAppointments)
-}
-addMinMax();
-available_times("30");//todo
+                radio.addEventListener('click', function() { showHideRadioQuantity(formatedValueDOM) }, false)
+                label.setAttribute("for", formatedValueDOM);
+                label.innerHTML = value;
+                li.appendChild(radio);
+                li.appendChild(label);
+                wrapper.appendChild(li);
+            });
+        }
 
-function available_times(interval) {
-  for (let i = 0; i < currentAppointments.length - 1; i++) {
-    calculate_time_slot(parseTime(currentAppointments[i].end_time), parseTime(currentAppointments[i + 1].start_time), interval)
-  }
-  var timeSlots = [...new Set(time_slots.sort((a, b) => parseTime(a) - parseTime(b)))];
-  var wrapper = document.getElementById('wrapper');
-console.log(timeSlots)
-  var elementsToInsert = [];
+        function convertTime24to12 (time) 
+        {
+            // Check correct time format and split into components
+            time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
-  timeSlots.forEach(x=> {
-    // var randomIndex = Math.floor(Math.random() * timeSlots.length);
+            if (time.length > 1) { // If time format correct
+              time = time.slice (1);  // Remove full string match value
+              time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+              time[0] = +time[0] % 12 || 12; // Adjust hours
+            }
+            return time.join (''); // return adjusted time or original string
+        }
 
-    var value =convertTime24to12( x);
-    var radio = document.createElement('input');
-    var label = document.createElement('label');
-    var li = document.createElement('li');
-    let formatedValueDOM = value.replace(":","").replace(" ","");
+        convertTime24to12 ('18:00:00');
 
-    radio.type = 'radio';
-    radio.name =  "product_attribute_15" ;//value;
-    radio.id = formatedValueDOM;
-    radio.value = value;
-    @*label.for = formatedValueDOM;*@
+        function convertTime12to24(time12h) 
+        {
+            const [time, modifier] = time12h.split(' ');
+            let [hours, minutes] = time.split(':');
 
-  radio.addEventListener('click', function() { showHideRadioQuantity(formatedValueDOM) }, false)
-    label.setAttribute("for", formatedValueDOM);
-    label.innerHTML = value;
-    li.appendChild(radio);
-    li.appendChild(label);
-    wrapper.appendChild(li);
-                                        @*showHideRadioQuantity(value);*@
-
-  });
-  // let selectedSlot = $('input[name="category_filter"]:checked').val();
-// if(selectedSlot){}
-}
-
- function convertTime24to12 (time) {
-    // Check correct time format and split into components
-    time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-
-    if (time.length > 1) { // If time format correct
-      time = time.slice (1);  // Remove full string match value
-      time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
-      time[0] = +time[0] % 12 || 12; // Adjust hours
-    }
-    return time.join (''); // return adjusted time or original string
-  }
-
-  convertTime24to12 ('18:00:00');
-
-  function convertTime12to24(time12h) {
-      console.log('time12h',time12h);
-    const [time, modifier] = time12h.split(' ');
-
-    let [hours, minutes] = time.split(':');
-
-    if (hours === '12') {
-      hours = '00';
-    }
-      console.log('modifier',modifier);
-
-    if (modifier === 'PM') {
-      hours = parseInt(hours, 10) + 12;
-    }
-
-    return `${hours}:${minutes}`;
-  }
+            if (hours === '12') {
+              hours = '00';
+            }
+            if (modifier === 'PM') {
+              hours = parseInt(hours, 10) + 12;
+            }
+            return `${hours}:${minutes}`;
+        }
 
 
     </script>
-    }
-    else if (appointmentType == 7)
+}
+    else if (appointmentType == ((dynamic)configSettings)._valueMultiSlot)
     {
-    {
-    <p>multi slot</p>}
+        <p>multi slot</p>
     }
-
 
     <script asp-location="Footer">
 
@@ -219,10 +213,10 @@ console.log(timeSlots)
             console.log($now.add('days', 5));
                 var format = '';
                 var isTime = false;
-                if (@appointmentType == 5) {
+            if (@appointmentType == ((dynamic)configSettings)._valueTentative) {
                     format = 'MM/DD/YYYY HH:mm a';
                     isTime = true;
-                } else if (@appointmentType == 6) {
+        } else if (@appointmentType == ((dynamic)configSettings)._valueSingleSlot) {
                     format = 'MM/DD/YYYY';
                     isTime = false;
                 }
@@ -236,7 +230,7 @@ console.log(timeSlots)
             //currentDate: new Date(),
             disabledDays: [6,7],
             date: true,
-                    time: isTime,
+            time: isTime,
             monthPicker: false,
             year: true,
             clearButton: false,
@@ -254,19 +248,22 @@ console.log(timeSlots)
             });
 
     </script>
-    }
+}
 
     <style>
 
-        :root {
+        :root 
+        {
             --primary: #c09e6c !important;
         }
 
-        .btn-outline-primary {
+        .btn-outline-primary 
+        {
             background-color: #c09e6c !important;
             color: white !important;
         }
-        .product-estimate-shipping {
-        display: none;
+        .product-estimate-shipping 
+        {
+            display: none;
         }
     </style>
