@@ -7,6 +7,7 @@
 @using Newtonsoft.Json
 @using System.Dynamic
 
+
 @inject IStoreContext storeContext
 @inject ISettingService settingService
 @inject CatalogSettings catalogSettings
@@ -17,7 +18,7 @@
 {
     var currentStoreId = (await storeContext.GetCurrentStoreAsync()).Id;
     var configSettings = JsonConvert.DeserializeObject(await settingService.GetConfigSettingByKeyAsync<string>("customsettings.vendor.appointment", currentStoreId), typeof(ExpandoObject));
-           
+
     var noService = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).noService)?.DefaultValue;
     var futureAllowedDaysForBooking = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).futureAllowedDaysForBooking)?.DefaultValue;
     var lunchTimeEnd = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).lunchTimeEnd)?.DefaultValue;
@@ -28,7 +29,8 @@
     var customHolidays = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).customHolidays)?.DefaultValue;
     var weekleaves = Model.VendorModel.VendorAttributes?.First(x => x.Id == ((dynamic)configSettings).weekleaves)?.Values?.Where(x => x.IsPreSelected)?.Select(x => x.Id)?.ToList();
     var productType = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).producAtType)?.DefaultValue;
-
+    var valueTentative = ((dynamic)configSettings)._valueTentative;
+    var valueSingleSlot = ((dynamic)configSettings)._valueSingleSlot;
     //TODO: should cleanup unused links - performance tuning
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
@@ -36,15 +38,15 @@
 
     <link href="https://cdn.jsdelivr.net/gh/djibe/bootstrap-material-datetimepicker@6659d24c7d2a9c782dc2058dcf4267603934c863/css/bootstrap-material-datetimepicker-bs4.min.css" rel="stylesheet" />
 
-    <script  src="https://code.jquery.com/jquery-3.2.1.min.js	"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js	"></script>
 
-    <script  src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
 
-    <script  src="https://cdn.jsdelivr.net/gh/moment/moment@develop/min/moment-with-locales.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/moment/moment@develop/min/moment-with-locales.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/gh/djibe/bootstrap-material-datetimepicker@83a10c38ee94dd27fd946ea137af6667c65a738f/js/bootstrap-material-datetimepicker-bs4.min.js"></script>
 
-  
+
     if (appointmentType == ((dynamic)configSettings)._valueSingleSlot)
     {
         <div class="attributes">
@@ -68,167 +70,151 @@
                 </div>
             </div>
         </div>
-    <script>
-         function showHideRadioQuantity(id) 
-         {
-             $('input[name=' + id + ']:radio').each(function () {
+        <script>
+            function showHideRadioQuantity(id) {
+                $('input[name=' + id + ']:radio').each(function () {
                     $('#' + $(this).attr('id') + '_qty_box').hide();
-             });
-             $('#' + id + '_' + $('input[name=' + id + ']:radio:checked').val() + '_qty_box').css('display', 'inline-block');
-         };
+                });
+                $('#' + id + '_' + $('input[name=' + id + ']:radio:checked').val() + '_qty_box').css('display', 'inline-block');
+            };
 
-         function parseTime(s) 
-         {
-            var c = s.split(':');
-            return parseInt(c[0]) * 60 + parseInt(c[1]);
-         }
+            function parseTime(s) {
+                var c = s.split(':');
+                return parseInt(c[0]) * 60 + parseInt(c[1]);
+            }
 
-         function convertHours(mins) 
-         {
-            var hour = Math.floor(mins / 60);
-            var mins = mins % 60;
-            var converted = pad(hour, 2) + ':' + pad(mins, 2);
-            return converted;
-         }
+            function convertHours(mins) {
+                var hour = Math.floor(mins / 60);
+                var mins = mins % 60;
+                var converted = pad(hour, 2) + ':' + pad(mins, 2);
+                return converted;
+            }
 
-        function pad(str, max) 
-        {
-          str = str.toString();
-          return str.length < max ? pad("0" + str, max) : str;
-        }
-        let time_slots = [];
+            function pad(str, max) {
+                str = str.toString();
+                return str.length < max ? pad("0" + str, max) : str;
+            }
+            let time_slots = [];
 
-        function calculate_time_slot(start_time, end_time, interval = "30") 
-        {
-              let i, formatted_time;
+            function calculate_time_slot(start_time, end_time, interval = "30") {
+                let i, formatted_time;
 
-              for (let i = end_time - interval; i >= start_time; i = i - interval) 
-              {
+                for (let i = end_time - interval; i >= start_time; i = i - interval) {
                     formatted_time = convertHours(i);
                     if ((end_time - i) >= interval)
-                    time_slots.push(formatted_time);
-              }
-              for (let i = start_time; i <= end_time; i = i + interval) 
-              {
+                        time_slots.push(formatted_time);
+                }
+                for (let i = start_time; i <= end_time; i = i + interval) {
                     formatted_time = convertHours(i);
                     if ((end_time - i) >= interval)
-                    time_slots.push(formatted_time);
-              }
-              return time_slots;
-        }
-
-        var minTime =convertTime12to24("@shopOpeningTime");
-        var maxTime = convertTime12to24("@shopClosingTime");
-
-        let currentAppointments = [
-          { start_time: convertTime12to24("@lunchTimeStart"), end_time:convertTime12to24("@lunchTimeEnd")  }
-        ];
-
-        function addMinMax() 
-        {
-            currentAppointments.unshift({ start_time: minTime, end_time: minTime });
-            currentAppointments.push({ start_time: maxTime, end_time: maxTime });
-            currentAppointments = currentAppointments.sort((a, b) => parseTime(a.start_time) - parseTime(b.start_time));
-        }
-        addMinMax();
-        available_times("30");//todo
-
-        function available_times(interval) 
-        {
-            for (let i = 0; i < currentAppointments.length - 1; i++) 
-            {
-                calculate_time_slot(parseTime(currentAppointments[i].end_time), parseTime(currentAppointments[i + 1].start_time), interval)
+                        time_slots.push(formatted_time);
+                }
+                return time_slots;
             }
-            var timeSlots = [...new Set(time_slots.sort((a, b) => parseTime(a) - parseTime(b)))];
-            var wrapper = document.getElementById('wrapper');
-            var elementsToInsert = [];
 
-            timeSlots.forEach(x=> 
-            {
-                var value =convertTime24to12( x);
-                var radio = document.createElement('input');
-                var label = document.createElement('label');
-                var li = document.createElement('li');
-                let formatedValueDOM = value.replace(":","").replace(" ","");
+            var minTime = convertTime12to24("@shopOpeningTime");
+            var maxTime = convertTime12to24("@shopClosingTime");
 
-                radio.type = 'radio';
-                radio.name =  "product_attribute_15" ;//value;
-                radio.id = formatedValueDOM;
-                radio.value = value;
+            let currentAppointments = [
+                { start_time: convertTime12to24("@lunchTimeStart"), end_time: convertTime12to24("@lunchTimeEnd") }
+            ];
 
-                radio.addEventListener('click', function() { showHideRadioQuantity(formatedValueDOM) }, false)
-                label.setAttribute("for", formatedValueDOM);
-                label.innerHTML = value;
-                li.appendChild(radio);
-                li.appendChild(label);
-                wrapper.appendChild(li);
-            });
-        }
-
-        function convertTime24to12 (time) 
-        {
-            // Check correct time format and split into components
-            time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-
-            if (time.length > 1) { // If time format correct
-              time = time.slice (1);  // Remove full string match value
-              time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
-              time[0] = +time[0] % 12 || 12; // Adjust hours
+            function addMinMax() {
+                currentAppointments.unshift({ start_time: minTime, end_time: minTime });
+                currentAppointments.push({ start_time: maxTime, end_time: maxTime });
+                currentAppointments = currentAppointments.sort((a, b) => parseTime(a.start_time) - parseTime(b.start_time));
             }
-            return time.join (''); // return adjusted time or original string
-        }
+            addMinMax();
+            available_times("30");//todo
 
-        convertTime24to12 ('18:00:00');
+            function available_times(interval) {
+                for (let i = 0; i < currentAppointments.length - 1; i++) {
+                    calculate_time_slot(parseTime(currentAppointments[i].end_time), parseTime(currentAppointments[i + 1].start_time), interval)
+                }
+                var timeSlots = [...new Set(time_slots.sort((a, b) => parseTime(a) - parseTime(b)))];
+                var wrapper = document.getElementById('wrapper');
+                var elementsToInsert = [];
 
-        function convertTime12to24(time12h) 
-        {
-            const [time, modifier] = time12h.split(' ');
-            let [hours, minutes] = time.split(':');
+                timeSlots.forEach(x => {
+                    var value = convertTime24to12(x);
+                    var radio = document.createElement('input');
+                    var label = document.createElement('label');
+                    var li = document.createElement('li');
+                    let formatedValueDOM = value.replace(":", "").replace(" ", "");
 
-            if (hours === '12') {
-              hours = '00';
+                    radio.type = 'radio';
+                    radio.name = "product_attribute_15";//value;
+                    radio.id = formatedValueDOM;
+                    radio.value = value;
+
+                    radio.addEventListener('click', function () { showHideRadioQuantity(formatedValueDOM) }, false)
+                    label.setAttribute("for", formatedValueDOM);
+                    label.innerHTML = value;
+                    li.appendChild(radio);
+                    li.appendChild(label);
+                    wrapper.appendChild(li);
+                });
             }
-            if (modifier === 'PM') {
-              hours = parseInt(hours, 10) + 12;
+
+            function convertTime24to12(time) {
+                // Check correct time format and split into components
+                time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+                if (time.length > 1) { // If time format correct
+                    time = time.slice(1);  // Remove full string match value
+                    time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+                    time[0] = +time[0] % 12 || 12; // Adjust hours
+                }
+                return time.join(''); // return adjusted time or original string
             }
-            return `${hours}:${minutes}`;
-        }
+
+            convertTime24to12('18:00:00');
+
+            function convertTime12to24(time12h) {
+                const [time, modifier] = time12h.split(' ');
+                let [hours, minutes] = time.split(':');
+
+                if (hours === '12') {
+                    hours = '00';
+                }
+                if (modifier === 'PM') {
+                    hours = parseInt(hours, 10) + 12;
+                }
+                return `${hours}:${minutes}`;
+            }
 
 
-    </script>
-}
+        </script>
+    }
     else if (appointmentType == ((dynamic)configSettings)._valueMultiSlot)
     {
-        <p>multi slot</p>
+        <p>Multi Slot - Planned for future release</p>
     }
 
-    <script asp-location="Footer">
+    <script>
 
-            $(document).ready(function () {
-            @*$(function () {*@
+        $(document).ready(function () {
+        @*$(function () {*@
             var $now = moment();
             var $dateMin = $now.subtract(3, 'days');
-            console.log($now);
-            console.log($dateMin);
-            console.log($now.add('days', 5));
-                var format = '';
-                var isTime = false;
-            if (@appointmentType == ((dynamic)configSettings)._valueTentative) {
-                    format = 'MM/DD/YYYY HH:mm a';
-                    isTime = true;
-        } else if (@appointmentType == ((dynamic)configSettings)._valueSingleSlot) {
-                    format = 'MM/DD/YYYY';
-                    isTime = false;
-                }
-                console.log(format);
-                console.log(isTime);
-                $('#datetimepicker_' + @appointmentType).bootstrapMaterialDatePicker({
-                    format: format,
-                    shortTime: true,
+            var format = '';
+            var isTime = false;
+            if (@appointmentType == @valueTentative) {
+            format = 'MM/DD/YYYY HH:mm a';
+            isTime = true;
+        } else if (@appointmentType == @valueSingleSlot) {
+            format = 'MM/DD/YYYY';
+            isTime = false;
+        }
+        console.log(format);
+        console.log(isTime);
+        $('#datetimepicker_' + @appointmentType).bootstrapMaterialDatePicker({
+            format: format,
+            shortTime: true,
             minDate: new Date(),
-            maxDate: new Date(new Date().setDate(new Date().getDate() + @futureAllowedDaysForBooking)),
+            maxDate: new Date(new Date().setDate(new Date().getDate() + @futureAllowedDaysForBooking ?  @futureAllowedDaysForBooking : 0)),
             //currentDate: new Date(),
-            disabledDays: [6,7],
+            disabledDays: [6, 7],
             date: true,
             time: isTime,
             monthPicker: false,
@@ -237,33 +223,26 @@
             nowButton: false,
             switchOnClick: true,
             cancelText: 'Cancel',
-            //okText: 'VALIDER',
-            //clearText: 'EFFACER',
-            //nowText: 'MAINTENANT',
-            //triggerEvent: 'focus',
-            //lang: 'en',
             weekStart: 1,
-            });
+        });
 
-            });
+    });
 
     </script>
 }
 
-    <style>
+<style>
 
-        :root 
-        {
-            --primary: #c09e6c !important;
-        }
+    :root {
+        --primary: #c09e6c !important;
+    }
 
-        .btn-outline-primary 
-        {
-            background-color: #c09e6c !important;
-            color: white !important;
-        }
-        .product-estimate-shipping 
-        {
-            display: none;
-        }
-    </style>
+    .btn-outline-primary {
+        background-color: #c09e6c !important;
+        color: white !important;
+    }
+
+    .product-estimate-shipping {
+        display: none;
+    }
+</style>
