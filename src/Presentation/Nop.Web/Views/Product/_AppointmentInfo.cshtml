@@ -31,6 +31,7 @@
     var productType = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).producAtType)?.DefaultValue;
     var valueTentative = ((dynamic)configSettings)._valueTentative;
     var valueSingleSlot = ((dynamic)configSettings)._valueSingleSlot;
+    int maxValue = (string)futureAllowedDaysForBooking != null ? int.Parse(futureAllowedDaysForBooking) : 0;
     //TODO: should cleanup unused links - performance tuning
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
@@ -94,7 +95,7 @@
                 str = str.toString();
                 return str.length < max ? pad("0" + str, max) : str;
             }
-            let time_slots = [];
+            var time_slots = [];
 
             function calculate_time_slot(start_time, end_time, interval = "30") {
                 let i, formatted_time;
@@ -109,7 +110,7 @@
                     if ((end_time - i) >= interval)
                         time_slots.push(formatted_time);
                 }
-                return time_slots;
+               // return time_slots;
             }
 
             var minTime = convertTime12to24("@shopOpeningTime");
@@ -128,12 +129,14 @@
             available_times("30");//todo
 
             function available_times(interval) {
+                console.log("1111111")
                 for (let i = 0; i < currentAppointments.length - 1; i++) {
                     calculate_time_slot(parseTime(currentAppointments[i].end_time), parseTime(currentAppointments[i + 1].start_time), interval)
                 }
                 var timeSlots = [...new Set(time_slots.sort((a, b) => parseTime(a) - parseTime(b)))];
                 var wrapper = document.getElementById('wrapper');
                 var elementsToInsert = [];
+                console.log("111144444444444111", timeSlots)
 
                 timeSlots.forEach(x => {
                     var value = convertTime24to12(x);
@@ -151,6 +154,7 @@
                     label.setAttribute("for", formatedValueDOM);
                     label.innerHTML = value;
                     li.appendChild(radio);
+                console.log("11112222221111")
                     li.appendChild(label);
                     wrapper.appendChild(li);
                 });
@@ -212,7 +216,7 @@
             format: format,
             shortTime: true,
             minDate: new Date(),
-            maxDate: new Date(new Date().setDate(new Date().getDate() + @futureAllowedDaysForBooking ?  @futureAllowedDaysForBooking : 0)),
+            maxDate: new Date(new Date().setDate(new Date().getDate() + @maxValue )),
             //currentDate: new Date(),
             disabledDays: [6, 7],
             date: true,
