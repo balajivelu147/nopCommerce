@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core.Domain.Shipping;
 using Nop.Services.Common;
 using Nop.Services.Directory;
@@ -9,6 +10,7 @@ using Nop.Services.Localization;
 using Nop.Services.Shipping;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Shipping.Pickup;
+using Nop.Services.Vendors;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Areas.Admin.Models.Directory;
 using Nop.Web.Areas.Admin.Models.Shipping;
@@ -34,6 +36,7 @@ namespace Nop.Web.Areas.Admin.Factories
         private readonly IShippingPluginManager _shippingPluginManager;
         private readonly IShippingService _shippingService;
         private readonly IStateProvinceService _stateProvinceService;
+        private readonly IVendorService _vendorService;
 
         #endregion
 
@@ -48,7 +51,8 @@ namespace Nop.Web.Areas.Admin.Factories
             IPickupPluginManager pickupPluginManager,
             IShippingPluginManager shippingPluginManager,
             IShippingService shippingService,
-            IStateProvinceService stateProvinceService)
+            IStateProvinceService stateProvinceService,
+            IVendorService vendorService)
         {
             _addressModelFactory = addressModelFactory;
             _addressService = addressService;
@@ -60,6 +64,7 @@ namespace Nop.Web.Areas.Admin.Factories
             _shippingPluginManager = shippingPluginManager;
             _shippingService = shippingService;
             _stateProvinceService = stateProvinceService;
+            _vendorService = vendorService;
         }
 
         #endregion
@@ -507,7 +512,22 @@ namespace Nop.Web.Areas.Admin.Factories
             await _addressModelFactory.PrepareAddressModelAsync(model.Address, address);
             model.Address.CountryRequired = true;
             model.Address.ZipPostalCodeRequired = true;
-
+            var vendors = await _vendorService.GetAllVendorsAsync();
+            if (vendors.Any())
+            {
+                model.AvailableVendors.Add(new SelectListItem
+                {
+                    Value = "0",
+                    Text = await _localizationService.GetResourceAsync("Common.All")
+                });
+                foreach (var vendor in vendors)
+                    model.AvailableVendors.Add(new SelectListItem
+                    {
+                        Value = vendor.Id.ToString(),
+                        Text = await _localizationService.GetLocalizedAsync(vendor, x => x.Name),
+                        //Selected = model.vid == vendor.Id
+                    });
+            }
             return model;
         }
 

@@ -2061,7 +2061,7 @@ namespace Nop.Services.Catalog
         /// <param name="customer">Customer</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task<IList<TierPrice>> GetTierPricesAsync(Product product, Customer customer, int storeId)
+        public virtual async Task<IList<TierPrice>> GetTierPricesAsync(Product product, Customer customer, int storeId, int warehouseId=0)
         {
             if (product is null)
                 throw new ArgumentNullException(nameof(product));
@@ -2073,11 +2073,12 @@ namespace Nop.Services.Catalog
                 return null;
 
             //get actual tier prices
-            return (await GetTierPricesByProductAsync(product.Id))
+            return ((await GetTierPricesByProductAsync(product.Id))
                 .OrderBy(price => price.Quantity)
                 .FilterByStore(storeId)
-                .FilterByCustomerRole(await _customerService.GetCustomerRoleIdsAsync(customer))
-                .FilterByDate()
+                //.FilterByCustomerRole(await _customerService.GetCustomerRoleIdsAsync(customer))
+                .FilterByWarehouseRole(warehouseId)
+                .FilterByDate())
                 .RemoveDuplicatedQuantities()
                 .ToList();
         }

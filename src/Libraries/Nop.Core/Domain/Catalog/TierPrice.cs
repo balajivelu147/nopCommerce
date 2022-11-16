@@ -18,6 +18,16 @@ namespace Nop.Core.Domain.Catalog
         public int StoreId { get; set; }
 
         /// <summary>
+        /// Gets or sets the vendor identifier (0 - all warehouse  )
+        /// </summary>
+        public int? WarehouseId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the vendor identifier (0 - all vendors)
+        /// </summary>
+        //public int VendorId { get; set; }
+
+        /// <summary>
         /// Gets or sets the customer role identifier
         /// </summary>
         public int? CustomerRoleId { get; set; }

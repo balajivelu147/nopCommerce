@@ -1084,6 +1084,7 @@ namespace Nop.Services.ExportImport
                         await xmlWriter.WriteStringAsync("TierPriceId", tierPrice.Id);
                         await xmlWriter.WriteStringAsync("StoreId", tierPrice.StoreId);
                         await xmlWriter.WriteStringAsync("CustomerRoleId", tierPrice.CustomerRoleId, defaulValue: "0");
+                        await xmlWriter.WriteStringAsync("WarehouseId", tierPrice.WarehouseId, defaulValue: "0");
                         await xmlWriter.WriteStringAsync("Quantity", tierPrice.Quantity);
                         await xmlWriter.WriteStringAsync("Price", tierPrice.Price);
                         await xmlWriter.WriteStringAsync("StartDateTimeUtc", tierPrice.StartDateTimeUtc);

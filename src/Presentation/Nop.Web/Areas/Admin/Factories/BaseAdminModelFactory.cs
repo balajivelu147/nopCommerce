@@ -915,16 +915,19 @@ namespace Nop.Web.Areas.Admin.Factories
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task PrepareWarehousesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null)
+        public virtual async Task PrepareWarehousesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null, int vendorId = 0)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
-
+            //TODO: should avoid getting all warehouse, instead pass vendorId when warehouse count surpasses 200
             //prepare available warehouses
             var availableWarehouses = await _shippingService.GetAllWarehousesAsync();
             foreach (var warehouse in availableWarehouses)
             {
-                items.Add(new SelectListItem { Value = warehouse.Id.ToString(), Text = warehouse.Name });
+                if(warehouse.VendorId == vendorId)
+                {
+                    items.Add(new SelectListItem { Value = warehouse.Id.ToString(), Text = warehouse.Name });
+                }
             }
 
             //insert special item for the default value

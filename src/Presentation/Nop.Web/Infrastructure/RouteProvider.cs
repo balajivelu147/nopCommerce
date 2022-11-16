@@ -262,6 +262,11 @@ namespace Nop.Web.Infrastructure
                 pattern: $"{lang}/login/checkoutasguest",
                 defaults: new { controller = "Customer", action = "Login", checkoutAsGuest = true });
 
+            //find location of customer
+            endpointRouteBuilder.MapControllerRoute(name: "FindGeoLocation",
+                pattern: $"{lang}/findgeolocation",
+                defaults: new { controller = "Product", action = "FindGeoLocation", checkoutAsGuest = true });
+
             //register result page
             endpointRouteBuilder.MapControllerRoute(name: "RegisterResult",
                 pattern: $"{lang}/registerresult/{{resultId:min(0)}}",

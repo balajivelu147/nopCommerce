@@ -1,6 +1,7 @@
 ﻿using FluentMigrator.Builders.Create.Table;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Shipping;
 using Nop.Data.Extensions;
 
 namespace Nop.Data.Mapping.Builders.Catalog
@@ -20,6 +21,7 @@ namespace Nop.Data.Mapping.Builders.Catalog
         {
             table
                 .WithColumn(nameof(TierPrice.CustomerRoleId)).AsInt32().Nullable().ForeignKey<CustomerRole>()
+                .WithColumn(nameof(TierPrice.WarehouseId)).AsInt32().Nullable().ForeignKey<Warehouse>()
                 .WithColumn(nameof(TierPrice.ProductId)).AsInt32().ForeignKey<Product>();
         }
 

@@ -255,7 +255,12 @@
                         },
                         new ColumnProperty(nameof(TierPriceModel.CustomerRole))
                         {
-                            Title = T("Admin.Catalog.Products.TierPrices.Fields.CustomerRole").Text
+                            Title = T("Admin.Catalog.Products.TierPrices.Fields.CustomerRole").Text,
+                            Visible = false
+                        },
+                        new ColumnProperty(nameof(TierPriceModel.WarehouseId))
+                        {
+                        Title = T("Admin.Catalog.Products.TierPrices.Fields.Warehouse").Text
                         },
                         new ColumnProperty(nameof(TierPriceModel.Quantity))
                         {

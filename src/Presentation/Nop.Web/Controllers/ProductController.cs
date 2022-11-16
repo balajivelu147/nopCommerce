@@ -11,6 +11,7 @@ using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Security;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Events;
+using Nop.Core.Http.Extensions;
 using Nop.Core.Rss;
 using Nop.Services.Catalog;
 using Nop.Services.Customers;
@@ -38,7 +39,7 @@ namespace Nop.Web.Controllers
 
         private readonly CaptchaSettings _captchaSettings;
         private readonly CatalogSettings _catalogSettings;
-        private readonly IAclService _aclService;
+        private readonly IAclService _aclService;    
         private readonly ICompareProductsService _compareProductsService;
         private readonly ICustomerActivityService _customerActivityService;
         private readonly ICustomerService _customerService;
@@ -161,6 +162,13 @@ namespace Nop.Web.Controllers
 
         public virtual async Task<IActionResult> ProductDetails(int productId, int updatecartitemid = 0)
         {
+
+            if (HttpContext.Session.Get("geo-latitude") is null)
+            {
+                return RedirectToRoute("FindGeoLocation", new { returnUrl = Url.RouteUrl("Product") });
+
+            }
+
             var product = await _productService.GetProductByIdAsync(productId);
                var  products = product.ManufacturerPartNumber != null ? await _productService.SearchProductsAsync(0,
 
@@ -719,6 +727,19 @@ namespace Nop.Web.Controllers
             _compareProductsService.ClearCompareProducts();
 
             return RedirectToRoute("CompareProducts");
+        }
+
+
+
+        [HttpGet]
+        public int LatLong2(double latitude, double longitude, double accuracy)
+          {
+            //TODO: standardize
+            HttpContext.Session.Set<double>("geo-latitude", latitude);
+            HttpContext.Session.Set<double>("geo-longitude", longitude);
+            HttpContext.Session.Set<double>("geo-accuracy", accuracy);
+
+            return 1;
         }
 
         #endregion

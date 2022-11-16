@@ -1,0 +1,70 @@
+﻿@*@model IList<ProductOverviewModel>
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.RecentlyViewedProducts").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-recently-viewed-products-page");
+}
+<div class="page recently-viewed-products-page">
+    <div class="page-title">
+        <h1>@T("Products.RecentlyViewedProducts")</h1>
+    </div>
+    <div class="page-body">
+        @if (Model.Count > 0)
+        {
+            <div class="product-grid">
+                <div class="item-grid">
+                    @foreach (var product in Model)
+                    {
+                        <div class="item-box">
+                            @await Html.PartialAsync("_ProductBox", product)
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+*@
+
+@*@model LoginModel*@
+@using Nop.Core
+@using Nop.Core.Domain.Customers
+@inject IWebHelper webHelper
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Login").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-login-page");
+
+    //register URL with return URL (if specified)
+    var registerUrl = Url.RouteUrl("Product", new { returnUrl = this.Context.Request.Query["returnUrl"] }, webHelper.GetCurrentRequestProtocol());
+}
+
+@*//TODO: replace will remove history, so we need to use "href" or other alternatives*@
+    <button type="submit" id="clickcc" class="button-1 login-button" onclick="window.location.replace('@Context.Request.Query["returnUrl"]')" style="display:none">continue</button>
+
+<p> get location, please approve the the location to provide you more accurate solution</p>
+<script>
+    $.ajax({
+        cache: false,
+        type: "GET",
+        url: "@(Url.Action("LatLong2", "Product"))",
+        data: {
+            "latitude": 11,
+            "longitude": 11,
+            "accuracy": 23
+        },
+        success: function (data, textStatus, jqXHR) {
+            document.getElementById("clickcc").click();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            document.getElementById("clickcc").click();
+        }
+    });
+</script>

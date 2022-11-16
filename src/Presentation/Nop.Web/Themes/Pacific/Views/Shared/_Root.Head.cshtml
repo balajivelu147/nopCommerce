@@ -21,7 +21,7 @@
     {
         NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.js");
     }
-    else
+    else    
     {
         NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.min.js");
     }
@@ -48,22 +48,16 @@
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
 
-    <div style="display: none" id="geolocationtag">
-        @*var finalvendorprodCombo = JsonConvert.SerializeObject(prdList);*@
-    </div>
 
 
 
-    <script class="qqqqqqqqqqqq">
+    <script  async>
         getUserLocation();
         /*Location functions here*/
         function getUserLocation() {
-           // debugger;
-          //  console.log("getting location");
             //check if the geolocation object is supported, if so get position
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(displayLocation, displayError);
-
             } else {
               //  document.getElementById("map").innerHTML = "Sorry - your browser doesn't support geolocation!";
             }
@@ -73,24 +67,37 @@
         var currentUserLat = "";
         var currentUserLong = "";
         function displayLocation(position) {
-           // console.log(position)
-
             //console.log(JSON.stringify(position))
-            document.getElementById("geolocationtag").innerHTML = JSON.stringify(position);
+            //document.getElementById("geolocationtag").innerHTML = JSON.stringify(position);
 
             //build text string including co-ordinate data passed in parameter
             var displayText = "User latitude is " + position.coords.latitude + " and longitude is " + position.coords.longitude;
             currentUserLat = position.coords.latitude;
             currentUserLong = position.coords.longitude;
-            document.getElementById("geo-latitude").value = currentUserLat;
-            document.getElementById("geo-longitude").value = currentUserLong;
-            document.getElementById("geo-accuracy").value = position.coords.accuracy;
-
-          //  console.log(position)
-            //initialize();
-            //display the string for demonstration
-            //document.getElementById("locationData").innerHTML = displayText;
-        };
+            //document.getElementById("geo-latitude").value = currentUserLat;
+            //document.getElementById("geo-longitude").value = currentUserLong;
+            //document.getElementById("geo-accuracy").value = position.coords.accuracy;
+            if(currentUserLat !=sessionStorage.getItem("geo-latitude")){
+                $.ajax({
+                    cache: false,
+                    type: "GET",
+                    url: "@(Url.Action("LatLong2", "Product"))",
+                    data: {
+                        "latitude": currentUserLat,
+                        "longitude": currentUserLong,
+                        "accuracy": position.coords.accuracy//position.coords.accuracy,
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                         sessionStorage.setItem("geo-latitude", currentUserLat);
+                        sessionStorage.setItem("geo-longitude", currentUserLong);
+                        sessionStorage.setItem("geo-accuracy", position.coords.accuracy);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                       // $("#getOptionsByAttributeIdAlert").click();
+                    }
+                });
+            }
+       };
 
         function displayError(error) {
           //  console.log(error)

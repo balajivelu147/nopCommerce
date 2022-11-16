@@ -202,6 +202,8 @@ namespace Nop.Web.Factories
                 model.ZipPostalCode = address.ZipPostalCode;
                 model.PhoneNumber = address.PhoneNumber;
                 model.FaxNumber = address.FaxNumber;
+                model.Latitude = address.Latitude;
+                model.Longitude = address.Longitude;
             }
 
             if (address == null && prePopulateWithCustomerFields)
@@ -296,6 +298,8 @@ namespace Nop.Web.Factories
             model.PhoneRequired = addressSettings.PhoneRequired;
             model.FaxEnabled = addressSettings.FaxEnabled;
             model.FaxRequired = addressSettings.FaxRequired;
+
+
 
             //customer attribute services
             if (_addressAttributeService != null && _addressAttributeParser != null)

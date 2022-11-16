@@ -2468,6 +2468,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 var tierPrice = model.ToEntity<TierPrice>();
                 tierPrice.ProductId = product.Id;
                 tierPrice.CustomerRoleId = model.CustomerRoleId > 0 ? model.CustomerRoleId : (int?)null;
+                tierPrice.WarehouseId = model.WarehouseId > 0 ? model.WarehouseId : (int?)null;
 
                 await _productService.InsertTierPriceAsync(tierPrice);
 
@@ -2486,7 +2487,10 @@ namespace Nop.Web.Areas.Admin.Controllers
             return View(model);
         }
 
-        public virtual async Task<IActionResult> TierPriceEditPopup(int id)
+    
+
+
+public virtual async Task<IActionResult> TierPriceEditPopup(int id)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
                 return AccessDeniedView();
@@ -2536,6 +2540,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 //fill entity from model
                 tierPrice = model.ToEntity(tierPrice);
                 tierPrice.CustomerRoleId = model.CustomerRoleId > 0 ? model.CustomerRoleId : (int?)null;
+                tierPrice.WarehouseId = model.WarehouseId > 0 ? model.WarehouseId : (int?)null;
                 await _productService.UpdateTierPriceAsync(tierPrice);
 
                 ViewBag.RefreshPage = true;

@@ -141,9 +141,33 @@
             <span asp-validation-for="FaxNumber"></span>
         </div>
     }
+    <div class="inputs">
+        <label asp-for="Latitude" asp-postfix=":"></label>
+        <input asp-for="Latitude" />
+        <nop-required />
+        <span asp-validation-for="Latitude"></span>
+    </div>
+
+    <div class="inputs">
+        <label asp-for="Longitude" asp-postfix=":"></label>
+        <input asp-for="Longitude" />
+        <nop-required />
+        <span asp-validation-for="Longitude"></span>
+    </div>
     @if (Model.CustomAddressAttributes.Count > 0)
     {
         @await Html.PartialAsync("_AddressAttributes", Model.CustomAddressAttributes)
     }
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.AddressBottom, additionalData = Model })
 </div>
+
+<script>
+    //TODO: ,mostly not required, should be removed
+   $(function(){
+        console.log('new', document.getElementById("geo-longitude")?.value);
+        console.log('old',document.getElementById("geo-latitude")?.value);
+
+   // document.getElementById("Address_Latitude").value = document.getElementById("geo-latitude")?.value;
+   // document.getElementById("Address_Longitude").value = document.getElementById("geo-longitude")?.value;
+   })
+</script>

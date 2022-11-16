@@ -110,6 +110,12 @@ namespace Nop.Services.Common
                 cache => cache.PrepareKeyForShortTermCache(NopEntityCacheDefaults<Address>.ByIdCacheKey, addressId));
         }
 
+        public virtual async Task<IList<Address>> GetAddressesByIdsAsync(IList<int> ids)
+        {
+            //TODO: should implement cache if needed
+            return await _addressRepository.GetByIdsAsync(ids);
+        }
+
         /// <summary>
         /// Inserts an address
         /// </summary>

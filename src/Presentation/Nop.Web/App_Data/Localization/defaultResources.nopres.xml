@@ -4117,6 +4117,9 @@
   <LocaleResource Name="Admin.Catalog.Products.TierPrices.Fields.CustomerRole">
     <Value>Customer role</Value>
   </LocaleResource>
+    <LocaleResource Name="Admin.Catalog.Products.TierPrices.Fields.Warehouse">
+        <Value>Vendor</Value>
+    </LocaleResource>
   <LocaleResource Name="Admin.Catalog.Products.TierPrices.Fields.CustomerRole.All">
     <Value>All customer roles</Value>
   </LocaleResource>

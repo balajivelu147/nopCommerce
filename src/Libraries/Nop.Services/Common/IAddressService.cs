@@ -98,5 +98,16 @@ namespace Nop.Services.Common
         /// </summary>
         /// <returns>A deep copy of address</returns>
         Address CloneAddress(Address address);
+
+
+        /// <summary>
+        /// Gets an address by address identifier
+        /// </summary>
+        /// <param name="Ids">Multiple Address identifiers</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the address list
+        /// </returns>
+        Task<IList<Address>> GetAddressesByIdsAsync(IList<int> ids);
     }
 }

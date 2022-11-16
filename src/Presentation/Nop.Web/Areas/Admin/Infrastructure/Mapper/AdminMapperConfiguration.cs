@@ -665,10 +665,12 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Mapper
             CreateMap<TierPrice, TierPriceModel>()
                 .ForMember(model => model.Store, options => options.Ignore())
                 .ForMember(model => model.AvailableCustomerRoles, options => options.Ignore())
+                .ForMember(model => model.AvailableWarehouses, options => options.Ignore())
                 .ForMember(model => model.AvailableStores, options => options.Ignore())
                 .ForMember(model => model.CustomerRole, options => options.Ignore());
             CreateMap<TierPriceModel, TierPrice>()
                 .ForMember(entity => entity.CustomerRoleId, options => options.Ignore())
+                .ForMember(entity => entity.WarehouseId, options => options.Ignore())
                 .ForMember(entity => entity.ProductId, options => options.Ignore());
         }
 

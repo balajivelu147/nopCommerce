@@ -404,7 +404,7 @@ namespace Nop.Core.Domain.Catalog
 
         //public decimal _price { get; set; }
 
-        private decimal price;
+       // private decimal price;
         //public decimal PriceWithCommission
         //{
 

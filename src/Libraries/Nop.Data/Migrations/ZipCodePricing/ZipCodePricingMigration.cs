@@ -4,10 +4,11 @@ using Nop.Data.Mapping;
 using Nop.Data.Extensions;
 using Nop.Core.Domain.Vendors;
 using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Shipping;
 
 namespace Nop.Data.Migrations
 {
-    [NopMigration("2022/10/08 11:26:08:9937683", "Adding Zipcode pricing to vendor", UpdateMigrationType.Data, MigrationProcessType.Update)]
+    [NopMigration("2022/11/03 11:26:08:9937684", "Adding Zipcode pricing to vendor", UpdateMigrationType.Data, MigrationProcessType.Update)]
     public class ZipCodePricingMigration : AutoReversingMigration
     {
 
@@ -135,7 +136,33 @@ namespace Nop.Data.Migrations
                     .AddColumn(nameof(VendorAttribute.AttributeGroup)).AsString().Nullable();
             }
 
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(Warehouse))).Column(nameof(Warehouse.VendorId)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(Warehouse)))
+                    .AddColumn(nameof(Warehouse.VendorId)).AsInt32().Nullable();
+            }
 
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(TierPrice))).Column(nameof(TierPrice.WarehouseId)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(TierPrice)))
+                    .AddColumn(nameof(TierPrice.WarehouseId)).AsInt32().Nullable();
+            }
+
+            //if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(Customer))).Column(nameof(Customer.Latitude)).Exists())
+            //{
+            //    //add new column
+            //    Alter.Table(NameCompatibilityManager.GetTableName(typeof(Customer)))
+            //        .AddColumn(nameof(Customer.Latitude)).AsDouble().Nullable();
+            //}
+
+            //if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(Customer))).Column(nameof(Customer.Longitude)).Exists())
+            //{
+            //    //add new column
+            //    Alter.Table(NameCompatibilityManager.GetTableName(typeof(Customer)))
+            //        .AddColumn(nameof(Customer.Longitude)).AsDouble().Nullable();
+            //}
 
         }
 

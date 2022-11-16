@@ -129,6 +129,7 @@ namespace Nop.Services.Catalog
                     ProductId = productCopy.Id,
                     StoreId = tierPrice.StoreId,
                     CustomerRoleId = tierPrice.CustomerRoleId,
+                    WarehouseId = tierPrice.WarehouseId,
                     Quantity = tierPrice.Quantity,
                     Price = tierPrice.Price,
                     StartDateTimeUtc = tierPrice.StartDateTimeUtc,

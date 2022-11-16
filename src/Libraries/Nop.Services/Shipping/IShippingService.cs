@@ -149,6 +149,30 @@ namespace Nop.Services.Shipping
         /// </returns>
         Task<Warehouse> GetNearestWarehouseAsync(Address address, IList<Warehouse> warehouses = null);
 
+        /// <summary>
+        /// Gets all warehouses
+        /// </summary>
+        /// <param name="vendorId">vendor Identity</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the warehouses
+        /// </returns>
+        /// 
+        Task<IList<Warehouse>> GetAllWarehousesByVendorAsync(int vendorId);
+
+
+
+        /// <summary>
+        /// Gets all warehouses with address using vendor identiifier
+        /// </summary>
+        /// <param name="vendorId">vendor Identity</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the warehouses
+        /// </returns>
+        /// 
+        Task<dynamic> GetAllAddressOfWarehouseByVendorAsync(int vendorId);
+
         #endregion
 
         #region Workflow

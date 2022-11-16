@@ -160,7 +160,6 @@
 
             case AttributeControlType.MultiDatepickerCalendar:
                 {
-                    <p>MultiDatepickerCalendar</p>
                     <div class="attribute-data">
                         @*<input id="@(endDateControlId)" name="@(endDateControlId)" type="text" class="datepicker" value="@(Model.RentalEndDate.HasValue ? Model.RentalEndDate.Value.ToShortDateString() : null)" @if(isMobileDevice){<text>readonly</text>}/>*@
                         <input class="form-control" id="@(controlId)" value="@(attribute.DefaultValue)" name="@(controlId)" type="text" placeholder="Choose time">

@@ -101,5 +101,7 @@ namespace Nop.Core.Domain.Common
         /// Gets or sets a value indicating whether we have to preselect a country if there's only one country available (public store)
         /// </summary>
         public bool PreselectCountryIfOnlyOne { get; set; }
+        public decimal? Latitude { get; set; }
+        public decimal? Longitude { get; set; }
     }
 }

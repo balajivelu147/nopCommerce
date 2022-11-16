@@ -583,7 +583,7 @@ namespace Nop.Services.Catalog
         /// <param name="customer">Customer</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task<IList<TierPrice>> GetTierPricesAsync(Product product, Customer customer, int storeId);
+        Task<IList<TierPrice>> GetTierPricesAsync(Product product, Customer customer, int storeId, int warehouseId = 0);
 
         /// <summary>
         /// Gets a tier prices by product identifier

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core.Domain.Catalog;
+using Nop.Core.Http.Extensions;
 using Nop.Services.Catalog;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
@@ -544,6 +546,16 @@ namespace Nop.Web.Areas.Admin.Controllers
             var result = (from o in options
                           select new { id = o.Id, name = o.Name }).ToList();
             return Json(result);
+        }
+
+        [HttpGet]
+        public int LatLong2(double latitude, double longitude, double accuracy)
+        {
+            //TODO: should standardize it
+            HttpContext.Session.Set<double>("geo-latitude", latitude);
+            HttpContext.Session.Set<double>("geo-longitude", longitude);
+            HttpContext.Session.Set<double>("geo-accuracy", accuracy);
+            return 1;
         }
 
         #endregion

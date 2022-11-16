@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -24,13 +25,16 @@ using Nop.Services.Localization;
 using Nop.Services.Media;
 using Nop.Services.Security;
 using Nop.Services.Seo;
+using Nop.Services.Shipping;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
+using Nop.Web.Framework;
 using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Catalog;
 using Nop.Web.Models.Common;
 using Nop.Web.Models.Media;
+using Nop.Core.Http.Extensions;
 
 namespace Nop.Web.Factories
 {
@@ -78,6 +82,8 @@ namespace Nop.Web.Factories
         private readonly ShippingSettings _shippingSettings;
         private readonly VendorSettings _vendorSettings;   
         private readonly IVendorModelFactory _vendorModelFactory;
+        private readonly IShippingService _shippingService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         #endregion
 
@@ -119,7 +125,9 @@ namespace Nop.Web.Factories
             SeoSettings seoSettings,
             ShippingSettings shippingSettings,
             VendorSettings vendorSettings,
-            IVendorModelFactory vendorModelFactory
+            IVendorModelFactory vendorModelFactory,
+            IShippingService shippingService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _captchaSettings = captchaSettings;
@@ -159,6 +167,8 @@ namespace Nop.Web.Factories
             _shippingSettings = shippingSettings;
             _vendorSettings = vendorSettings;
             _vendorModelFactory = vendorModelFactory;
+            _shippingService = shippingService;
+            _httpContextAccessor = httpContextAccessor;
 
     }
 
@@ -354,7 +364,6 @@ namespace Nop.Web.Factories
                     //prices
                     var customer = await _workContext.GetCurrentCustomerAsync();
                     var (minPossiblePriceWithoutDiscount, minPossiblePriceWithDiscount, _, _) = await _priceCalculationService.GetFinalPriceAsync(product, customer);
-
                     if (product.HasTierPrices)
                     {
                         var (tierPriceMinPossiblePriceWithoutDiscount, tierPriceMinPossiblePriceWithDiscount, _, _) = await _priceCalculationService.GetFinalPriceAsync(product, customer, quantity: int.MaxValue);
@@ -1064,7 +1073,29 @@ namespace Nop.Web.Factories
 
             var customer = await _workContext.GetCurrentCustomerAsync();
             var store = await _storeContext.GetCurrentStoreAsync();
-            var model = await (await _productService.GetTierPricesAsync(product, customer, store.Id))
+            var warehouseId = 0;
+            if (product.HasTierPrices)
+            {
+                var latitude = _httpContextAccessor.HttpContext.Session.Get<double>("geo-latitude");
+                var longitude = _httpContextAccessor.HttpContext.Session.Get<double>("geo-longitude");
+
+                if (latitude != 0)
+                {
+                    // var data = _shippingService.GetAllWarehousesAsync();
+                    var vendorWarehouse = await _shippingService.GetAllAddressOfWarehouseByVendorAsync(product.VendorId);
+                    var distance = 10000.001;
+                    foreach (WarehouseWithLatLong warehouse in vendorWarehouse)
+                    {
+                        var geoDistance = DistanceAlgorithm.DistanceBetweenPlaces(latitude, longitude, (double)warehouse.Latitude, (double)warehouse.Longitude);
+                        if (distance > geoDistance)
+                        {
+                            warehouseId = warehouse.Id;
+                            distance = geoDistance;
+                        }
+                    }
+                }
+            }
+                var model = await (await _productService.GetTierPricesAsync(product, customer, store.Id, warehouseId))
                 .SelectAwait(async tierPrice =>
                 {
                     var priceBase = (await _taxService.GetProductPriceAsync(product, (await _priceCalculationService.GetFinalPriceAsync(product,

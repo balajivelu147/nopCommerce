@@ -18,6 +18,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         {
             AvailableStores = new List<SelectListItem>();
             AvailableCustomerRoles = new List<SelectListItem>();
+            AvailableWarehouses = new List<SelectListItem>();
         }
 
         #endregion
@@ -29,7 +30,13 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         [NopResourceDisplayName("Admin.Catalog.Products.TierPrices.Fields.CustomerRole")]
         public int CustomerRoleId { get; set; }
 
+
+        [NopResourceDisplayName("Admin.Catalog.Products.TierPrices.Fields.Warehouse")]
+        public int WarehouseId { get; set; }
+        public string Warehouse { get; set; }
+
         public IList<SelectListItem> AvailableCustomerRoles { get; set; }
+        public IList<SelectListItem> AvailableWarehouses { get; set; }
 
         public string CustomerRole { get; set; }
 

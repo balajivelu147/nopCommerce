@@ -1,4 +1,4 @@
-namespace Nop.Core.Domain.Shipping
+﻿namespace Nop.Core.Domain.Shipping
 {
     /// <summary>
     /// Represents a shipment
@@ -19,5 +19,30 @@ namespace Nop.Core.Domain.Shipping
         /// Gets or sets the address identifier of the warehouse
         /// </summary>
         public int AddressId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the vendor identifier of the warehouse
+        /// </summary>
+        public int VendorId { get; set; }
+
+    }
+    public partial class WarehouseWithLatLong  
+    {
+
+        public WarehouseWithLatLong(int id, string name, decimal? latitude, decimal? longitude)
+        {
+            Latitude = latitude;
+            Longitude = longitude;
+            Name = name;
+            //VendorId = vendorId;
+            Id = id;
+        }
+
+        public decimal? Latitude { get; set; }
+        public decimal? Longitude { get; set; }
+        public string Name { get; set; }
+        //public int VendorId { get; set; }
+        public int Id { get; set; }
+
     }
 }

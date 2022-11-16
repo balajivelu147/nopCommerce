@@ -1,6 +1,8 @@
 ﻿using Nop.Web.Areas.Admin.Models.Common;
 using Nop.Web.Framework.Mvc.ModelBinding;
 using Nop.Web.Framework.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 
 namespace Nop.Web.Areas.Admin.Models.Shipping
 {
@@ -14,6 +16,7 @@ namespace Nop.Web.Areas.Admin.Models.Shipping
         public WarehouseModel()
         {
             Address = new AddressModel();
+            AvailableVendors = new List<SelectListItem>();
         }
 
         #endregion
@@ -28,6 +31,11 @@ namespace Nop.Web.Areas.Admin.Models.Shipping
 
         [NopResourceDisplayName("Admin.Configuration.Shipping.Warehouses.Fields.Address")]
         public AddressModel Address { get; set; }
+
+
+        [NopResourceDisplayName("Admin.Catalog.Products.Fields.Vendor")]
+        public int VendorId { get; set; }
+        public IList<SelectListItem> AvailableVendors { get; set; }
 
         #endregion
     }

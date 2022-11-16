@@ -32,6 +32,7 @@ using Nop.Web.Areas.Admin.Models.Orders;
 using Nop.Web.Framework.Extensions;
 using Nop.Web.Framework.Factories;
 using Nop.Web.Framework.Models.Extensions;
+//using System.Device.Location;
 
 namespace Nop.Web.Areas.Admin.Factories
 {
@@ -1792,7 +1793,9 @@ namespace Nop.Web.Areas.Admin.Factories
 
             //get tier prices
             var tierPrices = (await _productService.GetTierPricesByProductAsync(product.Id))
-                .OrderBy(price => price.StoreId).ThenBy(price => price.Quantity).ThenBy(price => price.CustomerRoleId)
+                .OrderBy(price => price.StoreId).ThenBy(price => price.Quantity)
+                //.ThenBy(price => price.CustomerRoleId)
+                .ThenBy(price => price.WarehouseId)
                 .ToList().ToPagedList(searchModel);
 
             //prepare grid model
@@ -1808,10 +1811,13 @@ namespace Nop.Web.Areas.Admin.Factories
                         ? ((await _storeService.GetStoreByIdAsync(price.StoreId))?.Name ?? "Deleted")
                         : await _localizationService.GetResourceAsync("Admin.Catalog.Products.TierPrices.Fields.Store.All");
                     tierPriceModel.CustomerRoleId = price.CustomerRoleId ?? 0;
+                    tierPriceModel.WarehouseId = price.WarehouseId ?? 0;
                     tierPriceModel.CustomerRole = price.CustomerRoleId.HasValue
                         ? (await _customerService.GetCustomerRoleByIdAsync(price.CustomerRoleId.Value))?.Name
                         : await _localizationService.GetResourceAsync("Admin.Catalog.Products.TierPrices.Fields.CustomerRole.All");
-
+                    tierPriceModel.Warehouse = price.WarehouseId.HasValue
+                        ? (await _shippingService.GetWarehouseByIdAsync(price.WarehouseId.Value))?.Name
+                        : await _localizationService.GetResourceAsync("Admin.Catalog.Products.TierPrices.Fields.CustomerRole.All");
                     return tierPriceModel;
                 });
             });
@@ -1845,6 +1851,8 @@ namespace Nop.Web.Areas.Admin.Factories
 
             //prepare available stores
             await _baseAdminModelFactory.PrepareStoresAsync(model.AvailableStores);
+            await _baseAdminModelFactory.PrepareWarehousesAsync(model.AvailableWarehouses, true, null, product.VendorId);
+
 
             //prepare available customer roles
             await _baseAdminModelFactory.PrepareCustomerRolesAsync(model.AvailableCustomerRoles);

@@ -132,5 +132,16 @@ namespace Nop.Core.Domain.Customers
         /// Gets or sets the shipping address identifier
         /// </summary>
         public int? ShippingAddressId { get; set; }
+
+
+        ///// <summary>
+        ///// Gets or sets latitude
+        ///// </summary>
+        //public decimal? Latitude { get; set; }
+
+        ///// <summary>
+        ///// Gets or sets longitude
+        ///// </summary>
+        //public decimal? Longitude { get; set; }
     }
 }

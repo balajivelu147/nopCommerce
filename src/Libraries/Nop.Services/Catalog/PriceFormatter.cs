@@ -344,7 +344,7 @@ namespace Nop.Services.Catalog
                 RentalPricePeriod.Years => string.Format(await _localizationService.GetResourceAsync("Products.Price.Rental.Years"), price, product.RentalPriceLength),
                 _ => throw new NopException("Not supported rental period"),
             };
-            return result;
+            return result;  
         }
 
         /// <summary>
