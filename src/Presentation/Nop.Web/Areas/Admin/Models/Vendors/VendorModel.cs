@@ -133,6 +133,7 @@ namespace Nop.Web.Areas.Admin.Models.Vendors
             public string Name { get; set; }
 
             public bool IsPreSelected { get; set; }
+            public int? DependentAttributeValueId { get; set; }
         }
 
         #endregion

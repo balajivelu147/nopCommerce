@@ -13,6 +13,7 @@
 {
     var controlId = $"{NopVendorDefaults.VendorAttributePrefix}{attribute.Id}";
     var textPrompt = attribute.Name;
+    var IsDependentSelectorAvailable = false;
     <div class="inputs vendor-attributes">
         <label>@textPrompt:</label>
 
@@ -20,14 +21,21 @@
         {
             case AttributeControlType.DropdownList:
                 {
-                    <select name="@(controlId)" id="@(controlId)">
+                    <select name="@(controlId)" id="@(controlId)" >
                         @if (!attribute.IsRequired)
                         {
                             <option value="0">---</option>
                         }
                         @foreach (var attributeValue in attribute.Values)
                         {
-                            <option selected="@attributeValue.IsPreSelected" value="@attributeValue.Id">@attributeValue.Name</option>
+                            //TODO: should avoid if else
+                            if(attributeValue.DependentAttributeValueId != null)
+                            {
+                                 IsDependentSelectorAvailable = true;
+                                <option selected="@attributeValue.IsPreSelected" value="@attributeValue.Id" id="dependent_@attributeValue.DependentAttributeValueId" class="dependent @attributeValue.DependentAttributeValueId">@attributeValue.Name</option>
+                            }else{
+                                <option selected="@attributeValue.IsPreSelected" value="@attributeValue.Id">@attributeValue.Name</option>
+                            }
                         }
                     </select>
                 }
@@ -64,7 +72,14 @@
                 break;
             case AttributeControlType.TextBox:
                 {
-                    <input name="@(controlId)" type="text" class="textbox" id="@(controlId)" value="@(attribute.DefaultValue)" />
+                    if (@attribute.DependencyType == "compare password")
+                    {
+                      <input name="@(controlId)" type="password" class="textbox" id="@(controlId)" value="@(attribute.DefaultValue)" autocomplete="off"/><br/>
+                      <span id='message@(controlId)'></span>
+                    }
+                    else { 
+                      <input name="@(controlId)" type="text" class="textbox" id="@(controlId)" value="@(attribute.DefaultValue)" />
+                    }
                 }
                 break;
             case AttributeControlType.MultilineTextbox:
@@ -113,7 +128,7 @@
 
                         $(document).ready(function () {
                         @*$(function () {*@
-                                                                                                                        var $now = moment();
+                            var $now = moment();
                             var $dateMin = $now.subtract(3, 'days');
                             console.log($now);
                             console.log($dateMin);
@@ -290,4 +305,50 @@
             <nop-required />
         }
     </div>
+                    //TODO: should use enums
+                  @if ("compare password" == attribute.DependencyType)
+                  {
+                     var dependentControlId = $"{NopVendorDefaults.VendorAttributePrefix}{@attribute.DependentAttributeId}";
+                      <script>
+                    $('#@(controlId), #@(dependentControlId)').on('keyup', function () {
+                        console.log($('#@(controlId)').val());
+                        console.log($('#@(dependentControlId) ').val());
+                         if ($('#@(controlId)').val() !='' && $('#@(dependentControlId) ').val() != '') 
+                        if ($('#@(controlId)').val() == $('#@(dependentControlId)').val()) {
+                            $('#message@(controlId)').html('@textPrompt Matching').css('color', 'green');
+                        } else 
+                            $('#message@(controlId)').html('@textPrompt Not Matching').css('color', 'red');
+                    });
+                    </script>
+                  }
+
+                  @if(IsDependentSelectorAvailable){
+                         var dependentControlId = $"{NopVendorDefaults.VendorAttributePrefix}{@attribute.DependentAttributeId}";
+                          <script>
+                                    $(document).ready(function () {
+
+                                     let select = document.querySelector('#@(dependentControlId)');
+                                     select?.addEventListener('change',function(){
+                                            let val = $('#@(dependentControlId)').find(":selected").val();
+                                            onSelection(val);
+                                            event.stopPropagation();
+                                     });
+                                    });
+                        </script>
+                  }
 }
+
+                   <script>
+                         function onSelection(id){    
+                             let elems = document.getElementsByClassName('dependent'),
+                                size = elems.length;
+                                for (let i = 0; i < size; i++) {
+                                    var box = elems[i];
+                                     box.setAttribute('style', 'display:none');
+                                   
+                                    if(box.className == 'dependent '+id){
+                                       box.setAttribute('style', 'display:block');
+                                   }
+                                }
+                         }
+                  </script>

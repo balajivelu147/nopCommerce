@@ -26,5 +26,10 @@ namespace Nop.Core.Domain.Vendors
         /// Gets or sets the vendor attribute identifier
         /// </summary>
         public int VendorAttributeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Depandant attribute line identifier
+        /// </summary>
+        public int? DependentAttributeValueId { get; set; }
     }
 }

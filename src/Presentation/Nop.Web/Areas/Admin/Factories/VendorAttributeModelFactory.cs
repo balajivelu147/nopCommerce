@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core.Domain.Vendors;
 using Nop.Services.Localization;
 using Nop.Services.Vendors;
@@ -142,7 +143,7 @@ namespace Nop.Web.Areas.Admin.Factories
                 //prepare nested search model
                 PrepareVendorAttributeValueSearchModel(model.VendorAttributeValueSearchModel, vendorAttribute);
 
-                //define localized model configuration action
+                //define localized model configuration action   
                 localizedModelConfiguration = async (locale, languageId) =>
                 {
                     locale.Name = await _localizationService.GetLocalizedAsync(vendorAttribute, entity => entity.Name, languageId, false, false);
@@ -152,6 +153,22 @@ namespace Nop.Web.Areas.Admin.Factories
             //prepare localized models
             if (!excludeProperties)
                 model.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync(localizedModelConfiguration);
+            var availableDependentAttributes = await _vendorAttributeService.GetAllVendorAttributesAsync();
+            if (availableDependentAttributes.Any())
+            {
+                model.AvailableDependentAttributes.Add(new SelectListItem
+                {
+                    Value = "0",
+                    //TODO: should localize
+                    Text = "empty"//await _localizationService.GetResourceAsync("Common.All")
+                });
+                foreach (var vendor in availableDependentAttributes)
+                    model.AvailableDependentAttributes.Add(new SelectListItem
+                    {
+                        Value = vendor.Id.ToString(),
+                        Text = await _localizationService.GetLocalizedAsync(vendor, x => x.Name),
+                    });
+            }
 
             return model;
         }
@@ -223,6 +240,25 @@ namespace Nop.Web.Areas.Admin.Factories
             //prepare localized models
             if (!excludeProperties)
                 model.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync(localizedModelConfiguration);
+            if (vendorAttribute.DependentAttributeId > 0 && vendorAttribute.DependentAttributeId is not null)
+            {
+                var availableDependentAttributeValues = await _vendorAttributeService.GetVendorAttributeValuesAsync((int)vendorAttribute.DependentAttributeId);
+                if (availableDependentAttributeValues.Any())
+                {
+                    model.AvailableAttributes.Add(new SelectListItem
+                    {
+                        Value = "0",
+                        //TODO: should localize
+                        Text = "not depandant"//await _localizationService.GetResourceAsync("Common.All")
+                    });
+                    foreach (var vendor in availableDependentAttributeValues)
+                        model.AvailableAttributes.Add(new SelectListItem
+                        {
+                            Value = vendor.Id.ToString(),
+                            Text = await _localizationService.GetLocalizedAsync(vendor, x => x.Name),
+                        });
+                }
+            }
 
             return model;
         }

@@ -117,13 +117,13 @@
                                                 <input asp-for="ProductTemplateTypes" />
                                                 <span asp-validation-for="ProductTemplateTypes"></span>
                                             </div>
-                                            <div class="inputs"  style="display:none">
+                                            <div class="inputs">
                                                 <label>Latitude:</label>
-                                                <input asp-for="Latitude" id="long" />
+                                                <input asp-for="Latitude" id="geo-lat" />
                                             </div>
-                                            <div class="inputs" style="display:none">
+                                            <div class="inputs">
                                                 <label>Longitude: </label>
-                                                <input asp-for="Longitude" id="lat"/>
+                                                <input asp-for="Longitude" id="geo-long"/>
                                             </div>
                                             <div class="form-group row advanced-setting)">
                                                @* <div class="col-md-3">  
@@ -148,6 +148,7 @@
                                         </div>
                                     </div>
                                 </div> 
+                                @await Html.PartialAsync("_GeoLocationFinderPopup", null)
                                 <input type="button" name="next" class="next action-button" value="Next Step" />
                             </fieldset>
                            @foreach(var item in Model.VendorAttributes.GroupBy(x=> x.AttributeGroup).Select(x=>x.ToList()).ToList())
@@ -438,14 +439,11 @@
         
 
 </style>
-
 <script asp-location="Footer">
-    $(document).ready(function()
-    {
+    $(document).ready(function () {
         var current_fs, next_fs, previous_fs; //fieldsets
         var opacity;
-        $(".next").click(function()
-        {
+        $(".next").click(function () {
             current_fs = $(this).parent();
             next_fs = $(this).parent().next();
             //Add Class Active
@@ -453,24 +451,22 @@
             //show the next fieldset
             next_fs.show();
             //hide the current fieldset with style
-            current_fs.animate({opacity: 0}, 
-            {
-                step: function(now) 
+            current_fs.animate({ opacity: 0 },
                 {
-                    // for making fielset appear animation
-                    opacity = 1 - now;
-                    current_fs.css({
-                    'display': 'none',
-                    'position': 'relative'
-                    });
-                    next_fs.css({'opacity': opacity});
-                   },
-                duration: 600
-            });
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        next_fs.css({ 'opacity': opacity });
+                    },
+                    duration: 600
+                });
         });
 
-        $(".previous").click(function()
-        {
+        $(".previous").click(function () {
             current_fs = $(this).parent();
             previous_fs = $(this).parent().prev();
             //Remove class active
@@ -478,30 +474,27 @@
             //show the previous fieldset
             previous_fs.show();
             //hide the current fieldset with style
-            current_fs.animate({opacity: 0}, 
-            {
-                step: function(now) 
+            current_fs.animate({ opacity: 0 },
                 {
-                    // for making fielset appear animation
-                    opacity = 1 - now;
-                    current_fs.css({
-                    'display': 'none',
-                    'position': 'relative'
-                    });
-                    previous_fs.css({'opacity': opacity});
-                },
-                duration: 600
-            });
+                    step: function (now) {
+                        // for making fielset appear animation
+                        opacity = 1 - now;
+                        current_fs.css({
+                            'display': 'none',
+                            'position': 'relative'
+                        });
+                        previous_fs.css({ 'opacity': opacity });
+                    },
+                    duration: 600
+                });
         });
 
-        $('.radio-group .radio').click(function()
-        {
+        $('.radio-group .radio').click(function () {
             $(this).parent().find('.radio').removeClass('selected');
             $(this).addClass('selected');
         });
 
-        $(".submit").click(function()
-        {
+        $(".submit").click(function () {
             return false;
         })
     });

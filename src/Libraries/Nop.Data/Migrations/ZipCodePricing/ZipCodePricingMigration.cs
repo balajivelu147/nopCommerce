@@ -8,7 +8,7 @@ using Nop.Core.Domain.Shipping;
 
 namespace Nop.Data.Migrations
 {
-    [NopMigration("2022/11/03 11:26:08:9937684", "Adding Zipcode pricing to vendor", UpdateMigrationType.Data, MigrationProcessType.Update)]
+    [NopMigration("2022/11/03 11:26:08:9937687", "Adding Zipcode pricing to vendor", UpdateMigrationType.Data, MigrationProcessType.Update)]
     public class ZipCodePricingMigration : AutoReversingMigration
     {
 
@@ -150,6 +150,35 @@ namespace Nop.Data.Migrations
                     .AddColumn(nameof(TierPrice.WarehouseId)).AsInt32().Nullable();
             }
 
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(TierPrice))).Column(nameof(TierPrice.WarehouseId)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(TierPrice)))
+                    .AddColumn(nameof(TierPrice.WarehouseId)).AsInt32().Nullable();
+            }
+
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttributeValue))).Column(nameof(VendorAttributeValue.DependentAttributeValueId)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttributeValue)))
+                    .AddColumn(nameof(VendorAttributeValue.DependentAttributeValueId)).AsInt32().Nullable();
+            }
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute))).Column(nameof(VendorAttribute.DependentAttributeId)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute)))
+                    .AddColumn(nameof(VendorAttribute.DependentAttributeId)).AsInt32().Nullable();
+            }
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute))).Column(nameof(VendorAttribute.DependencyType)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute)))
+                    .AddColumn(nameof(VendorAttribute.DependencyType)).AsString().Nullable();
+            }
             //if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(Customer))).Column(nameof(Customer.Latitude)).Exists())
             //{
             //    //add new column

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
 
@@ -15,6 +16,7 @@ namespace Nop.Web.Areas.Admin.Models.Vendors
         {
             Locales = new List<VendorAttributeLocalizedModel>();
             VendorAttributeValueSearchModel = new VendorAttributeValueSearchModel();
+            AvailableDependentAttributes = new List<SelectListItem>();
         }
 
         #endregion
@@ -38,6 +40,13 @@ namespace Nop.Web.Areas.Admin.Models.Vendors
 
         [NopResourceDisplayName("Admin.Vendors.VendorAttributes.Fields.AttributeGroup")]
         public string AttributeGroup { get; set; }
+
+        [NopResourceDisplayName("Admin.Vendors.VendorAttributes.Fields.DependentAttributeId")]
+        public int? DependentAttributeId { get; set; }
+
+        [NopResourceDisplayName("Admin.Vendors.VendorAttributes.Fields.DependencyType")]
+        public string DependencyType { get; set; }
+        public IList<SelectListItem> AvailableDependentAttributes { get; set; }
 
         public IList<VendorAttributeLocalizedModel> Locales { get; set; }
 

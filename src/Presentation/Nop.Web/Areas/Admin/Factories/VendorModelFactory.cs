@@ -139,7 +139,8 @@ namespace Nop.Web.Areas.Admin.Factories
                         {
                             Id = attributeValue.Id,
                             Name = attributeValue.Name,
-                            IsPreSelected = attributeValue.IsPreSelected
+                            IsPreSelected = attributeValue.IsPreSelected,
+                            DependentAttributeValueId = attributeValue.DependentAttributeValueId,
                         };
                         attributeModel.Values.Add(attributeValueModel);
                     }

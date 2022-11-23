@@ -37,6 +37,18 @@
             new ColumnProperty(nameof(VendorAttributeModel.DisplayOrder))
             {
                 Title = T("Admin.Vendors.VendorAttributes.Fields.DisplayOrder").Text,
+                Width = "50",
+                ClassName = NopColumnClassDefaults.CenterAll
+            },
+            new ColumnProperty(nameof(VendorAttributeModel.DependentAttributeId))
+            {
+            Title = T("Admin.Vendors.VendorAttributes.Fields.DisplayOrder").Text,
+            Width = "50",
+            ClassName = NopColumnClassDefaults.CenterAll
+            },
+            new ColumnProperty(nameof(VendorAttributeModel.DependencyType))
+            {
+            Title = T("Admin.Vendors.VendorAttributes.Fields.DependencyType").Text,
                 Width = "100",
                 ClassName = NopColumnClassDefaults.CenterAll
             },

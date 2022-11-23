@@ -87,6 +87,8 @@ namespace Nop.Web.Factories
                     IsRequired = attribute.IsRequired,
                     AttributeControlType = attribute.AttributeControlType,
                     AttributeGroup = attribute.AttributeGroup,
+                    DependentAttributeId = attribute.DependentAttributeId,
+                    DependencyType = attribute.DependencyType
                 };
 
                 if (attribute.ShouldHaveValues())
@@ -99,7 +101,8 @@ namespace Nop.Web.Factories
                         {
                             Id = attributeValue.Id,
                             Name = await _localizationService.GetLocalizedAsync(attributeValue, x => x.Name),
-                            IsPreSelected = attributeValue.IsPreSelected
+                            IsPreSelected = attributeValue.IsPreSelected,
+                            DependentAttributeValueId = attributeValue.DependentAttributeValueId
                         };
                         attributeModel.Values.Add(valueModel);
                     }

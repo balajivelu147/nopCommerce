@@ -26,6 +26,9 @@ namespace Nop.Web.Models.Vendors
 
         public string AttributeGroup { get; set; }
 
+        public int? DependentAttributeId { get; set; }
+
+        public string DependencyType { get; set; }
     }
 
     public partial record VendorAttributeValueModel : BaseNopEntityModel
@@ -33,5 +36,7 @@ namespace Nop.Web.Models.Vendors
         public string Name { get; set; }
 
         public bool IsPreSelected { get; set; }
+
+        public int? DependentAttributeValueId { get; set; }
     }
 }

@@ -34,6 +34,17 @@ namespace Nop.Core.Domain.Vendors
         public string AttributeGroup { get; set; }
 
         /// <summary>
+        /// Gets or sets the DependentAttributeId
+        /// </summary>
+        public int? DependentAttributeId { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the DependencyType
+        /// </summary>
+        public string DependencyType { get; set; }
+
+        /// <summary>
         /// Gets the attribute control type
         /// </summary>
         public AttributeControlType AttributeControlType
