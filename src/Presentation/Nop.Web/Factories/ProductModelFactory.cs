@@ -1086,7 +1086,9 @@ namespace Nop.Web.Factories
                     var distance = 10000.001;
                     foreach (WarehouseWithLatLong warehouse in vendorWarehouse)
                     {
-                        var geoDistance = DistanceAlgorithm.DistanceBetweenPlaces(latitude, longitude, (double)warehouse.Latitude, (double)warehouse.Longitude);
+                        var geoDistance = 10000.001;
+                        if (warehouse.Latitude!= null && warehouse.Longitude != null)
+                            geoDistance = DistanceAlgorithm.DistanceBetweenPlaces(latitude, longitude, (double)warehouse.Latitude, (double)warehouse.Longitude);
                         if (distance > geoDistance)
                         {
                             warehouseId = warehouse.Id;

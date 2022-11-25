@@ -47,10 +47,7 @@
 
     <script src="https://cdn.jsdelivr.net/gh/djibe/bootstrap-material-datetimepicker@83a10c38ee94dd27fd946ea137af6667c65a738f/js/bootstrap-material-datetimepicker-bs4.min.js"></script>
 
-
-    if (appointmentType == ((dynamic)configSettings)._valueSingleSlot)
-    {
-        <div class="attributes">
+     <div class="attributes">
             <div class="attribute" id="product_attribute_input_23">
                 <div class="attribute-title">
                     <label class="text-prompt">
@@ -59,6 +56,18 @@
                 </div>
                 <input class="form-control" id="datetimepicker_@appointmentType" type="text" placeholder="Choose time" name="product_attribute_16">
             </div>
+     </div>
+    if (appointmentType == ((dynamic)configSettings)._valueSingleSlot)
+    {
+        <div class="attributes">
+    @*        <div class="attribute" id="product_attribute_input_23">
+                <div class="attribute-title">
+                    <label class="text-prompt">
+                        available timings:
+                    </label>
+                </div>
+                <input class="form-control" id="datetimepicker_@appointmentType" type="text" placeholder="Choose time" name="product_attribute_16">
+            </div>*@
 
             <div class="attribute" id="product_attribute_input_22">
                 <div class="attribute-title">

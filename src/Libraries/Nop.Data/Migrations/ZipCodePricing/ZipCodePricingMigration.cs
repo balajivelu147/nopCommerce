@@ -150,15 +150,6 @@ namespace Nop.Data.Migrations
                     .AddColumn(nameof(TierPrice.WarehouseId)).AsInt32().Nullable();
             }
 
-
-            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(TierPrice))).Column(nameof(TierPrice.WarehouseId)).Exists())
-            {
-                //add new column
-                Alter.Table(NameCompatibilityManager.GetTableName(typeof(TierPrice)))
-                    .AddColumn(nameof(TierPrice.WarehouseId)).AsInt32().Nullable();
-            }
-
-
             if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttributeValue))).Column(nameof(VendorAttributeValue.DependentAttributeValueId)).Exists())
             {
                 //add new column
