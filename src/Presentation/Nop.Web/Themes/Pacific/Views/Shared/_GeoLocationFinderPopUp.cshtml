@@ -1,24 +1,24 @@
-﻿
-@*//TODO: should try to remove this script*@
-<script  src="https://maps.google.com/maps/api/js?libraries=places&region=uk&language=en&sensor=true"></script>
-
-<button id="trigger"  onclick="getMap();return false;">Set my location</button>
+﻿@*//TODO: should try to remove this script*@
+<script src="https://maps.google.com/maps/api/js?libraries=places&region=uk&language=en&sensor=true"></script>
+<button id="trigger" onclick="getMap();return false;">Set my location</button>
 <div id="overlay">
     <div id="popup">
         <div id="close">X</div>
-        Address:
-        <input id="searchTextField" type="text" size="50" style="text-align: left;width:357px;direction: ltr;">
-        <br>
+        @*Address:*@
+        <input id="searchTextField" type="text" style="">
+        @*<br>
         latitude:<input name="latitude" class="MapLat" value="" type="text" placeholder="Latitude" style="width: 161px;" disabled>
         longitude:<input name="longitude" class="MapLon" value="" type="text" placeholder="Longitude" style="width: 161px;" disabled>
-
-        <div id="map_canvas" style="height: 350px;width: 500px;margin: 0.6em;"></div>
+        *@
+        <div id="map_canvas" style="height: 100%;margin: 0 0 0 0;"></div>
     </div>
 </div>
 
 <script>
-    function getMap() {
-         $('#overlay').fadeIn(300);
+    function getMap() 
+    {
+        $('.footer').hide();
+        $('#overlay').fadeIn(300);
         var lat = sessionStorage.getItem('geo-latitude'),// 44.88623409320778,
             lng = sessionStorage.getItem('geo-longitude'),// -87.86480712897173,
             latlng = new google.maps.LatLng(lat, lng),
@@ -41,12 +41,12 @@
                 position: google.maps.ControlPosition.TOP_left
             }
         },
-            map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions),
-            marker = new google.maps.Marker({
-                position: latlng,
-                map: map,
-                icon: image
-            });
+        map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions),
+        marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            icon: image
+        });
 
         var input = document.getElementById('searchTextField');
         var autocomplete = new google.maps.places.Autocomplete(input, {
@@ -118,11 +118,24 @@
         });
         $('#close').click(function () {
             $('#overlay').fadeOut(300);
+            $('.footer').show();
         });
     });
 </script>
 
 <style>
+    #searchTextField {
+        text-align: left;
+        direction: ltr;
+        overflow: hidden;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        width: 50%;
+    }
+
+    #trigger {
+        float: left;
+    }
 
     button {
         background: #000;
@@ -147,10 +160,10 @@
 
     #popup {
         max-width: 600px;
-        width: 80%;
+        width: 100%;
         max-height: 500px;
         height: 80%;
-        padding: 20px;
+        /*padding: 20px;*/
         position: relative;
         background: #fff;
         margin: 130px auto;
@@ -163,4 +176,4 @@
         cursor: pointer;
         color: #000;
     }
- </style>
+</style>
