@@ -29,6 +29,8 @@
     var customHolidays = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).customHolidays)?.DefaultValue;
     var weekleaves = Model.VendorModel.VendorAttributes?.First(x => x.Id == ((dynamic)configSettings).weekleaves)?.Values?.Where(x => x.IsPreSelected)?.Select(x => x.Id)?.ToList();
     var productType = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).producAtType)?.DefaultValue;
+    var appointmentDate = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).appointmentDate)?.DefaultValue;
+    var appointmentTime = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).appointmentTime)?.DefaultValue;
     var valueTentative = ((dynamic)configSettings)._valueTentative;
     var valueSingleSlot = ((dynamic)configSettings)._valueSingleSlot;
     int maxValue = (string)futureAllowedDaysForBooking != null ? int.Parse(futureAllowedDaysForBooking) : 0;
@@ -54,10 +56,12 @@
                         available timings:
                     </label>
                 </div>
-                <input class="form-control" id="datetimepicker_@appointmentType" type="text" placeholder="Choose time" name="product_attribute_16">
-            </div>
+            <input class="form-control" id="datetimepicker_@appointmentType" type="text" placeholder="Choose time" name="product_attribute_@(appointmentDate)">
+            
+        <input type="hidden" name="product_attribute_@(appointmentTime)"/>
+        </div>
      </div>
-    if (appointmentType == ((dynamic)configSettings)._valueSingleSlot)
+    if  (appointmentType == ((dynamic)configSettings)._valueSingleSlot)
     {
         <div class="attributes">
     @*        <div class="attribute" id="product_attribute_input_23">
@@ -138,14 +142,14 @@
             available_times("30");//todo
 
             function available_times(interval) {
-                console.log("1111111")
+               // console.log("1111111")
                 for (let i = 0; i < currentAppointments.length - 1; i++) {
                     calculate_time_slot(parseTime(currentAppointments[i].end_time), parseTime(currentAppointments[i + 1].start_time), interval)
                 }
                 var timeSlots = [...new Set(time_slots.sort((a, b) => parseTime(a) - parseTime(b)))];
                 var wrapper = document.getElementById('wrapper');
                 var elementsToInsert = [];
-                console.log("111144444444444111", timeSlots)
+              //  console.log("111144444444444111", timeSlots)
 
                 timeSlots.forEach(x => {
                     var value = convertTime24to12(x);
@@ -155,7 +159,7 @@
                     let formatedValueDOM = value.replace(":", "").replace(" ", "");
 
                     radio.type = 'radio';
-                    radio.name = "product_attribute_15";//value;
+                    radio.name = "product_attribute_@(appointmentTime)";//value;
                     radio.id = formatedValueDOM;
                     radio.value = value;
 
@@ -163,7 +167,7 @@
                     label.setAttribute("for", formatedValueDOM);
                     label.innerHTML = value;
                     li.appendChild(radio);
-                console.log("11112222221111")
+               // console.log("11112222221111")
                     li.appendChild(label);
                     wrapper.appendChild(li);
                 });
