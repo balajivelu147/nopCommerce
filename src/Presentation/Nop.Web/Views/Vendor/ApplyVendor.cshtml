@@ -83,6 +83,14 @@
                                                             <label>@T("Vendors.ApplyAccount.Picture"):</label>
                                                             <input name="uploadedFile" type="file" accept="image/*" />
                                                         </div>
+                                                        <div class="inputs">
+                                                            <label>Latitude:</label>
+                                                            <input asp-for="Latitude" id="geo-lat" />
+                                                        </div>
+                                                        <div class="inputs">
+                                                            <label>Longitude: </label>
+                                                            <input asp-for="Longitude" id="geo-long"/>
+                                                        </div>
                                                          <div class="inputs">
                                                             <label>Branch Address:</label>
                                                              @await Html.PartialAsync("_GeoLocationFinderPopup", null)
@@ -364,7 +372,6 @@ overflow: hidden;
         content: '\f64f'
     }
     
-    require_BusinessOverview
     #progressbar #require_BusinessOverview:before {
         font-family: "Font Awesome 5 Free";
         content: '\f0e8'

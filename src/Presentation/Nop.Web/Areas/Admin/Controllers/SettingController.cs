@@ -1909,6 +1909,16 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             return View(model);
         }
+        [HttpGet]
+        public virtual async Task<IActionResult> AllSettingsApi(string settingName)
+        {
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageSettings))
+                return AccessDeniedView();
+            //prepare model
+            //var model = await _settingModelFactory.PrepareSettingSearchModelAsync(new SettingSearchModel { SearchSettingName = WebUtility.HtmlEncode(settingName) });
+            var model = await _settingService.GetConfigSettingByKeyAsync<string>("admin.customfields.productfieldsgroup.selector");
+            return Json(model);
+        }
 
         [HttpPost]
         public virtual async Task<IActionResult> AllSettings(SettingSearchModel searchModel)
