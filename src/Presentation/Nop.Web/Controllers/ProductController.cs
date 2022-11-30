@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Localization;
@@ -740,6 +741,12 @@ namespace Nop.Web.Controllers
             HttpContext.Session.Set<double>("geo-accuracy", accuracy);
 
             return 1;
+        }
+
+        //TODO: should remove async and optimize
+        public async Task<IActionResult> FindGeoLocation()
+        {
+            return View("~/Views/Product/FindGeoLocation.cshtml", null);
         }
 
         #endregion

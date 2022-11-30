@@ -106,8 +106,8 @@ namespace Nop.Data.Migrations.Installation
             Create.TableFor<ProductReviewReviewTypeMapping>();
             Create.TableFor<SpecificationAttributeOption>();
             Create.TableFor<ProductSpecificationAttribute>();
-            Create.TableFor<TierPrice>();
             Create.TableFor<Warehouse>();
+            Create.TableFor<TierPrice>();
             Create.TableFor<DeliveryDate>();
             Create.TableFor<ProductAvailabilityRange>();
             Create.TableFor<Shipment>();
