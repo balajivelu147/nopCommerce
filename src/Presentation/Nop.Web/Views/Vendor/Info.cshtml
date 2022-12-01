@@ -145,10 +145,14 @@
                                                     </div>
                                                 }
                                             </div>
+                                             <div class="inputs">
+                                                    <label>Branch Address:</label>
+                                                    @await Html.PartialAsync("_GeoLocationFinderPopup", null)
+                                             </div>
                                         </div>
                                     </div>
                                 </div> 
-                                @await Html.PartialAsync("_GeoLocationFinderPopup", null)
+                                @*@await Html.PartialAsync("_GeoLocationFinderPopup", null)*@
                                 <input type="button" name="next" class="next action-button" value="Next Step" />
                             </fieldset>
                            @foreach(var item in Model.VendorAttributes.GroupBy(x=> x.AttributeGroup).Select(x=>x.ToList()).ToList())

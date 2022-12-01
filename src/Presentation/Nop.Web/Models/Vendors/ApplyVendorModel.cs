@@ -31,5 +31,11 @@ namespace Nop.Web.Models.Vendors
 
         public bool DisableFormInput { get; set; }
         public string Result { get; set; }
+        [NopResourceDisplayName("Account.VendorInfo.Longitude")]
+
+        public decimal Longitude { get; set; }
+
+        [NopResourceDisplayName("Account.VendorInfo.Latitude")]
+        public decimal Latitude { get; set; }
     }
 }
