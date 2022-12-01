@@ -73,92 +73,95 @@ namespace Nop.Web.Factories
         /// A task that represents the asynchronous operation
         /// The task result contains the list of the vendor attribute model
         /// </returns>
-        public virtual async Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml)
+        public virtual async Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml, string productType = "")
         {
             var result = new List<VendorAttributeModel>();
 
             var vendorAttributes = await _vendorAttributeService.GetAllVendorAttributesAsync();
             foreach (var attribute in vendorAttributes)
             {
-                var attributeModel = new VendorAttributeModel
+                if (attribute.AttributeGroup?.Replace(" ", "") == productType.Replace(" ", "") || string.IsNullOrEmpty(productType))
                 {
-                    Id = attribute.Id,
-                    Name = await _localizationService.GetLocalizedAsync(attribute, x => x.Name),
-                    IsRequired = attribute.IsRequired,
-                    AttributeControlType = attribute.AttributeControlType,
-                    AttributeGroup = attribute.AttributeGroup,
-                    DependentAttributeId = attribute.DependentAttributeId,
-                    DependencyType = attribute.DependencyType
-                };
-
-                if (attribute.ShouldHaveValues())
-                {
-                    //values
-                    var attributeValues = await _vendorAttributeService.GetVendorAttributeValuesAsync(attribute.Id);
-                    foreach (var attributeValue in attributeValues)
+                    var attributeModel = new VendorAttributeModel
                     {
-                        var valueModel = new VendorAttributeValueModel
+                        Id = attribute.Id,
+                        Name = await _localizationService.GetLocalizedAsync(attribute, x => x.Name),
+                        IsRequired = attribute.IsRequired,
+                        AttributeControlType = attribute.AttributeControlType,
+                        AttributeGroup = attribute.AttributeGroup,
+                        DependentAttributeId = attribute.DependentAttributeId,
+                        DependencyType = attribute.DependencyType
+                    };
+
+                    if (attribute.ShouldHaveValues())
+                    {
+                        //values
+                        var attributeValues = await _vendorAttributeService.GetVendorAttributeValuesAsync(attribute.Id);
+                        foreach (var attributeValue in attributeValues)
                         {
-                            Id = attributeValue.Id,
-                            Name = await _localizationService.GetLocalizedAsync(attributeValue, x => x.Name),
-                            IsPreSelected = attributeValue.IsPreSelected,
-                            DependentAttributeValueId = attributeValue.DependentAttributeValueId
-                        };
-                        attributeModel.Values.Add(valueModel);
+                            var valueModel = new VendorAttributeValueModel
+                            {
+                                Id = attributeValue.Id,
+                                Name = await _localizationService.GetLocalizedAsync(attributeValue, x => x.Name),
+                                IsPreSelected = attributeValue.IsPreSelected,
+                                DependentAttributeValueId = attributeValue.DependentAttributeValueId
+                            };
+                            attributeModel.Values.Add(valueModel);
+                        }
                     }
-                }
 
-                switch (attribute.AttributeControlType)
-                {
-                    case AttributeControlType.DropdownList:
-                    case AttributeControlType.RadioList:
-                    case AttributeControlType.Checkboxes:
-                        {
-                            if (!string.IsNullOrEmpty(vendorAttributesXml))
+                    switch (attribute.AttributeControlType)
+                    {
+                        case AttributeControlType.DropdownList:
+                        case AttributeControlType.RadioList:
+                        case AttributeControlType.Checkboxes:
                             {
-                                //clear default selection
-                                foreach (var item in attributeModel.Values)
-                                    item.IsPreSelected = false;
-
-                                //select new values
-                                var selectedValues = await _vendorAttributeParser.ParseVendorAttributeValuesAsync(vendorAttributesXml);
-                                foreach (var attributeValue in selectedValues)
+                                if (!string.IsNullOrEmpty(vendorAttributesXml))
+                                {
+                                    //clear default selection
                                     foreach (var item in attributeModel.Values)
-                                        if (attributeValue.Id == item.Id)
-                                            item.IsPreSelected = true;
-                            }
-                        }
-                        break;
-                    case AttributeControlType.ReadonlyCheckboxes:
-                        {
-                            //do nothing
-                            //values are already pre-set
-                        }
-                        break;
-                    case AttributeControlType.TextBox:
-                    case AttributeControlType.MultilineTextbox:
-                    case AttributeControlType.MultiDatepickerCalendar:
-                    case AttributeControlType.DatepickerCalendar:
-                    case AttributeControlType.TimepickerCalendar:
-                        {
-                            if (!string.IsNullOrEmpty(vendorAttributesXml))
-                            {
-                                var enteredText = _vendorAttributeParser.ParseValues(vendorAttributesXml, attribute.Id);
-                                if (enteredText.Any())
-                                    attributeModel.DefaultValue = enteredText[0];
-                            }
-                        }
-                        break;
-                    case AttributeControlType.ColorSquares:
-                    case AttributeControlType.ImageSquares:
-                    case AttributeControlType.Datepicker:
-                    case AttributeControlType.FileUpload:
-                    default:
-                        //not supported attribute control types
-                        break;
-                }
+                                        item.IsPreSelected = false;
 
-                result.Add(attributeModel);
+                                    //select new values
+                                    var selectedValues = await _vendorAttributeParser.ParseVendorAttributeValuesAsync(vendorAttributesXml);
+                                    foreach (var attributeValue in selectedValues)
+                                        foreach (var item in attributeModel.Values)
+                                            if (attributeValue.Id == item.Id)
+                                                item.IsPreSelected = true;
+                                }
+                            }
+                            break;
+                        case AttributeControlType.ReadonlyCheckboxes:
+                            {
+                                //do nothing
+                                //values are already pre-set
+                            }
+                            break;
+                        case AttributeControlType.TextBox:
+                        case AttributeControlType.MultilineTextbox:
+                        case AttributeControlType.MultiDatepickerCalendar:
+                        case AttributeControlType.DatepickerCalendar:
+                        case AttributeControlType.TimepickerCalendar:
+                            {
+                                if (!string.IsNullOrEmpty(vendorAttributesXml))
+                                {
+                                    var enteredText = _vendorAttributeParser.ParseValues(vendorAttributesXml, attribute.Id);
+                                    if (enteredText.Any())
+                                        attributeModel.DefaultValue = enteredText[0];
+                                }
+                            }
+                            break;
+                        case AttributeControlType.ColorSquares:
+                        case AttributeControlType.ImageSquares:
+                        case AttributeControlType.Datepicker:
+                        case AttributeControlType.FileUpload:
+                        default:
+                            //not supported attribute control types
+                            break;
+                    }
+
+                    result.Add(attributeModel);
+                }
             }
 
             return result;
@@ -219,7 +222,7 @@ namespace Nop.Web.Factories
         /// The task result contains the vendor info model
         /// </returns>
         public virtual async Task<VendorInfoModel> PrepareVendorInfoModelAsync(VendorInfoModel model,
-            bool excludeProperties, string overriddenVendorAttributesXml = "")
+            bool excludeProperties, string overriddenVendorAttributesXml = "", string productType = "")
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
@@ -250,7 +253,7 @@ namespace Nop.Web.Factories
             //vendor attributes
             if (string.IsNullOrEmpty(overriddenVendorAttributesXml))
                 overriddenVendorAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(vendor, NopVendorDefaults.VendorAttributes);
-            model.VendorAttributes = await PrepareVendorAttributesAsync(overriddenVendorAttributesXml);
+            model.VendorAttributes = await PrepareVendorAttributesAsync(overriddenVendorAttributesXml, productType);
 
             return model;
         }

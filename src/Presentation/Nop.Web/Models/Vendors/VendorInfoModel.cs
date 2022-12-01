@@ -30,7 +30,7 @@ namespace Nop.Web.Models.Vendors
         [NopResourceDisplayName("Account.VendorInfo.Longitude")]
 
         public decimal Longitude { get; set; }
-        
+
         [NopResourceDisplayName("Account.VendorInfo.Latitude")]
         public decimal Latitude { get; set; }
 
@@ -39,21 +39,21 @@ namespace Nop.Web.Models.Vendors
 
         [NopResourceDisplayName("Account.VendorInfo.Citys")]
         public string Citys { get; set; }
-        [NopResourceDisplayName("Account.VendorInfo.CityFromPrice")] 
+        [NopResourceDisplayName("Account.VendorInfo.CityFromPrice")]
         public decimal CityFromPrice { get; set; }
         [NopResourceDisplayName("Account.VendorInfo.CityUptoPrice")]
         public decimal CityUptoPrice { get; set; }
 
-        [NopResourceDisplayName("Account.VendorInfo.CityFromWeight")] 
+        [NopResourceDisplayName("Account.VendorInfo.CityFromWeight")]
         public decimal CityFromWeight { get; set; }
-        [NopResourceDisplayName("Account.VendorInfo.CityUptoWeight")] 
+        [NopResourceDisplayName("Account.VendorInfo.CityUptoWeight")]
         public decimal CityUptoWeight { get; set; }
-       
+
         [NopResourceDisplayName("Account.VendorInfo.ProductTemplateTypes")]
         public string ProductTemplateTypes { get; set; }
 
 
-        [NopResourceDisplayName("Account.VendorInfo.ZipCodes")] 
+        [NopResourceDisplayName("Account.VendorInfo.ZipCodes")]
         public string ZipCodes { get; set; }
     }
 }

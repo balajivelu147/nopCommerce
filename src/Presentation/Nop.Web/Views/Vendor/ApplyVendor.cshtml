@@ -7,6 +7,10 @@
     //page class
     NopHtml.AppendPageCssClassParts("html-apply-vendor-page");
 }
+@{
+    //TODO: should create seed data and all settings param*@ 
+    var businessAttributeGroups = new List<string> { "BusinessOverview", "BusinessDetails", "BankAccountDetails", "DocumentUploads", "OnlineIntegration" };
+}
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"/>
 <div class="page apply-vendor-page">
     <div class="page-title">
@@ -41,22 +45,11 @@
                                             @*<li id="contact"><strong>Contact</strong></li>*@
                                             @foreach (var item in AttributeGroups)
                                             {
-                                                @if (!String.IsNullOrWhiteSpace(item))
+                                                @if (businessAttributeGroups.Contains(item.Replace(" ", "")))
                                                 {
-                                                    <li id="require_@item.Replace(" ", "")" class="pg-bar"><strong> @item</strong></li>
-
+                                                        <li id="require_@item.Replace(" ", "")" class="pg-bar"><strong> @item</strong></li>
                                                 }
-                                                else
-                                                {
-                                                    <li id="require_@item" class="pg-bar"><strong>info</strong></li>
-
-                                                }
-
                                             }
-                                            @*         <li id="require"><strong>Requirements</strong></li>
-                                        <li id="require-2"><strong>Specs</strong></li>
-                                        <li id="confirm"><strong>Info</strong></li>*@
-
                                         </ul>
                                         <fieldset>
                                             <div class="form-card">
@@ -112,29 +105,31 @@
                                         @{
                                             var attributes =  Model.VendorAttributes.GroupBy(x => x.AttributeGroup).Select(x => x.ToList()).ToList(); int i = 1;
                                         }
-                                        @foreach (var item in attributes)
+@*                                      @foreach (var item in attributes)
+                                        {*@
+                                        @foreach(var item in Model.VendorAttributes.GroupBy(x=> x.AttributeGroup).Select(x=>x.ToList()).ToList())
                                         {
                                             i++;
-                                            <fieldset>
-                                                <div class="form-card">
-                                                    <h2 class="fs-title">@(item[0].AttributeGroup)</h2>
+                                            @if (businessAttributeGroups.Contains(item[0].AttributeGroup.Replace(" ", "")))
+                                            {
 
-
-                                                    @*                                       @if (Model.VendorAttributes.Count > 0)
-                                            {*@
-                                                    <div class="fieldset">
-                                                        <div class="form-fields">
-                                                            @await Html.PartialAsync("_VendorAttributes", item)
+                                                <fieldset>
+                                                    <div class="form-card">
+                                                        <h2 class="fs-title">@(item[0].AttributeGroup)</h2>
+                                                        <div class="fieldset">
+                                                            <div class="form-fields">
+                                                                @await Html.PartialAsync("_VendorAttributes", item)
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    @*}*@
-                                                </div>
-                                                <input type="button" name="previous" class="previous action-button" value="Previous" />
-                                                @if (i <= attributes.Count) { 
-                                                <input type="button" name="next" class="next action-button" value="Next Step" />
-                                                }
-                                            </fieldset>
+                                                    <input type="button" name="previous" class="previous action-button" value="Previous" />
+                                                    @if (i <= attributes.Count) { 
+                                                    <input type="button" name="next" class="next action-button" value="Next Step" />
+                                                    }
+                                                </fieldset>
+                                            }
                                         }
+                                        @*}*@
                                         <div class="buttons">
                                             @if (Model.TermsOfServiceEnabled)
                                             {
