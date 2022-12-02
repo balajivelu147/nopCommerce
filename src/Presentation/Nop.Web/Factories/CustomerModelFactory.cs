@@ -699,6 +699,13 @@ namespace Nop.Web.Factories
                     Tab = (int)CustomerNavigationEnum.VendorInfo,
                     ItemClass = "customer-vendor-info"
                 });
+                model.CustomerNavigationItems.Add(new CustomerNavigationItemModel
+                {
+                    RouteName = "CustomerVendorSettingsInfo",
+                    Title = await _localizationService.GetResourceAsync("Account.VendorInfoSettings"),
+                    Tab = (int)CustomerNavigationEnum.VendorInfo,
+                    ItemClass = "customer-vendor-settings-info"
+                });
             }
             if (_gdprSettings.GdprEnabled)
             {

@@ -436,6 +436,11 @@ namespace Nop.Web.Infrastructure
                 pattern: $"{lang}/customer/vendorinfo",
                 defaults: new { controller = "Vendor", action = "Info" });
 
+            //vendor settings info
+            endpointRouteBuilder.MapControllerRoute(name: "CustomerVendorSettingsInfo",
+                pattern: $"{lang}/customer/vendorSettings/{{productType}}",
+                defaults: new { controller = "Vendor", action = "ProductSettings" });
+
             //customer GDPR
             endpointRouteBuilder.MapControllerRoute(name: "GdprTools",
                 pattern: $"{lang}/customer/gdpr",

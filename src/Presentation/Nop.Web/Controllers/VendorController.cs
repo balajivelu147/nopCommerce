@@ -313,6 +313,19 @@ namespace Nop.Web.Controllers
             return View(model);
         }
 
+        public virtual async Task<IActionResult> ProductSettings(string productType)
+        {
+            if (!await _customerService.IsRegisteredAsync(await _workContext.GetCurrentCustomerAsync()))
+                return Challenge();
+
+            if (await _workContext.GetCurrentVendorAsync() == null || !_vendorSettings.AllowVendorsToEditInfo)
+                return RedirectToRoute("CustomerInfo");
+
+            var model = new VendorInfoModel();
+            model = await _vendorModelFactory.PrepareVendorInfoModelAsync(model, false,"", productType);
+            return View(model);
+        }
+
         [HttpPost, ActionName("Info")]
         [FormValueRequired("save-info-button")]
         public virtual async Task<IActionResult> Info(VendorInfoModel model, IFormFile uploadedFile, IFormCollection form)

@@ -1,4 +1,5 @@
 ﻿@using System.Collections.Generic;
+//TODO:(medium) should cleanup unused lines
 @model VendorInfoModel
 @{
     Layout = "_ColumnsTwo";
@@ -18,161 +19,33 @@
     var businessAttributeGroups = new List<string> { "BusinessOverview", "BusinessDetails", "BankAccountDetails", "DocumentUploads", "OnlineIntegration" };
 }
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"/>
-<div class="account-page vendorinfo-page">
+<div class="page account-page vendorinfo-page">
     <div class="page-title">
-        <h1>@T("Account.MyAccount") - @T("Account.VendorInfo")</h1>
+        <h1>@T("Account.MyAccount") -  @(Model.VendorAttributes[0].AttributeGroup) Settings</h1>
     </div>
 </div>
 
-<script>
-   $(function(){
-        console.log('new',document.getElementById("lat")?.value);
-        console.log('old',document.getElementById("geo-latitude")?.value);
-   })
-</script>
-
-<!-- MultiStep Form -->
 <div class="container-fluid" id="grad1">
     <div class="row justify-content-center mt-0">
             <div class="col-12" style="padding-left: 0px;
              padding-right: 0px;">
             <div class="card">
                 <div class="subcard">
-                    <h2><strong>Vendor Info</strong></h2>
-                    <p>use this form to update info</p>
+                    <h2><strong>@(Model.VendorAttributes[0].AttributeGroup) Settings</strong></h2>
+                    <p>use this form to configure your @(Model.VendorAttributes[0].AttributeGroup) products</p>
                 </div>
                 <div class="row">
                     <div class="col-md-12 mx-0">
                         <form id="msform"  asp-route="CustomerVendorInfo" method="post" enctype="multipart/form-data">
                             <div asp-validation-summary="ModelOnly" class="message-error"></div>
-                            <!-- progressbar -->
-                                <ul id="progressbar">
-                                    <li id="company" class="active">Company</li>
-                                       @foreach(var item in AttributeGroups)
-                                       {
-                                            @if (businessAttributeGroups.Contains(item.Replace(" ", "")))
-                                            {
-                                                    <li id="require_@item.Replace(" ", "")" class="pg-bar">@item</li>
-                                            }
-                                       }
-                                </ul> <!-- fieldsets -->
-                            <fieldset>
-                                    <div class="form-card">
-                                    <h2 class="fs-title">Company Information</h2>
-                                    <div class="fieldset">
-                                        <div class="form-fields">
-                                            <div class="inputs">
-                                                <label asp-for="Name" asp-postfix=":"></label>
-                                                <input asp-for="Name"/>
-                                                <nop-required />
-                                                <span asp-validation-for="Name"></span>
-                                            </div>
-                                            <div class="inputs">
-                                                <label asp-for="Email" asp-postfix=":"></label>
-                                                <input asp-for="Email"/>
-                                                <nop-required />
-                                                <span asp-validation-for="Email"></span>
-                                            </div>
-                                            <div class="inputs">
-                                                <label asp-for="Description" asp-postfix=":"></label>
-                                                <textarea asp-for="Description"></textarea>
-                                                <span asp-validation-for="Description"></span>
-                                            </div>
-                                            <div class="inputs" style="display:none">
-                                               <label>IsWholeCitySupply</label>
-                                                 <ul class="option-list">
-                                                    <li>
-                                                        <input asp-for="IsWholeCitySupply" />
-                                                        <label asp-for="IsWholeCitySupply"></label>
-                                                        <span asp-validation-for="IsWholeCitySupply"></span>
-                                                    </li>
-                                                 </ul>
-                                            </div>
-                                            <div class="inputs" style="display:none">
-                                                <label asp-for="Citys" asp-postfix=":"></label>
-                                                <input asp-for="Citys"/>
-                                                <span asp-validation-for="Citys"></span>
-                                            </div>
-                                            <div class="inputs"  style="display:none">
-                                                <label asp-for="CityFromPrice" asp-postfix=":"></label>
-                                                <input asp-for="CityFromPrice"/>
-                                                <span asp-validation-for="CityFromPrice"></span>
-                                            </div>
-                                            <div class="inputs"  style="display:none">
-                                                <label asp-for="CityUptoPrice" asp-postfix=":"></label>
-                                                <input asp-for="CityUptoPrice"/>
-                                                <span asp-validation-for="CityUptoPrice"></span>
-                                            </div>
-                                            <div class="inputs"  style="display:none">
-                                                <label asp-for="CityFromWeight" asp-postfix=":"></label>
-                                                <input asp-for="CityFromWeight"/>
-                                                <span asp-validation-for="CityFromWeight"></span>
-                                            </div>
-                                            <div class="inputs"  style="display:none">
-                                                <label asp-for="CityUptoWeight" asp-postfix=":"></label>
-                                                <input asp-for="CityUptoWeight"/>
-                                                <span asp-validation-for="CityUptoWeight"></span>
-                                            </div>
-                                            <div class="inputs"  style="display:none">
-                                                <label asp-for="ProductTemplateTypes" asp-postfix=":"></label>
-                                                <input asp-for="ProductTemplateTypes" />
-                                                <span asp-validation-for="ProductTemplateTypes"></span>
-                                            </div>
-                                            <div class="inputs">
-                                                <label>Latitude:</label>
-                                                <input asp-for="Latitude" id="geo-lat" />
-                                            </div>
-                                            <div class="inputs">
-                                                <label>Longitude: </label>
-                                                <input asp-for="Longitude" id="geo-long"/>
-                                            </div>
-                                            <div class="form-group row advanced-setting)">
-                                               @* <div class="col-md-3">  
-                                                    <nop-label asp-for="ZipCodes" />
-                                                </div>
-                                                <div class="col-md-9">
-                                                    <nop-editor asp-for="ZipCodes" />
-                                                    <span asp-validation-for="ZipCodes"></span>
-                                                </div>*@
-                                            </div>
-                                            <div class="inputs"  style="display:none">
-                                                <label asp-for="PictureUrl" asp-postfix=":"></label>
-                                                <input name="uploadedFile" type="file" accept="image/*" />
-                                                @if (!string.IsNullOrEmpty(Model.PictureUrl))
-                                                {
-                                                    <div class="vendor-picture">
-                                                        <img src="@(Model.PictureUrl)" alt="picture" />
-                                                        <button type="submit" name="remove-picture" class="button-2 remove-picture-button">@T("Account.VendorInfo.Picture.Remove")</button>
-                                                    </div>
-                                                }
-                                            </div>
-                                             <div class="inputs">
-                                                    <label>Branch Address:</label>
-                                                    @await Html.PartialAsync("_GeoLocationFinderPopup", null)
-                                             </div>
-                                        </div>
-                                    </div>
-                                </div> 
-                                @*@await Html.PartialAsync("_GeoLocationFinderPopup", null)*@
-                                <input type="button" name="next" class="next action-button" value="Next Step" />
-                            </fieldset>
-                           @foreach(var item in Model.VendorAttributes.GroupBy(x=> x.AttributeGroup).Select(x=>x.ToList()).ToList())
-                           {
-                                @if (businessAttributeGroups.Contains(item[0].AttributeGroup.Replace(" ", "")))
-                                {
-                                    <fieldset>
+                      
                                         <div class="form-card">
-                                            <h2 class="fs-title">@(item[0].AttributeGroup)</h2>
                                             <div class="fieldset">
                                                 <div class="form-fields">
-                                                    @await Html.PartialAsync("_VendorAttributes", item)
+                                                    @await Html.PartialAsync("_VendorAttributes", Model.VendorAttributes)
                                                 </div>
                                             </div>
-                                        </div> 
-                                        <input type="button" name="previous" class="previous action-button" value="Previous" /> <input type="button" name="next" class="next action-button" value="Next Step" />
-                                    </fieldset>
-                                }
-                            }
+                                        </div>
                            <div class="buttons">
                                 <button type="submit" name="save-info-button" class="save action-button">@T("Common.Save")</button>
                            </div>
@@ -327,7 +200,7 @@
 
         .card .subcard 
         {
-            padding:10px;
+            padding:30px;
             text-align: center
         }
 

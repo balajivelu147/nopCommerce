@@ -13,7 +13,7 @@ namespace Nop.Web.Factories
         /// <summary>
         /// Prepares Vendor attributes
         /// </summary>
-        Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml);
+        Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml, string productType = "");
 
         /// <summary>
         /// Prepare the apply vendor model
@@ -38,6 +38,6 @@ namespace Nop.Web.Factories
         /// A task that represents the asynchronous operation
         /// The task result contains the vendor info model
         /// </returns>
-        Task<VendorInfoModel> PrepareVendorInfoModelAsync(VendorInfoModel model, bool excludeProperties, string overriddenVendorAttributesXml = "");
+        Task<VendorInfoModel> PrepareVendorInfoModelAsync(VendorInfoModel model, bool excludeProperties, string overriddenVendorAttributesXml = "", string productType = "");
     }
 }

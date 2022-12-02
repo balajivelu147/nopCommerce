@@ -4,15 +4,29 @@
         <strong>@T("Account.Navigation")</strong>
     </div>
     <div class="listbox">
-        <ul class="list">
+        <ul class="list menu">
             @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.AccountNavigationBefore, additionalData = Model })
             @foreach (var item in Model.CustomerNavigationItems)
             {
-                <li class="@item.ItemClass @(Model.SelectedTab == item.Tab ? "active" : "inactive")">
-                    <a href="@Url.RouteUrl(item.RouteName)">@(item.Title)</a>
+                <li class="@item.RouteName @(Model.SelectedTab  == item.Tab  ? "active" : "inactive")">
+                    @if(item.RouteName == "CustomerVendorSettingsInfo"){
+                        <a href="@Url.RouteUrl(item.RouteName,new {productType = "Appointment"})">Appointment Settings</a>
+                     }else{
+                        <a href="@Url.RouteUrl(item.RouteName)">@(item.Title)</a>
+                     }
                 </li>
             }
             @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.AccountNavigationAfter, additionalData = Model })
         </ul>
     </div>
 </div>
+                
+<script>
+    $(document).ready(function () {
+    //TODO:(high) should be dynamic, remove hardcode
+        if(window.location.pathname == '/customer/vendorSettings/Appointment'){
+            $(".menu li").removeClass('active');
+            $(".CustomerVendorSettingsInfo").addClass('active');
+        }
+    });
+</script>

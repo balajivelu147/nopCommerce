@@ -64,15 +64,6 @@
     if  (appointmentType == ((dynamic)configSettings)._valueSingleSlot)
     {
         <div class="attributes">
-    @*        <div class="attribute" id="product_attribute_input_23">
-                <div class="attribute-title">
-                    <label class="text-prompt">
-                        available timings:
-                    </label>
-                </div>
-                <input class="form-control" id="datetimepicker_@appointmentType" type="text" placeholder="Choose time" name="product_attribute_16">
-            </div>*@
-
             <div class="attribute" id="product_attribute_input_22">
                 <div class="attribute-title">
                     <label class="text-prompt">
@@ -142,14 +133,12 @@
             available_times("30");//todo
 
             function available_times(interval) {
-               // console.log("1111111")
                 for (let i = 0; i < currentAppointments.length - 1; i++) {
                     calculate_time_slot(parseTime(currentAppointments[i].end_time), parseTime(currentAppointments[i + 1].start_time), interval)
                 }
                 var timeSlots = [...new Set(time_slots.sort((a, b) => parseTime(a) - parseTime(b)))];
                 var wrapper = document.getElementById('wrapper');
                 var elementsToInsert = [];
-              //  console.log("111144444444444111", timeSlots)
 
                 timeSlots.forEach(x => {
                     var value = convertTime24to12(x);
@@ -167,7 +156,6 @@
                     label.setAttribute("for", formatedValueDOM);
                     label.innerHTML = value;
                     li.appendChild(radio);
-               // console.log("11112222221111")
                     li.appendChild(label);
                     wrapper.appendChild(li);
                 });
@@ -199,8 +187,6 @@
                 }
                 return `${hours}:${minutes}`;
             }
-
-
         </script>
     }
     else if (appointmentType == ((dynamic)configSettings)._valueMultiSlot)
@@ -211,26 +197,22 @@
     <script>
 
         $(document).ready(function () {
-        @*$(function () {*@
             var $now = moment();
             var $dateMin = $now.subtract(3, 'days');
             var format = '';
             var isTime = false;
             if (@appointmentType == @valueTentative) {
-            format = 'MM/DD/YYYY HH:mm a';
-            isTime = true;
-        } else if (@appointmentType == @valueSingleSlot) {
-            format = 'MM/DD/YYYY';
-            isTime = false;
-        }
-        console.log(format);
-        console.log(isTime);
+                format = 'MM/DD/YYYY HH:mm a';
+                isTime = true;
+            } else if (@appointmentType == @valueSingleSlot) {
+                format = 'MM/DD/YYYY';
+                isTime = false;
+            }
         $('#datetimepicker_' + @appointmentType).bootstrapMaterialDatePicker({
             format: format,
             shortTime: true,
             minDate: new Date(),
             maxDate: new Date(new Date().setDate(new Date().getDate() + @maxValue )),
-            //currentDate: new Date(),
             disabledDays: [6, 7],
             date: true,
             time: isTime,
@@ -248,18 +230,18 @@
     </script>
 }
 
-<style>
+    <style>
 
-    :root {
-        --primary: #c09e6c !important;
-    }
+        :root {
+        --primary: #f5a64a !important;
+        }
 
-    .btn-outline-primary {
-        background-color: #c09e6c !important;
-        color: white !important;
-    }
+        .btn-outline-primary {
+        background-color: #f5a64a !important;
+            color: white !important;
+        }
 
-    .product-estimate-shipping {
-        display: none;
-    }
-</style>
+        .product-estimate-shipping {
+            display: none;
+        }
+    </style>
