@@ -126,6 +126,9 @@ namespace Nop.Web.Areas.Admin.Models.Vendors
             public AttributeControlType AttributeControlType { get; set; }
 
             public IList<VendorAttributeValueModel> Values { get; set; }
+            public string ToolTip { get; set; }
+
+
         }
 
         public partial record VendorAttributeValueModel : BaseNopEntityModel

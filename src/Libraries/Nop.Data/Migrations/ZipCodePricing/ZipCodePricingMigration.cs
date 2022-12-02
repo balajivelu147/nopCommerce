@@ -8,7 +8,7 @@ using Nop.Core.Domain.Shipping;
 
 namespace Nop.Data.Migrations
 {
-    [NopMigration("2022/11/03 11:26:08:9937687", "Adding Zipcode pricing to vendor", UpdateMigrationType.Data, MigrationProcessType.Update)]
+    [NopMigration("2022/12/01 11:26:08:9937688", "Adding Zipcode pricing to vendor", UpdateMigrationType.Data, MigrationProcessType.Update)]
     public class ZipCodePricingMigration : AutoReversingMigration
     {
 
@@ -169,6 +169,13 @@ namespace Nop.Data.Migrations
                 //add new column
                 Alter.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute)))
                     .AddColumn(nameof(VendorAttribute.DependencyType)).AsString().Nullable();
+            }
+
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute))).Column(nameof(VendorAttribute.ToolTip)).Exists())
+            {
+                //add new column
+                Alter.Table(NameCompatibilityManager.GetTableName(typeof(VendorAttribute)))
+                    .AddColumn(nameof(VendorAttribute.ToolTip)).AsString().Nullable();
             }
             //if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(Customer))).Column(nameof(Customer.Latitude)).Exists())
             //{

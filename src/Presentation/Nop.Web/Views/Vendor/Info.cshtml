@@ -13,7 +13,7 @@
     @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.VendorInfo })
 }
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"/>
-<div class="page account-page vendorinfo-page">
+<div class="account-page vendorinfo-page">
     <div class="page-title">
         <h1>@T("Account.MyAccount") - @T("Account.VendorInfo")</h1>
     </div>
@@ -161,7 +161,7 @@
                                     <div class="form-card">
                                         <h2 class="fs-title">@(item[0].AttributeGroup)</h2>
                                         <div class="fieldset">
-                                              <div class="form-fields"><p>sddddddddws</p>
+                                              <div class="form-fields">
                                                  @await Html.PartialAsync("_VendorAttributes", item)
                                               </div>
                                         </div>
@@ -323,7 +323,7 @@ overflow: hidden;
 
         .card .subcard 
         {
-            padding:30px;
+            padding:10px;
             text-align: center
         }
 
