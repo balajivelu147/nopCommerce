@@ -1,5 +1,6 @@
 ﻿@using System.Collections.Generic;
-//TODO:(medium) should cleanup unused lines
+@*//TODO:(medium) should cleanup unused lines*@
+@*//TODO: should remove this page itself, and use existing info page*@
 @model VendorInfoModel
 @{
     Layout = "_ColumnsTwo";
@@ -19,7 +20,7 @@
     var businessAttributeGroups = new List<string> { "BusinessOverview", "BusinessDetails", "BankAccountDetails", "DocumentUploads", "OnlineIntegration" };
 }
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"/>
-<div class="page account-page vendorinfo-page">
+<div class="account-page vendorinfo-page">
     <div class="page-title">
         <h1>@T("Account.MyAccount") -  @(Model.VendorAttributes[0].AttributeGroup) Settings</h1>
     </div>
@@ -36,16 +37,132 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 mx-0">
-                        <form id="msform"  asp-route="CustomerVendorInfo" method="post" enctype="multipart/form-data">
+                        <form id="msform" asp-route="CustomerVendorSettingsInfo" method="post" enctype="multipart/form-data">
                             <div asp-validation-summary="ModelOnly" class="message-error"></div>
-                      
+
+                            @*//unused - just for data update*@
+                            <fieldset style="display:none">
+                                <div class="form-card">
+                                    <h2 class="fs-title">Company Information</h2>
+                                    <div class="fieldset">
+                                        <div class="form-fields">
+                                            <div class="inputs">
+                                                <label asp-for="Name" asp-postfix=":"></label>
+                                                <input asp-for="Name" />
+                                                <nop-required />
+                                                <span asp-validation-for="Name"></span>
+                                            </div>
+                                            <div class="inputs">
+                                                <label asp-for="Email" asp-postfix=":"></label>
+                                                <input asp-for="Email" />
+                                                <nop-required />
+                                                <span asp-validation-for="Email"></span>
+                                            </div>
+                                            <div class="inputs">
+                                                <label asp-for="Description" asp-postfix=":"></label>
+                                                <textarea asp-for="Description"></textarea>
+                                                <span asp-validation-for="Description"></span>
+                                            </div>
+                                            <div class="inputs" style="display:none">
+                                                <label>IsWholeCitySupply</label>
+                                                <ul class="option-list">
+                                                    <li>
+                                                        <input asp-for="IsWholeCitySupply" />
+                                                        <label asp-for="IsWholeCitySupply"></label>
+                                                        <span asp-validation-for="IsWholeCitySupply"></span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="inputs" style="display:none">
+                                                <label asp-for="Citys" asp-postfix=":"></label>
+                                                <input asp-for="Citys" />
+                                                <span asp-validation-for="Citys"></span>
+                                            </div>
+                                            <div class="inputs" style="display:none">
+                                                <label asp-for="CityFromPrice" asp-postfix=":"></label>
+                                                <input asp-for="CityFromPrice" />
+                                                <span asp-validation-for="CityFromPrice"></span>
+                                            </div>
+                                            <div class="inputs" style="display:none">
+                                                <label asp-for="CityUptoPrice" asp-postfix=":"></label>
+                                                <input asp-for="CityUptoPrice" />
+                                                <span asp-validation-for="CityUptoPrice"></span>
+                                            </div>
+                                            <div class="inputs" style="display:none">
+                                                <label asp-for="CityFromWeight" asp-postfix=":"></label>
+                                                <input asp-for="CityFromWeight" />
+                                                <span asp-validation-for="CityFromWeight"></span>
+                                            </div>
+                                            <div class="inputs" style="display:none">
+                                                <label asp-for="CityUptoWeight" asp-postfix=":"></label>
+                                                <input asp-for="CityUptoWeight" />
+                                                <span asp-validation-for="CityUptoWeight"></span>
+                                            </div>
+                                            <div class="inputs" style="display:none">
+                                                <label asp-for="ProductTemplateTypes" asp-postfix=":"></label>
+                                                <input asp-for="ProductTemplateTypes" />
+                                                <span asp-validation-for="ProductTemplateTypes"></span>
+                                            </div>
+                                            <div class="inputs">
+                                                <label>Latitude:</label>
+                                                <input asp-for="Latitude" id="geo-lat" />
+                                            </div>
+                                            <div class="inputs">
+                                                <label>Longitude: </label>
+                                                <input asp-for="Longitude" id="geo-long" />
+                                            </div>
+                                            <div class="form-group row advanced-setting)">
+                                            </div>
+                                            <div class="inputs" style="display:none">
+                                                <label asp-for="PictureUrl" asp-postfix=":"></label>
+                                                <input name="uploadedFile" type="file" accept="image/*" />
+                                                @if (!string.IsNullOrEmpty(Model.PictureUrl))
+                                                {
+                                                    <div class="vendor-picture">
+                                                        <img src="@(Model.PictureUrl)" alt="picture" />
+                                                        <button type="submit" name="remove-picture" class="button-2 remove-picture-button">@T("Account.VendorInfo.Picture.Remove")</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="inputs">
+                                                <label>Branch Address:</label>
+                                                @await Html.PartialAsync("_GeoLocationFinderPopup", null)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*@await Html.PartialAsync("_GeoLocationFinderPopup", null)*@
+                                <input type="button" name="next" class="next action-button" value="Next Step" />
+                            </fieldset>
+
+
+                            @foreach (var item in Model.VendorAttributes.GroupBy(x => x.AttributeGroup).Select(x => x.ToList()).ToList())
+                            {
+                                //TODO: shouldnt hardcode
+                                @if (item[0].AttributeGroup.Replace(" ", "") == "Appointment")
+                                {
                                         <div class="form-card">
+                                            @*<h2 class="fs-title">@(item[0].AttributeGroup)</h2>*@
                                             <div class="fieldset">
                                                 <div class="form-fields">
-                                                    @await Html.PartialAsync("_VendorAttributes", Model.VendorAttributes)
+                                                    @await Html.PartialAsync("_VendorAttributes", item)
                                                 </div>
                                             </div>
                                         </div>
+                                }else {
+                                    @*//unused - just for data upate*@
+                                    <fieldset style="display:none">
+                                        <div class="form-card">
+                                            <h2 class="fs-title">@(item[0].AttributeGroup)</h2>
+                                            <div class="fieldset">
+                                                <div class="form-fields">
+                                                    @await Html.PartialAsync("_VendorAttributes", item)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                }
+                            }
                            <div class="buttons">
                                 <button type="submit" name="save-info-button" class="save action-button">@T("Common.Save")</button>
                            </div>

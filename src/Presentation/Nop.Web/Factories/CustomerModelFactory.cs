@@ -702,8 +702,8 @@ namespace Nop.Web.Factories
                 model.CustomerNavigationItems.Add(new CustomerNavigationItemModel
                 {
                     RouteName = "CustomerVendorSettingsInfo",
-                    Title = await _localizationService.GetResourceAsync("Account.VendorInfoSettings"),
-                    Tab = (int)CustomerNavigationEnum.VendorInfo,
+                    Title = await _localizationService.GetResourceAsync("Account.VendorInfo"),
+                    Tab = (int)CustomerNavigationEnum.VendorInfoSettings,
                     ItemClass = "customer-vendor-settings-info"
                 });
             }

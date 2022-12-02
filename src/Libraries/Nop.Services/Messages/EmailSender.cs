@@ -141,10 +141,10 @@ namespace Nop.Services.Messages
         {
             using (MailMessage objMailMsg = new MailMessage())
             {
-                //objMailMsg.AlternateViews.Add(avHtml);
-                //objMailMsg.Body = htmlBody;
-                //objMailMsg.Subject = message.Subject;
-                //objMailMsg.BodyEncoding = Encoding.UTF8;
+                //objMailMsg.AlternateViews.Add("<p>sdsds</p>");
+                objMailMsg.Body = "<p>sdsds</p>";
+                objMailMsg.Subject = "message.Subject";
+                objMailMsg.BodyEncoding = Encoding.UTF8;
 
 
                 //Properties.Settings.Default.Reload();
@@ -155,16 +155,15 @@ namespace Nop.Services.Messages
 
                 //objMailMsg.From = new MailAddress(fromEmail, fromName);
                 //objMailMsg.To.Add(message.Destination);
-                //objMailMsg.IsBodyHtml = true;
+                objMailMsg.IsBodyHtml = true;
 
-                //Now we have to set the value to Mail message properties
-
-                //Note Please change it to correct mail-id to use this in your application
-               // objMailMsg.From = new MailAddress("xxxxx@xyz.com", "ABC");
-                //objMailMsg.To.Add(new MailAddress("yyyyy@xyz.com", "BCD"));
-               // objMailMsg.CC.Add(new MailAddress("zzzzz@xyz.com", "DEF"));// it is optional, only if required
-               // objMailMsg.Subject = "Send mail with ICS file as an Attachment";
-               // objMailMsg.Body = "Please Attend the meeting with this schedule";
+                // Now we have to set the value to Mail message properties
+                // Note Please change it to correct mail-id to use this in your application
+                objMailMsg.From = new MailAddress(fromAddress, "ABC");
+                objMailMsg.To.Add(new MailAddress(toAddress, "BCD"));
+                //objMailMsg.CC.Add(new MailAddress("zzzzz@xyz.com", "DEF"));// it is optional, only if required
+                objMailMsg.Subject = "Send mail with ICS file as an Attachment";
+                objMailMsg.Body = "Please Attend the meeting with this schedule";
                 objMailMsg.Headers.Add("Content-class", "urn:content-classes:calendarmessage");
 
                 // Now Contruct the ICS file using string builder
@@ -177,14 +176,14 @@ namespace Nop.Services.Messages
                 str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", DateTime.Now.AddMinutes(+330)));
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
                 str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", DateTime.Now.AddMinutes(+660)));
-                //  str.AppendLine("LOCATION: " + this.Location);
+                //str.AppendLine("LOCATION: " + this.Location);
                 str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
-               //// str.AppendLine(string.Format("DESCRIPTION:{0}", objMailMsg.Body));
-               //// str.AppendLine(string.Format("X-ALT-DESC;FMTTYPE=text/html:{0}", objMailMsg.Body));
-                //str.AppendLine(string.Format("SUMMARY:{0}", objMailMsg.Subject));
-               ///// str.AppendLine(string.Format("ORGANIZER:MAILTO:{0}", objMailMsg.From.Address));
+                str.AppendLine(string.Format("DESCRIPTION:{0}", objMailMsg.Body));
+                str.AppendLine(string.Format("X-ALT-DESC;FMTTYPE=text/html:{0}", objMailMsg.Body));
+                str.AppendLine(string.Format("SUMMARY:{0}", objMailMsg.Subject));
+                str.AppendLine(string.Format("ORGANIZER:MAILTO:{0}", objMailMsg.From.Address));
 
-               /// str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", objMailMsg.To[0].DisplayName, objMailMsg.To[0].Address));
+                str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", objMailMsg.To[0].DisplayName, objMailMsg.To[0].Address));
 
                 str.AppendLine("BEGIN:VALARM");
                 str.AppendLine("TRIGGER:-PT15M");

@@ -80,8 +80,6 @@ namespace Nop.Web.Factories
             var vendorAttributes = await _vendorAttributeService.GetAllVendorAttributesAsync();
             foreach (var attribute in vendorAttributes)
             {
-                if (attribute.AttributeGroup?.Replace(" ", "") == productType.Replace(" ", "") || string.IsNullOrEmpty(productType))
-                {
                     var attributeModel = new VendorAttributeModel
                     {
                         Id = attribute.Id,
@@ -161,7 +159,6 @@ namespace Nop.Web.Factories
                     }
 
                     result.Add(attributeModel);
-                }
             }
 
             return result;

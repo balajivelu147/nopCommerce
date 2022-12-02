@@ -403,8 +403,104 @@ namespace Nop.Web.Controllers
                 //notifications
                 if (_vendorSettings.NotifyStoreOwnerAboutVendorInformationChange)
                     await _workflowMessageService.SendVendorInformationChangeNotificationAsync(vendor, _localizationSettings.DefaultAdminLanguageId);
+                // var productType =  this.ControllerContext.RouteData.Values["productType"]?.ToString();
+                //TODO: should remove hardcode
+                //if (productType == "Appointment")
+                //{ 
+                  //  return RedirectToAction("ProductSettings", new { productType = productType });
+                //}
+               // else
+                //{
+                    return RedirectToAction("Info");
+               // }
+               
+            }
 
-                return RedirectToAction("Info");
+            //If we got this far, something failed, redisplay form
+            model = await _vendorModelFactory.PrepareVendorInfoModelAsync(model, true, vendorAttributesXml);
+            return View(model);
+        }
+
+        //TODO: duplicate actions, should be removed
+        [HttpPost, ActionName("ProductSettings")]
+        [FormValueRequired("save-info-button")]
+        public virtual async Task<IActionResult> ProductSettings(VendorInfoModel model, IFormFile uploadedFile, IFormCollection form)
+        {
+            if (!await _customerService.IsRegisteredAsync(await _workContext.GetCurrentCustomerAsync()))
+                return Challenge();
+
+            var vendor = await _workContext.GetCurrentVendorAsync();
+            if (vendor == null || !_vendorSettings.AllowVendorsToEditInfo)
+                return RedirectToRoute("CustomerInfo");
+
+            Picture picture = null;
+
+            if (uploadedFile != null && !string.IsNullOrEmpty(uploadedFile.FileName))
+            {
+                try
+                {
+                    var contentType = uploadedFile.ContentType.ToLowerInvariant();
+
+                    if (!contentType.StartsWith("image/"))
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.VendorInfo.Picture.ErrorMessage"));
+                    else
+                    {
+                        var vendorPictureBinary = await _downloadService.GetDownloadBitsAsync(uploadedFile);
+                        picture = await _pictureService.InsertPictureAsync(vendorPictureBinary, contentType, null);
+                    }
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.VendorInfo.Picture.ErrorMessage"));
+                }
+            }
+
+            var prevPicture = await _pictureService.GetPictureByIdAsync(vendor.PictureId);
+
+            //vendor attributes
+            var vendorAttributesXml = await ParseVendorAttributesAsync(form);
+            (await _vendorAttributeParser.GetAttributeWarningsAsync(vendorAttributesXml)).ToList()
+                .ForEach(warning => ModelState.AddModelError(string.Empty, warning));
+
+            if (ModelState.IsValid)
+            {
+                var description = _htmlFormatter.FormatText(model.Description, false, false, true, false, false, false);
+
+                vendor.Name = model.Name;
+                vendor.Email = model.Email;
+                vendor.Description = description;
+                vendor.IsWholeCitySupply = model.IsWholeCitySupply;
+                vendor.Latitude = model.Latitude;
+                vendor.Longitude = model.Longitude;
+                vendor.CityUptoPrice = model.CityUptoPrice;
+                vendor.CityFromPrice = model.CityFromPrice;
+                vendor.Citys = model.Citys;
+                vendor.CityFromWeight = model.CityFromWeight;
+                vendor.CityUptoWeight = model.CityUptoWeight;
+                vendor.ProductTemplateTypes = model.ProductTemplateTypes;
+                vendor.ZipCodes = model.ZipCodes;
+
+                if (picture != null)
+                {
+                    vendor.PictureId = picture.Id;
+
+                    if (prevPicture != null)
+                        await _pictureService.DeletePictureAsync(prevPicture);
+                }
+
+                //update picture seo file name
+                await UpdatePictureSeoNamesAsync(vendor);
+
+                await _vendorService.UpdateVendorAsync(vendor);
+
+                //save vendor attributes
+                await _genericAttributeService.SaveAttributeAsync(vendor, NopVendorDefaults.VendorAttributes, vendorAttributesXml);
+
+                //notifications
+                if (_vendorSettings.NotifyStoreOwnerAboutVendorInformationChange)
+                    await _workflowMessageService.SendVendorInformationChangeNotificationAsync(vendor, _localizationSettings.DefaultAdminLanguageId);
+                var productType = this.ControllerContext.RouteData.Values["productType"]?.ToString();
+                return RedirectToAction("ProductSettings", new { productType = productType });
             }
 
             //If we got this far, something failed, redisplay form
