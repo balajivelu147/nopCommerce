@@ -15,7 +15,16 @@
     var textPrompt = attribute.Name;
     var IsDependentSelectorAvailable = false;
     <div class="inputs vendor-attributes">
-        <label>@textPrompt:</label>
+       
+       <div class="label-wrapper">
+           <div title="@(attribute.ToolTip)">
+                <label>@textPrompt  
+                    @if (!string.IsNullOrEmpty(attribute.ToolTip)) { 
+                    <i class="fas fa-question-circle"></i>
+                    }
+                </label>  
+           </div>
+       </div>
 
         @switch (attribute.AttributeControlType)
         {
@@ -306,49 +315,62 @@
         }
     </div>
                     //TODO: should use enums
-                  @if ("compare password" == attribute.DependencyType)
-                  {
-                     var dependentControlId = $"{NopVendorDefaults.VendorAttributePrefix}{@attribute.DependentAttributeId}";
-                      <script>
-                    $('#@(controlId), #@(dependentControlId)').on('keyup', function () {
-                        console.log($('#@(controlId)').val());
-                        console.log($('#@(dependentControlId) ').val());
-                         if ($('#@(controlId)').val() !='' && $('#@(dependentControlId) ').val() != '') 
-                        if ($('#@(controlId)').val() == $('#@(dependentControlId)').val()) {
-                            $('#message@(controlId)').html('@textPrompt Matching').css('color', 'green');
-                        } else 
-                            $('#message@(controlId)').html('@textPrompt Not Matching').css('color', 'red');
+    @if ("compare password" == attribute.DependencyType)
+    {
+        var dependentControlId = $"{NopVendorDefaults.VendorAttributePrefix}{@attribute.DependentAttributeId}";
+        <script>
+            $('#@(controlId), #@(dependentControlId)').on('keyup', function () 
+            {
+                console.log($('#@(controlId)').val());
+                console.log($('#@(dependentControlId) ').val());
+                    if ($('#@(controlId)').val() !='' && $('#@(dependentControlId) ').val() != '') 
+                if ($('#@(controlId)').val() == $('#@(dependentControlId)').val()) {
+                    $('#message@(controlId)').html('@textPrompt Matching').css('color', 'green');
+                } else 
+                    $('#message@(controlId)').html('@textPrompt Not Matching').css('color', 'red');
+            });
+        </script>
+    }
+
+    @if(IsDependentSelectorAvailable)
+    {
+        var dependentControlId = $"{NopVendorDefaults.VendorAttributePrefix}{@attribute.DependentAttributeId}";
+        <script>
+                $(document).ready(function () 
+                {
+                    let select = document.querySelector('#@(dependentControlId)');
+                    select?.addEventListener('change',function()
+                    {
+                        let val = $('#@(dependentControlId)').find(":selected").val();
+                        onSelection(val);
+                        event.stopPropagation();
                     });
-                    </script>
-                  }
-
-                  @if(IsDependentSelectorAvailable){
-                         var dependentControlId = $"{NopVendorDefaults.VendorAttributePrefix}{@attribute.DependentAttributeId}";
-                          <script>
-                                    $(document).ready(function () {
-
-                                     let select = document.querySelector('#@(dependentControlId)');
-                                     select?.addEventListener('change',function(){
-                                            let val = $('#@(dependentControlId)').find(":selected").val();
-                                            onSelection(val);
-                                            event.stopPropagation();
-                                     });
-                                    });
-                        </script>
-                  }
+                });
+        </script>
+    }
 }
 
-                   <script>
-                         function onSelection(id){    
-                             let elems = document.getElementsByClassName('dependent'),
-                                size = elems.length;
-                                for (let i = 0; i < size; i++) {
-                                    var box = elems[i];
-                                     box.setAttribute('style', 'display:none');
+<script>
+        function onSelection(id){    
+            let elems = document.getElementsByClassName('dependent'),
+            size = elems.length;
+            for (let i = 0; i < size; i++) {
+                var box = elems[i];
+                    box.setAttribute('style', 'display:none');
                                    
-                                    if(box.className == 'dependent '+id){
-                                       box.setAttribute('style', 'display:block');
-                                   }
-                                }
-                         }
-                  </script>
+                if(box.className == 'dependent '+id){
+                    box.setAttribute('style', 'display:block');
+                }
+            }
+        }
+</script>
+<style>
+    .fa-question-circle {
+    color: #3c8dbc;
+    }
+    .label-wrapper {
+    
+    display: flex;
+    align-items: flex-start;
+}
+</style>

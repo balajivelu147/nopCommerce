@@ -88,7 +88,8 @@ namespace Nop.Web.Factories
                         AttributeControlType = attribute.AttributeControlType,
                         AttributeGroup = attribute.AttributeGroup,
                         DependentAttributeId = attribute.DependentAttributeId,
-                        DependencyType = attribute.DependencyType
+                        DependencyType = attribute.DependencyType,
+                        ToolTip = attribute.ToolTip
                     };
 
                     if (attribute.ShouldHaveValues())

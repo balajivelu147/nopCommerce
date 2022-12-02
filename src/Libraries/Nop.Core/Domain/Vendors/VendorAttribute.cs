@@ -45,6 +45,11 @@ namespace Nop.Core.Domain.Vendors
         public string DependencyType { get; set; }
 
         /// <summary>
+        /// Gets or sets the ToolTip
+        /// </summary>
+        public string ToolTip { get; set; }
+
+        /// <summary>
         /// Gets the attribute control type
         /// </summary>
         public AttributeControlType AttributeControlType

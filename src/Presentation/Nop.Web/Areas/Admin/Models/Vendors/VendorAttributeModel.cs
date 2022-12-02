@@ -46,6 +46,9 @@ namespace Nop.Web.Areas.Admin.Models.Vendors
 
         [NopResourceDisplayName("Admin.Vendors.VendorAttributes.Fields.DependencyType")]
         public string DependencyType { get; set; }
+
+        [NopResourceDisplayName("Admin.Vendors.VendorAttributes.Fields.ToolTip")]
+        public string ToolTip { get; set; }
         public IList<SelectListItem> AvailableDependentAttributes { get; set; }
 
         public IList<VendorAttributeLocalizedModel> Locales { get; set; }

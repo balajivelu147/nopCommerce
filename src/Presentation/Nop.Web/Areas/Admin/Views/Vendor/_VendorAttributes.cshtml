@@ -11,13 +11,14 @@
             @foreach (var attribute in Model)
             {
                 var controlId = $"{NopVendorDefaults.VendorAttributePrefix}{attribute.Id}";
-                var textPrompt = attribute.Name;
+                @*var textPrompt = attribute.Name;*@
                 <div class="form-group row">
                     <div class="col-md-3">
                         <div class="label-wrapper">
-                            <label class="col-form-label">
+                            @*<label class="col-form-label">
                                 @textPrompt
-                            </label>
+                            </label>*@
+                            <div class="hint">rerer</div>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -81,6 +82,7 @@
                                     //not support attribute type
                                 }
                                 break;
+                            
                         case AttributeControlType.FileUpload:
                             {
                                 <input type="file" id="@(controlId)" name="@(controlId)" class="form-control" />

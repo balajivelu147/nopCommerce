@@ -29,6 +29,8 @@ namespace Nop.Web.Models.Vendors
         public int? DependentAttributeId { get; set; }
 
         public string DependencyType { get; set; }
+
+        public string ToolTip { get; set; }
     }
 
     public partial record VendorAttributeValueModel : BaseNopEntityModel
