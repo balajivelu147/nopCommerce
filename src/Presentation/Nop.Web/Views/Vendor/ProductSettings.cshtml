@@ -1,5 +1,5 @@
 ﻿@using System.Collections.Generic;
-//TODO:(medium) should cleanup unused lines
+@*//TODO:(medium) should cleanup unused lines*@
 @model VendorInfoModel
 @{
     Layout = "_ColumnsTwo";
@@ -19,7 +19,7 @@
     var businessAttributeGroups = new List<string> { "BusinessOverview", "BusinessDetails", "BankAccountDetails", "DocumentUploads", "OnlineIntegration" };
 }
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"/>
-<div class="page account-page vendorinfo-page">
+<div class="account-page vendorinfo-page">
     <div class="page-title">
         <h1>@T("Account.MyAccount") -  @(Model.VendorAttributes[0].AttributeGroup) Settings</h1>
     </div>
@@ -200,7 +200,7 @@
 
         .card .subcard 
         {
-            padding:30px;
+            padding:10px;
             text-align: center
         }
 
