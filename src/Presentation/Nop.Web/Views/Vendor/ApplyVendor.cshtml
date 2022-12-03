@@ -462,7 +462,13 @@ overflow: hidden;
 
             current_fs = $(this).parent();
             next_fs = $(this).parent().next();
-
+            nextType = $(this).parent().next().next();
+            if(nextType[0].nodeName != "FIELDSET"){
+                $('.next').hide();
+            }else{
+                $('.next').show();
+            }
+             $('.previous').show();
             //Add Class Active
             $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
 
@@ -496,7 +502,13 @@ overflow: hidden;
 
             //show the previous fieldset
             previous_fs.show();
-
+            prevType = $(this).parent().prev().prev();
+            if (prevType[0].nodeName != "FIELDSET") {
+                $('.previous').hide();
+            } else {
+                $('.previous').show();
+            }
+             $('.next').show();
             //hide the current fieldset with style
             current_fs.animate({ opacity: 0 }, {
                 step: function (now) {

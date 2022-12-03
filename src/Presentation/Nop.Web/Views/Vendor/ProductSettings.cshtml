@@ -150,17 +150,11 @@
                                             </div>
                                         </div>
                                 }else {
-                                    @*//unused - just for data upate*@
-                                    <fieldset style="display:none">
-                                        <div class="form-card">
-                                            <h2 class="fs-title">@(item[0].AttributeGroup)</h2>
-                                            <div class="fieldset">
-                                                <div class="form-fields">
-                                                    @await Html.PartialAsync("_VendorAttributes", item)
-                                                </div>
-                                            </div>
+                                        @*//unused - just for data upate*@
+                                        <div class="form-fields" style="display:none">
+                                            @await Html.PartialAsync("_VendorAttributes", item)
                                         </div>
-                                    </fieldset>
+                                           
                                 }
                             }
                            <div class="buttons">
