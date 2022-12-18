@@ -75,7 +75,12 @@ namespace Nop.Web.Controllers
             var model = await _orderModelFactory.PrepareCustomerOrderListModelAsync();
             return View(model);
         }
-
+        [HttpGet]
+        public virtual async Task<IActionResult> GetOrdersById(int vendorId = 0)
+        {
+            var order = await _orderService.GetOrdersByVendorId(vendorId);
+            return Json(order);
+        }
         //My account / Orders / Cancel recurring order
         [HttpPost, ActionName("CustomerOrders")]
         [FormValueRequired(FormValueRequirement.StartsWith, "cancelRecurringPayment")]

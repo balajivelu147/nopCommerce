@@ -23,7 +23,7 @@ namespace Nop.Services.Orders
         /// The task result contains the order
         /// </returns>
         Task<Order> GetOrderByIdAsync(int orderId);
-
+        Task<IList<string>> GetOrdersByVendorId(int vendorId);
         /// <summary>
         /// Gets an order
         /// </summary>

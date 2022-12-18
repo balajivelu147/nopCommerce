@@ -37,6 +37,7 @@ namespace Nop.Services.Orders
         private readonly IRepository<RecurringPayment> _recurringPaymentRepository;
         private readonly IRepository<RecurringPaymentHistory> _recurringPaymentHistoryRepository;
         private readonly IShipmentService _shipmentService;
+        private readonly IProductAttributeParser _productAttributeParser;
 
         #endregion
 
@@ -50,6 +51,7 @@ namespace Nop.Services.Orders
             IRepository<OrderItem> orderItemRepository,
             IRepository<OrderNote> orderNoteRepository,
             IRepository<Product> productRepository,
+            IProductAttributeParser productAttributeParser,
             IRepository<ProductWarehouseInventory> productWarehouseInventoryRepository,
             IRepository<RecurringPayment> recurringPaymentRepository,
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository,
@@ -67,6 +69,7 @@ namespace Nop.Services.Orders
             _recurringPaymentRepository = recurringPaymentRepository;
             _recurringPaymentHistoryRepository = recurringPaymentHistoryRepository;
             _shipmentService = shipmentService;
+            _productAttributeParser = productAttributeParser;
         }
 
         #endregion
@@ -125,6 +128,26 @@ namespace Nop.Services.Orders
         {
             return await _orderRepository.GetByIdAsync(orderId,
                 cache => cache.PrepareKeyForShortTermCache(NopEntityCacheDefaults<Order>.ByIdCacheKey, orderId));
+        }
+
+        /// <summary>
+        /// Gets an order
+        /// </summary>
+        /// <param name="orderId">The order identifier</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the order
+        /// </returns>
+        public virtual async Task<IList<string>> GetOrdersByVendorId(int vendorId)
+        {
+            var queryVendorOrderItems = await (from orderItem in _orderItemRepository.Table
+                                            join p in _productRepository.Table on orderItem.ProductId equals p.Id
+                                            where p.VendorId == vendorId
+                                            select  orderItem.AttributesXml ).Distinct().ToListAsync();
+            
+            var oldConditionValues = _productAttributeParser.ParseAppointmentSlot(queryVendorOrderItems,0);
+                
+            return oldConditionValues;
         }
 
         /// <summary>
