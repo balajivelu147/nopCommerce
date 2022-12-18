@@ -5,8 +5,12 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using Google.Protobuf.WellKnownTypes;
+using iTextSharp.text.rtf.list;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Data;
@@ -17,6 +21,7 @@ using Nop.Services.Media;
 
 namespace Nop.Services.Catalog
 {
+
     /// <summary>
     /// Product attribute parser
     /// </summary>
@@ -424,6 +429,90 @@ namespace Nop.Services.Catalog
             return values;
         }
 
+        /// <summary>
+        /// Gets selected product attribute values
+        /// </summary>
+        /// <param name="attributesXml">Attributes in XML format</param>
+        /// <param name="productAttributeMappingId">Product attribute mapping identifier</param>
+        /// <returns>Product attribute values</returns>
+        public virtual List<string> ParseAppointmentSlot(List<string> attributesXml, int productAttributeMappingId)
+        {
+            var selectedValues = new List<string>();
+            var selectedValues1 = new List<string>();
+            //if (attributesXml.Count==0)
+            //    return selectedValues;
+            var jsonList = new List<string>();
+            //XmlNodeList nodeList2;
+            //XmlNodeList nodeList3;
+            var jsonString=string.Empty;
+
+            try
+            {
+                
+                foreach (var attributes in attributesXml)
+                {
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(attributes);
+
+                    var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/ProductAttribute");
+                    foreach (XmlNode node1 in nodeList1)
+                    {
+                        var str1 = node1.Attributes["ID"].InnerText.Trim();
+
+                        if (str1 == "14")
+                        {
+                            var nodeList2 = node1.SelectNodes(@"ProductAttributeValue/Value");
+                            foreach (XmlNode node2 in nodeList2)
+                            {
+                                var value = node2.InnerText.Trim();
+                                selectedValues.Add(value);
+                            }
+                        }
+
+                        if (str1 == "15")
+                        {
+
+                            var nodeList3 = node1.SelectNodes(@"ProductAttributeValue/Value");
+                            
+                            foreach (XmlNode node2 in nodeList3)
+                            {
+                                var value = node2.InnerText.Trim();
+                                selectedValues1.Add(value);
+                            }
+
+                        }
+                    }
+                    var n = DateTime.Parse(selectedValues[0]);
+                    double min = TimeSpan.Parse(selectedValues1[0]).TotalMinutes;
+                    DateTime a = n.AddMinutes(min);
+                    var res = new appointmentJson
+                    {
+                        
+                    start = n.ToString("HH:mm"),
+                        end = a,
+                        duration = selectedValues1[0],
+                        date = n.ToShortDateString()
+                    };
+
+
+                        //selectedValues.Add(res);
+                        jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(res);
+                        jsonList.Add(jsonString);
+                }
+                        
+                
+                
+                
+            }
+            catch (Exception exc)
+            {
+                Debug.Write(exc.ToString());
+            }
+
+            return jsonList;
+        }
+
+       
         /// <summary>
         /// Gets selected product attribute values
         /// </summary>
