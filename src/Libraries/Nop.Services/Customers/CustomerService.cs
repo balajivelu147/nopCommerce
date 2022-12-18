@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Blogs;
@@ -16,8 +18,10 @@ using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Polls;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Tax;
+using Nop.Core.Domain.ZipcodeSelling;
 using Nop.Core.Infrastructure;
 using Nop.Data;
+using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Localization;
 
@@ -34,6 +38,7 @@ namespace Nop.Services.Customers
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly INopDataProvider _dataProvider;
         private readonly IRepository<Address> _customerAddressRepository;
+        private readonly IRepository<ZipcodeList> _customerZipCodeListRepository;
         private readonly IRepository<BlogComment> _blogCommentRepository;
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<CustomerAddressMapping> _customerAddressMappingRepository;
@@ -61,6 +66,7 @@ namespace Nop.Services.Customers
             IGenericAttributeService genericAttributeService,
             INopDataProvider dataProvider,
             IRepository<Address> customerAddressRepository,
+            IRepository<ZipcodeList> zipcodeListRepository,
             IRepository<BlogComment> blogCommentRepository,
             IRepository<Customer> customerRepository,
             IRepository<CustomerAddressMapping> customerAddressMappingRepository,
@@ -84,6 +90,7 @@ namespace Nop.Services.Customers
             _genericAttributeService = genericAttributeService;
             _dataProvider = dataProvider;
             _customerAddressRepository = customerAddressRepository;
+            _customerZipCodeListRepository = zipcodeListRepository;
             _blogCommentRepository = blogCommentRepository;
             _customerRepository = customerRepository;
             _customerAddressMappingRepository = customerAddressMappingRepository;
@@ -312,6 +319,34 @@ namespace Nop.Services.Customers
             var customers = await query.ToPagedListAsync(pageIndex, pageSize);
 
             return customers;
+        }
+
+        /// <summary>
+        /// Gets a list of state
+        /// </summary>
+        /// <param name="stateName">The state namer</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the state list
+        /// </returns>
+        public virtual async Task<IList<string>> GetAllState(string stateName)
+        {
+            
+            if (string.IsNullOrEmpty(stateName))
+            {
+                var query = await (from sao in _customerZipCodeListRepository.Table
+                                 
+                                  select  sao.StateName).Distinct().ToListAsync();
+                return query;
+            }
+            else
+            {
+                  var query = await (from sao in _customerZipCodeListRepository.Table
+                              where sao.StateName == stateName
+                              select  sao.CityRegionName ).Distinct().ToListAsync();
+                return query;
+            }
+            
         }
 
         /// <summary>
