@@ -111,9 +111,48 @@
     </div>
 </section>
 <script asp-location="Head">
+    var productTypeSupportedValues = {};
+    var selectedProductTypeId = $("#@Html.IdFor(model => model.ProductTypeId)").val();
+    @foreach (var kvp in Model.ProductsTypesSupportedByProductTemplates)
+    {
+        <text>productTypeSupportedValues['@(kvp.Key)'] = { }; </text>
+        foreach (var item in kvp.Value)
+        {
+            <text>productTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))'; </text>
+        }
+    }
+            var productTemplateDropddown = $("#@Html.IdFor(model => model.ProductTemplateId)");
+    var productTemplateSelectedValue = productTemplateDropddown.val();
+    productTemplateDropddown.empty();
+    for (var name in productTypeSupportedValues[selectedProductTypeId]) {
+        productTemplateDropddown.append($("<option></option>").attr("value", name).text(productTypeSupportedValues[selectedProductTypeId][name]));
+    }
+    //previously selected value
+    $('#@Html.IdFor(model => model.ProductTemplateId) option').each(function () {
+        if (this.value == productTemplateSelectedValue) {
+            productTemplateDropddown.val(productTemplateSelectedValue);
+        }
+    });
+    function getSelectedText()
+    {
+        var selectedText = $('#nnpnlProductTemplateId').find(":selected").text();
+        let data = null;
+        data = jsonSourceData[selectedText].productFields;
+        let elems = document.getElementsByClassName('card-secondary'),
+        size = elems.length;
+        for (let i = 0; i < size; i++) {
+        var box = elems[i];
+        if (data?.indexOf(box.id) == -1) {
+            box.setAttribute('style', 'display:none');
+        } else {
+            box.setAttribute('style', 'display:block');
+        }
+        }
+    }
+    
     $(document).ready(function () 
     {
-        $('#ProductTemplateId').val('1');
+        
         $.ajax({
             cache: false,
             type: "GET",
@@ -122,24 +161,15 @@
             "settingName": "admin.customfields.productfieldsgroup.selector"
             },
             success: function (sourceData, textStatus, jqXHR) {
+                
                 var select = document.querySelector('#nnpnlProductTemplateId');
+                
                 jsonSourceData = JSON.parse( sourceData);
+                getSelectedText();
+               
                 select?.addEventListener('change',function()
-                {
-                    let data = null;
-                    var selectedText = $('#nnpnlProductTemplateId').find(":selected").text();
-                    data = jsonSourceData[selectedText].productFields;
-                    let elems = document.getElementsByClassName('card-secondary'),
-                    size = elems.length;
-                    for (let i = 0; i < size; i++) 
-                    {
-                        var box = elems[i];
-                        if(data?.indexOf(box.id) == -1){
-                        box.setAttribute('style', 'display:none');
-                        }else {
-                        box.setAttribute('style', 'display:block');
-                        }
-                    }
+                {    
+                    getSelectedText();
                 });
                     
             },
