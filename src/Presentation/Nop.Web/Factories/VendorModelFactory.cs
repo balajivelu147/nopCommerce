@@ -31,6 +31,7 @@ namespace Nop.Web.Factories
         private readonly IVendorAttributeParser _vendorAttributeParser;
         private readonly IVendorAttributeService _vendorAttributeService;
         private readonly IWorkContext _workContext;
+        private readonly IDownloadService _downloadService;
         private readonly MediaSettings _mediaSettings;
         private readonly VendorSettings _vendorSettings;
 
@@ -46,6 +47,7 @@ namespace Nop.Web.Factories
             IVendorAttributeParser vendorAttributeParser,
             IVendorAttributeService vendorAttributeService,
             IWorkContext workContext,
+            IDownloadService downloadService,
             MediaSettings mediaSettings,
             VendorSettings vendorSettings)
         {
@@ -59,21 +61,23 @@ namespace Nop.Web.Factories
             _workContext = workContext;
             _mediaSettings = mediaSettings;
             _vendorSettings = vendorSettings;
-        }
+            _downloadService = downloadService;
 
-        #endregion
+    }
 
-        #region Utilities
+    #endregion
 
-        /// <summary>
-        /// Prepare vendor attribute models
-        /// </summary>
-        /// <param name="vendorAttributesXml">Vendor attributes in XML format</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation
-        /// The task result contains the list of the vendor attribute model
-        /// </returns>
-        public virtual async Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml, string productType = "")
+    #region Utilities
+
+    /// <summary>
+    /// Prepare vendor attribute models
+    /// </summary>
+    /// <param name="vendorAttributesXml">Vendor attributes in XML format</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the list of the vendor attribute model
+    /// </returns>
+    public virtual async Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml, string productType = "")
         {
             var result = new List<VendorAttributeModel>();
 
@@ -140,8 +144,9 @@ namespace Nop.Web.Factories
                         case AttributeControlType.MultilineTextbox:
                         case AttributeControlType.MultiDatepickerCalendar:
                         case AttributeControlType.DatepickerCalendar:
+                        case AttributeControlType.CustomMultiParams:
                         case AttributeControlType.TimepickerCalendar:
-                            {
+                        {
                                 if (!string.IsNullOrEmpty(vendorAttributesXml))
                                 {
                                     var enteredText = _vendorAttributeParser.ParseValues(vendorAttributesXml, attribute.Id);
@@ -150,10 +155,22 @@ namespace Nop.Web.Factories
                                 }
                             }
                             break;
+                    case AttributeControlType.FileUpload:
+                        {
+                            if (!string.IsNullOrEmpty(vendorAttributesXml))
+                            {
+                                var downloadGuidStr = _vendorAttributeParser.ParseValues(vendorAttributesXml, attribute.Id).FirstOrDefault();
+                                _ = Guid.TryParse(downloadGuidStr, out var downloadGuid);
+                                var download = await _downloadService.GetDownloadByGuidAsync(downloadGuid);
+                                if (download != null)
+                                    attributeModel.DefaultValue = download.DownloadGuid.ToString();
+                            }
+                        }
+
+                        break;
                         case AttributeControlType.ColorSquares:
                         case AttributeControlType.ImageSquares:
                         case AttributeControlType.Datepicker:
-                        case AttributeControlType.FileUpload:
                         default:
                             //not supported attribute control types
                             break;

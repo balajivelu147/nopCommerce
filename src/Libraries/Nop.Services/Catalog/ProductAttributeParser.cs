@@ -320,24 +320,23 @@ namespace Nop.Services.Catalog
                     attributesXml = RemoveProductAttribute(attributesXml, attribute);
                 }
             }
-
+            //TODO: remove hardcode - critical
             if (product.ProductTemplateId == 3)
             {
-                var time_slot_selected = $"{NopCatalogDefaults.ProductAttributePrefix}{15}";
+                var time_slot_selected = $"{NopCatalogDefaults.ProductAttributePrefix}{14}";
 
                 if (attributesXml == "")
                 {
-                    attributesXml = "<Attributes><ProductAttribute ID=\"15\"><ProductAttributeValue><Value>" + form[time_slot_selected] + "</Value></ProductAttributeValue></ProductAttribute></Attributes>";
+                    attributesXml = "<Attributes><ProductAttribute ID=\"14\"><ProductAttributeValue><Value>" + form[time_slot_selected] + "</Value></ProductAttributeValue></ProductAttribute></Attributes>";
                 }
                 else
                 {
-                    attributesXml = attributesXml.Substring(0, 12) + "<ProductAttribute ID=\"15\"><ProductAttributeValue><Value>" + form[time_slot_selected] + "</Value></ProductAttributeValue></ProductAttribute>" + attributesXml.Substring(12);
-
+                    attributesXml = attributesXml.Substring(0, 12) + "<ProductAttribute ID=\"14\"><ProductAttributeValue><Value>" + form[time_slot_selected] + "</Value></ProductAttributeValue></ProductAttribute>" + attributesXml.Substring(12);
                 }
 
-                var date_slot_selected = $"{NopCatalogDefaults.ProductAttributePrefix}{16}";
+                var duration = $"{NopCatalogDefaults.ProductAttributePrefix}{15}";
 
-                attributesXml = attributesXml.Substring(0, 12) + "<ProductAttribute ID=\"16\"><ProductAttributeValue><Value>" + form[date_slot_selected] + "</Value></ProductAttributeValue></ProductAttribute>" + attributesXml.Substring(12);
+                attributesXml = attributesXml.Substring(0, 12) + "<ProductAttribute ID=\"15\"><ProductAttributeValue><Value>" + form[duration] + "</Value></ProductAttributeValue></ProductAttribute>" + attributesXml.Substring(12);
             }
             return attributesXml;
         }

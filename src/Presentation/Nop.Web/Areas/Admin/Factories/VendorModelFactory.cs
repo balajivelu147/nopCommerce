@@ -181,6 +181,7 @@ namespace Nop.Web.Areas.Admin.Factories
                         case AttributeControlType.MultilineTextbox:
                         case AttributeControlType.MultiDatepickerCalendar:
                         case AttributeControlType.DatepickerCalendar:
+                        case AttributeControlType.CustomMultiParams:
                         case AttributeControlType.TimepickerCalendar:
                             {
                                 if (!string.IsNullOrEmpty(selectedVendorAttributes))
