@@ -1959,6 +1959,14 @@ namespace Nop.Web.Controllers
             return View(model);
         }
 
+
+        [HttpGet]
+        public virtual async Task<IActionResult> GetZipCodeList(string stateName="")
+        {
+            var options = await _customerService.GetAllState(stateName);
+            return Json(options);
+        }
+
         #endregion
 
         #endregion

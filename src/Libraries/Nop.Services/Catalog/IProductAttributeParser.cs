@@ -43,6 +43,14 @@ namespace Nop.Services.Catalog
         IList<string> ParseValues(string attributesXml, int productAttributeMappingId);
 
         /// <summary>
+        /// Gets selected product attribute values
+        /// </summary>
+        /// <param name="attributesXml">Attributes in XML format</param>
+        /// <param name="productAttributeMappingId">Product attribute mapping identifier</param>
+        /// <returns>Product attribute values</returns>
+        List<string> ParseAppointmentSlot(List<string> attributesXml, int productAttributeMappingId);
+
+        /// <summary>
         /// Adds an attribute
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>

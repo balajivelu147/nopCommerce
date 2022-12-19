@@ -472,7 +472,7 @@
             </div>
         }
     </div>
-    <div class="form-group row @(Model.ProductEditorSettingsModel.ProductTemplate ? null : "advanced-setting")" @(Model.AvailableProductTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null) id="nnpnlProductTemplateId">
+    @*<div class="form-group row @(Model.ProductEditorSettingsModel.ProductTemplate ? null : "advanced-setting")" @(Model.AvailableProductTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null) id="nnpnlProductTemplateId">
         <div class="col-md-3">
             <nop-label asp-for="ProductTemplateId" />
         </div>
@@ -480,7 +480,7 @@
             <nop-select asp-for="ProductTemplateId" asp-items="Model.AvailableProductTemplates" />
             <span asp-validation-for="ProductTemplateId"></span>
         </div>
-    </div>
+    </div>*@
     <div class="form-group row @(Model.ProductEditorSettingsModel.VisibleIndividually ? null : "advanced-setting")" id="group-visible-individually">
         <div class="col-md-3">
             <nop-label asp-for="VisibleIndividually" />

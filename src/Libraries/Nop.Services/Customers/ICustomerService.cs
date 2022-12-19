@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nop.Core;
+using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Tax;
+using Nop.Core.Domain.ZipcodeSelling;
 
 namespace Nop.Services.Customers
 {
@@ -454,6 +456,16 @@ namespace Nop.Services.Customers
         /// </returns>
         Task<bool> IsRegisteredAsync(Customer customer, bool onlyActiveCustomerRoles = true);
 
+        /// <summary>
+        /// Gets a value indicating whether customer is registered
+        /// </summary>
+        /// <param name="customer">Customer</param>
+        /// <param name="onlyActiveCustomerRoles">A value indicating whether we should look only in active customer roles</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the result
+        /// </returns>
+        Task<IList<string>> GetAllState(string stateName);
         /// <summary>
         /// Gets a value indicating whether customer is guest
         /// </summary>

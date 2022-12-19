@@ -1,24 +1,29 @@
-﻿@*//TODO: should try to remove this script*@
-<script src="https://maps.google.com/maps/api/js?libraries=places&region=uk&language=en&sensor=true"></script>
+﻿<script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlaFZwZUwgZXk0l_J-CA75ReW4Wy45Ops&libraries=places&callback=initMap">
+</script>
+
 <button id="trigger" onclick="getMap();return false;">Set my location</button>
+<button type="button" onclick="getLocation()">Use my current location</button>
+
 <div id="overlay">
     <div id="popup">
-        <div id="close">X</div>
+        <div id="close"><i class="fa fa-window-close" aria-hidden="true"></i></div>
+        <button type="button" id="saveExit">Save&Close</button>
         @*Address:*@
         <input id="searchTextField" type="text" style="">
-        @*<br>
-        latitude:<input name="latitude" class="MapLat" value="" type="text" placeholder="Latitude" style="width: 161px;" disabled>
-        longitude:<input name="longitude" class="MapLon" value="" type="text" placeholder="Longitude" style="width: 161px;" disabled>
+       @* <br>
+        latitude:<input name="latitude" class="maplat" value="" type="text" placeholder="latitude" style="width: 161px;" disabled>
+        longitude:<input name="longitude" class="maplon" value="" type="text" placeholder="longitude" style="width: 161px;" disabled>
         *@
         <div id="map_canvas" style="height: 100%;margin: 0 0 0 0;"></div>
     </div>
 </div>
 
 <script>
-    function getMap() 
-    {
+    function getMap() {
         $('.footer').hide();
         $('#overlay').fadeIn(300);
+         var geocoder = new google.maps.Geocoder;
         var lat = sessionStorage.getItem('geo-latitude'),// 44.88623409320778,
             lng = sessionStorage.getItem('geo-longitude'),// -87.86480712897173,
             latlng = new google.maps.LatLng(lat, lng),
@@ -42,6 +47,7 @@
             }
         },
         map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions),
+
         marker = new google.maps.Marker({
             position: latlng,
             map: map,
@@ -75,7 +81,10 @@
             sessionStorage.setItem('geo-latitude', place.geometry.location.lat());
             sessionStorage.setItem('geo-longitude', place.geometry.location.lng());
         });
-        google.maps.event.addListener(map, 'click', function (event) {
+
+        google.maps.event.addListener(map, 'click', function (event) 
+        {
+            console.log("click event")
             $('.MapLat').val(event.latLng.lat());
             $('.MapLon').val(event.latLng.lng());
             $('#geo-lat').val(event.latLng.lat());
@@ -84,38 +93,73 @@
             sessionStorage.setItem('geo-latitude', event.latLng.lat());
             sessionStorage.setItem('geo-longitude', event.latLng.lng());
             infowindow.close();
-            var geocoder = new google.maps.Geocoder();
-            geocoder.geocode({
-                "latLng": event.latLng
-            }, function (results, status) {
-                console.log(results, status);
-                if (status == google.maps.GeocoderStatus.OK) {
-                    console.log(results);
-                    var lat = results[0].geometry.location.lat(),
-                        lng = results[0].geometry.location.lng(),
-                        placeName = results[0].address_components[0].long_name,
-                        latlng = new google.maps.LatLng(lat, lng);
+            map.panTo(event.latLng);
+        });
+    
+        google.maps.event.addListener(map, 'center_changed', function () {
+            var center = map.getCenter();
+            marker.setPosition(center);
 
-                    moveMarker(placeName, latlng);
-                    $("#searchTextField").val(results[0].formatted_address);
+            window.setTimeout(function () {
+                geocodeLatLng(geocoder, map, infowindow, marker);
+            }, 2000);
+        });
+    
+        function geocodeLatLng(geocoder, map, infowindow, marker) 
+        {
+            geocoder.geocode({ 'location': marker.position }, function (results, status) 
+            {
+                if (status === google.maps.GeocoderStatus.OK) 
+                {
+                    console.log(results);
+                    if (results[1]) {
+                        //map.setZoom(11);
+                        infowindow.setContent(results[1].formatted_address);
+                        infowindow.open(map, marker);
+                    } else {
+                        console.warn('GeoCoder: No results found');
+                    }
+                } else 
+                {
+                    console.warn('Geocoder failed due to: ' + status);
                 }
             });
-        });
-
-        function moveMarker(placeName, latlng) {
-            marker.setIcon(image);
-            marker.setPosition(latlng);
-            infowindow.setContent(placeName);
-            //infowindow.open(map, marker);
         }
-    };
+        
+        function hidePopup(){
+            $(popup).style.display = 'none';
+        }
+    }
+    function getLocation() 
+    {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
 
+    function showPosition(position) 
+    {
+        $('.MapLat').val(position.coords.latitude);
+        $('.MapLon').val(position.coords.longitude);
+        $('#geo-lat').val(position.coords.latitude);
+        $('#geo-long').val(position.coords.longitude);
 
+        sessionStorage.setItem('geo-latitude',position.coords.latitude);
+        sessionStorage.setItem('geo-longitude', position.coords.longitude); 
+    }
+    
     $(document).ready(function () {
         $('#trigger').click(function () {
             getMap();
             $('#overlay').fadeIn(300);
         });
+        $('#saveExit').click(function () {
+            $('#overlay').fadeOut(300);
+            $('.footer').show();
+        });
+
         $('#close').click(function () {
             $('#overlay').fadeOut(300);
             $('.footer').show();
@@ -138,7 +182,7 @@
     }
 
     button {
-        background: #000;
+        background: #616161;
         color: #fff;
         text-align: center;
         font-weight: bold;
