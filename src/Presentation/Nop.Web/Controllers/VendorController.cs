@@ -161,6 +161,7 @@ namespace Nop.Web.Controllers
                     case AttributeControlType.MultiDatepickerCalendar:
                     case AttributeControlType.DatepickerCalendar:
                     case AttributeControlType.TimepickerCalendar:
+                    case AttributeControlType.CustomMultiParams:
                     case AttributeControlType.MultilineTextbox:
                         {
                             var ctrlAttributes = form[controlId];
@@ -172,10 +173,51 @@ namespace Nop.Web.Controllers
                             }
                         }
                         break;
+                    case AttributeControlType.FileUpload:
+                        var httpPostedFile = Request.Form.Files[controlId];
+                        if (!string.IsNullOrEmpty(httpPostedFile?.FileName))
+                        {
+                            var fileSizeOk = true;
+                            //TODO:(high) - to set max size and add file type restrictions
+                            //if (attribute.ValidationFileMaximumSize.HasValue)
+                            //{
+                            //    //compare in bytes
+                            //    var maxFileSizeBytes = attribute.ValidationFileMaximumSize.Value * 1024;
+                            //    if (httpPostedFile.Length > maxFileSizeBytes)
+                            //    {
+                            //        warnings.Add(string.Format(
+                            //            await _localizationService.GetResourceAsync("ShoppingCart.MaximumUploadedFileSize"),
+                            //            attribute.ValidationFileMaximumSize.Value));
+                            //        fileSizeOk = false;
+                            //    }
+                            //}
+
+                            if (fileSizeOk)
+                            {
+                                //save an uploaded file
+                                var download = new Download
+                                {
+                                    DownloadGuid = Guid.NewGuid(),
+                                    UseDownloadUrl = false,
+                                    DownloadUrl = string.Empty,
+                                    DownloadBinary = await _downloadService.GetDownloadBitsAsync(httpPostedFile),
+                                    ContentType = httpPostedFile.ContentType,
+                                    Filename = _fileProvider.GetFileNameWithoutExtension(httpPostedFile.FileName),
+                                    Extension = _fileProvider.GetFileExtension(httpPostedFile.FileName),
+                                    IsNew = true
+                                };
+                                await _downloadService.InsertDownloadAsync(download);
+
+                                //save attribute
+                                attributesXml = _vendorAttributeParser.AddVendorAttribute(attributesXml,
+                                                     attribute, download.DownloadGuid.ToString());
+                            }
+                        }
+
+                        break;
                     case AttributeControlType.Datepicker:
                     case AttributeControlType.ColorSquares:
                     case AttributeControlType.ImageSquares:
-                    case AttributeControlType.FileUpload:
                     //not supported vendor attributes
                     default:
                         break;

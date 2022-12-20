@@ -141,7 +141,6 @@
                             var $dateMin = $now.subtract(3, 'days');
                             console.log($now);
                             console.log($dateMin);
-                            console.log($now.add('days', 5));
 
                             $('#@(controlId)').bootstrapMaterialDatePicker({
                                 format: 'hh:mm A',
@@ -198,6 +197,8 @@
                     </div>
                 }
                 break;
+
+
 
             case AttributeControlType.Datepicker:
             case AttributeControlType.ColorSquares:
@@ -306,6 +307,212 @@
                         }
                     </div>
 
+                }
+                break;
+
+            case AttributeControlType.CustomMultiParams:
+                {
+                    @*//TODO: should create a partial view for entire case*@
+                    <textarea class="form-control" id="@(controlId)" name="@(controlId)" type="text" style="display:block">@(attribute.DefaultValue)</textarea>
+
+                    <div class="">
+                        <div id="table" class="table-editable centered-vertically">
+                            <span class="table-add fa fa-plus-circle fa-2x"></span>
+
+                            <table class="table" id="personDataTable">
+                                <tr>
+                                    <th>start</th>
+                                    <th>end</th>
+                                    <th>WeekDays</th>
+                                    <th>Dates</th>
+                                    <th></th>
+@*                                    <th></th>*@
+                                </tr>
+                                <!-- This is our clonable table line -->
+                                <tr class="hide">
+                                 
+                                    <td contenteditable="true" class="time"><input type="text" class="datepicker" type="text" /></td>
+                                    <td contenteditable="true" class="time"><input type="text" class="datepicker " type="text" /></td>
+                                    <td contenteditable="true">
+                                        <select name="daySelected" class="form-control" id="day">
+                                            <option value="pick">Pick a day</option>
+                                            <option value="daily">Daily</option>
+                                            <option value="Mon">Monday</option>
+                                            <option value="Tue">Tuesday</option>
+                                            <option value="Wed">Wednesday</option>
+                                            <option value="Thu">Thursday</option>
+                                            <option value="Fri">Friday</option>
+                                            <option value="Sat">Saturday</option>
+                                            <option value="Sun">Sunday</option>
+                                        </select>
+
+                                    </td>
+                                     <td contenteditable="true" class="date"><input type="text" class="multidatepicker" type="text"></td>
+                                    <td></td>
+
+                                    <td>
+                                        <span class="table-remove fa fa-trash fa-2x"></span>
+                                    </td>
+                                    <td></td>
+                              @*      <td>
+                                        <span class="table-up fa fa-chevron-circle-up fa-2x"></span><span class="table-down fa fa-chevron-circle-down fa-2x"></span>
+                                    </td>*@
+                                </tr>
+                            </table>
+                        </div>
+                        @*//TODO: btn not required, should be removed along with scripts and styles*@
+                        <button id="export-btn" type="button" class="btn btn-primary">Export Data</button>
+                        @*<p id="export"></p>*@
+                    </div>
+                    <script>
+
+                        var $TABLE = $('#table');
+                        var $BTN = $('#export-btn');
+                        var $EXPORT = $('#export');
+
+                        $(function() {
+
+                          $(".datepicker").bootstrapMaterialDatePicker({
+                                format: 'hh:mm A',
+                                shortTime: true,
+                                date: false,
+                                time: true,
+                                monthPicker: false,
+                                year: true,
+                                clearButton: false,
+                                nowButton: false,
+                                switchOnClick: true,
+                                cancelText: 'Cancel',
+                                weekStart: 1,
+                            });
+
+                             $(".multidatepicker").datepicker({ dateFormat: "yy/m/d", multidate: true });
+                        });
+                        $(function() {
+                        $('.time').click(function() {
+                        $(this).find('.datepicker').focus();
+                        });
+                        });
+                        data = [
+                                {
+                                day: 'Mon',
+                                amstart: "11:30",
+                                amend: "12:30",
+                                dates: "12/20/2022,12/21/2022,11/28/2022"
+                                }
+                            ];
+       
+                                drawTable(data);
+                        function drawTable(data) {
+ 
+                        for (var i = 0; i < data.length; i++) {
+                            drawRow(data[i],i);       
+                        }
+                        }
+
+                        function drawRow(rowData,i) {
+                        var row = $("<tr />"); 
+                        $("#personDataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+ 
+
+
+                        row.append($('<td contenteditable="true" class="time" ><input type="text" class="datepicker" value="'+rowData.amstart+'" type="text" /></td>'));
+                        row.append($('<td contenteditable="true" class="time"><input type="text" class="datepicker" value="'+rowData.amend+'" type="text" /></td>'));
+                       
+                        row.append($('<td contenteditable="true"><select name="daySelected" class="form-control"  id='+rowData.day+'>                              <option value="Mon">Monday</option>                <option value="Tue">Tuesday</option>                <option value="Wednesday">Wednesday</option>                <option value="Thu">Thursday</option>                <option value="Fri">Friday</option>                <option value="Sat">Saturday</option>                <option value="Sun">Sunday</option>            </select></td>')); 
+                        $("#"+rowData.day).val(rowData.day);  
+                        row.append($('<td contenteditable="true" class="date"><input type="text" class="multidatepicker " value= "'+rowData.dates+'" type="text"></td>'));
+                       
+                        
+                        row.append($('<td></td><td><span class="table-remove fa fa-trash fa-2x"></span></td><td></td>'));
+                        @*<td><span class="table-up fa fa-chevron-circle-up fa-2x"></span><span class="table-down fa fa-chevron-circle-down fa-2x"></span></td></tr></table>'));*@
+                        }
+
+
+
+                        $('.table-add').click(function () {
+                        var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
+                        $clone.find("input.datepicker").each(function(){
+                        $(this).attr("id", "").removeData().off();
+                        $(this).find('.add-on').removeData().off();
+                        $(this).find('input').removeData().off();
+                       // $(this).timepicker({defaultTime:'16:20', minuteStep: 1, showMeridian: false});
+                        });
+
+                        $TABLE.find('table').append($clone).find("input.datepicker").addClass('datepicker');
+                        $(".datepicker").bootstrapMaterialDatePicker({
+                                format: 'hh:mm A',
+                                shortTime: true,
+                                date: false,
+                                time: true,
+                                monthPicker: false,
+                                year: true,
+                                clearButton: false,
+                                nowButton: false,
+                                switchOnClick: true,
+                                cancelText: 'Cancel',
+                                weekStart: 1,
+                            });
+
+                            $(".multidatepicker").datepicker({ dateFormat: "yy/m/d", multidate: true });
+                        });
+
+                        $('.table-remove').click(function () {
+                        $(this).parents('tr').detach();
+                        });
+
+                        $('.table-up').click(function () {
+                        var $row = $(this).parents('tr');
+                        if ($row.index() === 1) return; // Don't go above the header
+                        $row.prev().before($row.get(0));
+                        });
+
+                        $('.table-down').click(function () {
+                        var $row = $(this).parents('tr');
+                        $row.next().after($row.get(0));
+                        });
+
+                        // A few jQuery helpers for exporting only
+                        jQuery.fn.pop = [].pop;
+                        jQuery.fn.shift = [].shift;
+
+                        $BTN.click(function () {
+                        var $rows = $TABLE.find('tr:not(:hidden)');
+                        var $tds = $TABLE.find('td:not(:hidden)');
+                        var headers = [];
+                        var data = [];
+
+  
+                        // Get the headers (add special header logic here)
+                        $($rows.shift()).find('th:not(:empty)').each(function () {
+                        headers.push($(this).text().toLowerCase());
+                        });
+  
+                        // Turn all existing rows into a loopable array
+
+                        $rows.each(function () {
+                        var $td = $(this).find('td');
+                        var $td2 = $td.find('input'); 
+                        var $td3 = $td.find('select');
+                        var h2 = {};  
+                        // Use the headers from earlier to name our hash keys
+                        headers.forEach(function (header, i) {
+                            h2[header] = $td.eq(i).find('input,select').val() || $td.eq(i).text();
+                            console.log(h2[header]);
+
+                        }); 
+                        //check if the day exists in json here
+                        data.push(h2);
+                        });
+                            document.getElementById("@(controlId)").textContent = (JSON.stringify(data));
+                        // Output the result
+                      //  $EXPORT.value = (JSON.stringify(data));
+                        });
+                    </script>
+                    //TODO: styles - entire style is taken from https://codepen.io/caim/pen/pggZOx
+                    //this can be cleaned up, based on your interest
+                 
+                
                 }
                 break;
         }

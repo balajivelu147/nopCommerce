@@ -50,12 +50,17 @@
         /// </summary>
         MultiOptionSelectInputBox = 103,
 
-
         /// <summary>
         /// MultiOptionSelect
         /// </summary>
         MultiDatepickerCalendar = 104,
 
+        /// <summary>
+        /// this param will be used if there is a special case required
+        /// customMultiParams(advanced)
+        /// </summary>
+        CustomMultiParams = 105,
+        
         /// <summary>
         /// File upload control
         /// </summary>
