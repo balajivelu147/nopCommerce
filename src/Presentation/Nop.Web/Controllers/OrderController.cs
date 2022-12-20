@@ -76,7 +76,7 @@ namespace Nop.Web.Controllers
             return View(model);
         }
         [HttpGet]
-        public virtual async Task<IActionResult> GetOrdersById(int vendorId = 0)
+        public virtual async Task<IActionResult> GetOrdersByVendorId(int vendorId = 0)
         {
             var order = await _orderService.GetOrdersByVendorId(vendorId);
             return Json(order);

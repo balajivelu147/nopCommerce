@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,9 +16,11 @@ using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Data;
 using Nop.Services.Common;
+using Nop.Services.Configuration;
 using Nop.Services.Directory;
 using Nop.Services.Localization;
 using Nop.Services.Media;
+using StackExchange.Profiling.Internal;
 
 namespace Nop.Services.Catalog
 {
@@ -37,6 +40,8 @@ namespace Nop.Services.Catalog
         private readonly IRepository<ProductAttributeValue> _productAttributeValueRepository;
         private readonly IWorkContext _workContext;
 
+        private readonly ISettingService _settingService;
+
         #endregion
 
         #region Ctor
@@ -45,6 +50,8 @@ namespace Nop.Services.Catalog
             IDownloadService downloadService,
             ILocalizationService localizationService,
             IProductAttributeService productAttributeService,
+
+            ISettingService settingService,
             IRepository<ProductAttributeValue> productAttributeValueRepository,
             IWorkContext workContext)
         {
@@ -54,6 +61,8 @@ namespace Nop.Services.Catalog
             _productAttributeValueRepository = productAttributeValueRepository;
             _workContext = workContext;
             _localizationService = localizationService;
+
+            _settingService = settingService;
         }
 
         #endregion
@@ -437,18 +446,19 @@ namespace Nop.Services.Catalog
         /// <returns>Product attribute values</returns>
         public virtual List<string> ParseAppointmentSlot(List<string> attributesXml, int productAttributeMappingId)
         {
-            var selectedValues = new List<string>();
-            var selectedValues1 = new List<string>();
-            //if (attributesXml.Count==0)
-            //    return selectedValues;
+            var appointmentTimeValues = new List<string>();
+            var appointmentDurationValues = new List<string>();
             var jsonList = new List<string>();
-            //XmlNodeList nodeList2;
-            //XmlNodeList nodeList3;
             var jsonString=string.Empty;
 
             try
             {
-                
+            
+                var model = _settingService.GetConfigSettingByKeyAsync<string>("customsettings.vendor.appointment");
+
+                var configSetting = JsonConvert.DeserializeObject(model.Result, typeof(ExpandoObject));
+                var appointmentDuration = ((dynamic)configSetting)._appointmentDuration;
+                var appointmentTime = ((dynamic)configSetting)._appointmentTime;
                 foreach (var attributes in attributesXml)
                 {
                     var xmlDoc = new XmlDocument();
@@ -457,19 +467,18 @@ namespace Nop.Services.Catalog
                     var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/ProductAttribute");
                     foreach (XmlNode node1 in nodeList1)
                     {
-                        var str1 = node1.Attributes["ID"].InnerText.Trim();
-
-                        if (str1 == "14")
+                        var str1 = node1.Attributes["ID"].InnerText.Trim().ToString();
+                        if (String.Equals(str1, appointmentTime.ToString()))
                         {
                             var nodeList2 = node1.SelectNodes(@"ProductAttributeValue/Value");
                             foreach (XmlNode node2 in nodeList2)
                             {
                                 var value = node2.InnerText.Trim();
-                                selectedValues.Add(value);
+                                appointmentTimeValues.Add(value);
                             }
                         }
 
-                        if (str1 == "15")
+                        if (String.Equals(str1, appointmentDuration.ToString()))
                         {
 
                             var nodeList3 = node1.SelectNodes(@"ProductAttributeValue/Value");
@@ -477,27 +486,23 @@ namespace Nop.Services.Catalog
                             foreach (XmlNode node2 in nodeList3)
                             {
                                 var value = node2.InnerText.Trim();
-                                selectedValues1.Add(value);
+                                appointmentDurationValues.Add(value);
                             }
 
                         }
                     }
-                    var n = DateTime.Parse(selectedValues[0]);
-                    double min = TimeSpan.Parse(selectedValues1[0]).TotalMinutes;
-                    DateTime a = n.AddMinutes(min);
+                    var n = appointmentTimeValues[0].Split('(', ')')[1];
+                    string startTime = appointmentTimeValues[0].Substring(0, appointmentTimeValues[0].IndexOf("-")).Trim();
                     var res = new appointmentJson
                     {
                         
-                    start = n.ToString("HH:mm"),
-                        end = a,
-                        duration = selectedValues1[0],
-                        date = n.ToShortDateString()
+                       start = startTime,
+                        duration = appointmentDurationValues[0],
+                        date = n
                     };
 
-
-                        //selectedValues.Add(res);
-                        jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(res);
-                        jsonList.Add(jsonString);
+                    jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(res);
+                    jsonList.Add(jsonString);
                 }
                         
                 
