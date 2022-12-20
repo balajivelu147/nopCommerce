@@ -1,0 +1,1059 @@
+﻿@using Nop.Core
+@using Nop.Services.Configuration
+@using Nop.Core.Domain.Seo
+
+@inject SeoSettings seoSettings
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+
+@{
+    @*<head>*@
+    //<meta charset="UTF-8">
+    //<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    //<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    //<link href="style.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="image/fontawesome-free-6.2.0-web/fontawesome-free-6.2.0-web/css/all.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>TonearMe</title>
+    @*</head>*@
+}
+<body>
+    <div class="container-fluid py-0">
+
+        <!-- Menu Icon -->
+        <div>
+            <a href="javascript:void(0)" onclick="showHideSideNav()">
+                <abbr title="Main menu">
+                    <i class="fa-solid fa-bars tnm-menuicon p-3"></i>
+                </abbr>
+            </a>
+        </div>
+        <!-- Device SlideHeader section -->
+        <div class="row mb-2 tnm-slide-header-lgDevice justify-content-center tnm-slide-header-position">          
+            <div class="col-10 p-0 tnm-slide-header-lg-column">
+                <div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row m-0 tnm-header-slide-container">
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/stock-vector.jpg" alt="Spa Salon">
+                                    <div class="text-center tnm-header-font-size">Spa</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Hotel">
+                                    <div class="text-center tnm-header-font-size">Hotels</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Interiors">
+                                    <div class="text-center tnm-header-font-size">Interiors</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Home APPliances">
+                                    <div class="text-center tnm-header-font-size">Home</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Boutique">
+                                    <div class="text-center tnm-header-font-size">Boutique</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Cake">
+                                    <div class="text-center tnm-header-font-size">Cake</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Insurance">
+                                    <div class="text-center tnm-header-font-size">Insurance</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Construction">
+                                    <div class="text-center tnm-header-font-size">Construction</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Movie Tickets">
+                                    <div class="text-center tnm-header-font-size">Movie</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Adventure">
+                                    <div class="text-center tnm-header-font-size">Adventure</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row tnm-header-slide-container">
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/stock-vector.jpg" alt="Spa Salon">
+                                    <div class="text-center ">Spa & Salon</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Hotel">
+                                    <div class="text-center ">Hotels</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Interiors">
+                                    <div class="text-center ">Interiors</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Home APPliances">
+                                    <div class="text-center ">Home Appliances</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Boutique">
+                                    <div class="text-center ">Boutique</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Cake">
+                                    <div class="text-center ">Cake</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Insurance">
+                                    <div class="text-center ">Insurance</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Construction">
+                                    <div class="text-center ">Construction</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Movie Tickets">
+                                    <div class="text-center ">Movie Tickets</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Adventure">
+                                    <div class="text-center ">Adventure</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row tnm-header-slide-container">
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/stock-vector.jpg" alt="Spa Salon">
+                                    <div class="text-center ">Spa & Salon</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Hotel">
+                                    <div class="text-center ">Hotels</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Interiors">
+                                    <div class="text-center ">Interiors</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Home APPliances">
+                                    <div class="text-center ">Home Appliances</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Boutique">
+                                    <div class="text-center ">Boutique</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Cake">
+                                    <div class="text-center ">Cake</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Insurance">
+                                    <div class="text-center ">Insurance</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Construction">
+                                    <div class="text-center ">Construction</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Movie Tickets">
+                                    <div class="text-center ">Movie Tickets</div>
+                                </div>
+                                <div class="col p-2 tnm-slide-header-content">
+                                    <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Adventure">
+                                    <div class="text-center ">Adventure</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev tnm-slide-button-left tnm-slide-button-clr" type="button"
+                        data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next tnm-slide-button-right tnm-slide-button-clr" type="button"
+                        data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Big Mobile Device SlideHeader section -->
+        <div class="row tnm-slide-header-mdDevice">
+            <div class="col-11 ms-5">
+                <div class="tnm-header-flexContainer">
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Hotel">
+                        <div class="text-center tnm-header-font-size">Hotels</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Interiors">
+                        <div class="text-center tnm-header-font-size">Interiors</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Home APPliances">
+                        <div class="text-center tnm-header-font-size">Home Appliances</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Boutique">
+                        <div class="text-center tnm-header-font-size">Boutique</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Cake">
+                        <div class="text-center tnm-header-font-size">Cake</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Insurance">
+                        <div class="text-center tnm-header-font-size">Insurance</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Construction">
+                        <div class="text-center tnm-header-font-size">Construction</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Movie Tickets">
+                        <div class="text-center tnm-header-font-size">Movie Tickets</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Adventure">
+                        <div class="text-center tnm-header-font-size">Adventure</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Hotel">
+                        <div class="text-center tnm-header-font-size">Hotels</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Interiors">
+                        <div class="text-center tnm-header-font-size">Interiors</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Home APPliances">
+                        <div class="text-center tnm-header-font-size">Home Appliances</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Boutique">
+                        <div class="text-center tnm-header-font-size">Boutique</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Cake">
+                        <div class="text-center tnm-header-font-size">Cake</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Insurance">
+                        <div class="text-center tnm-header-font-size">Insurance</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Construction">
+                        <div class="text-center tnm-header-font-size">Construction</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Movie Tickets">
+                        <div class="text-center tnm-header-font-size">Movie Tickets</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Adventure">
+                        <div class="text-center tnm-header-font-size">Adventure</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Hotel">
+                        <div class="text-center tnm-header-font-size">Hotels</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Interiors">
+                        <div class="text-center tnm-header-font-size">Interiors</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Home APPliances">
+                        <div class="text-center tnm-header-font-size">Home Appliances</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Boutique">
+                        <div class="text-center tnm-header-font-size">Boutique</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Cake">
+                        <div class="text-center tnm-header-font-size">Cake</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Insurance">
+                        <div class="text-center tnm-header-font-size">Insurance</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Construction">
+                        <div class="text-center tnm-header-font-size">Construction</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Movie Tickets">
+                        <div class="text-center tnm-header-font-size">Movie Tickets</div>
+                    </div>
+                    <div class="col p-2 tnm-slide-header-content">
+                        <img class="tnm-slide-header-img-size" src="image/istockphoto-cake.jpg" alt="Adventure">
+                        <div class="text-center tnm-header-font-size">Adventure</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+
+        <!-- Side Navigation Item -->
+            <div class="tnm-sidenav d-none d-sm-none d-md-block">
+                <div class="tnm-sidenav-img p-2">
+                    <i class="fa-solid fa-car"></i>
+                    <div class="tnm-sidenav-content">Travel</div>
+                </div>
+                <div class="tnm-sidenav-img p-2">
+                    <i class="fa-solid fa-globe"></i>
+                    <div class="tnm-sidenav-content">Explore</div>
+                </div>
+                <div class="tnm-sidenav-img p-2">
+                    <i class="fa-solid fa-camera"></i>
+                    <div class="tnm-sidenav-content">Things to do</div>
+                </div>
+                <div class="tnm-sidenav-img p-2">
+                    <i class="fa-solid fa-plane"></i>
+                    <div class="tnm-sidenav-content">Flights</div>
+                </div>
+                <div class="tnm-sidenav-img-hotels p-2">
+                    <i class="fa-solid fa-bed"></i>
+                    <div class="tnm-sidenav-content">Hotels</div>
+                </div>
+                <div class="tnm-sidenav-img p-2">
+                    <i class="fa-sharp fa-solid fa-house"></i>
+                    <div class="tnm-sidenav-content">Holiday rentals</div>
+                </div>
+            </div>
+            <div class="tnm-element">
+
+            <!-- Form Control Search Bar -->
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-5 tnm-search-relative">
+                        <input type="search" class="form-control tnm-form-control ps-4" id="search" placeholder="Search"
+                            name="search">
+                        <div class="tnm-search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div class="tnm-delete-icon"><i class="fa-solid fa-xmark"></i></div>
+                    </div>
+                </div>
+
+            <!-- Form dropdawn Section -->
+                <div class="row tnm-main-dropdown me-0 mt-1 pt-2 mb-3">
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">All Filters(2)</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Under 2500</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A"> 4+ rating</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Price</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Property type</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Offers</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Guest rating</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Hostel class</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Amenities</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Brands</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Eco Certified</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-auto text-primary tnm-dropdowns tnm-filter pe-0">
+                        <select name="name" id="name" class="tnm-select  p-2 mb-1 w-100">
+                            <option value="A">Sort by</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+
+                </div>
+
+            <!-- Hotel location Details -->
+                <div class="row  mx-0 tnm-hotel-container">
+                    <div class="col-12 col-md-6 col-lg-4 p-0">
+                        <div class="row tnm-location-details mx-0  my-3">
+                            <div class="col-11 ps-0">Kadayanallur · 93 results</div>
+                            <div class="col-1">
+                                <i class="fa-solid fa-circle-info tnm-cursor-pointer float-end"></i>
+                            </div>
+                        </div>
+                        <div class="row ms-1 my-3 tnm-hotel-details tnm-ellipsis  mx-1 tnm-cursor-pointer">
+                            <div class="col-5 ps-0 tnm-hotel-details-div">
+                                <a href="#" target="_blank">
+                                    <div id="carouselExampleSlidesOnly" class="carousel slide " data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img  src="image/istockphoto.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-reception-bell">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/hotel-bed-room.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-bed-room">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/hotel-room.jpg" class="d-block w-100 tnm-hotel-image" alt="hotel-room">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="tnm-hotel-amount">₹650</div>
+                                            <div class="tnm-left-arrow"><i class="fa-solid fa-circle-left tnm-left-arrow-icon"></i></div>
+                                            <div class="tnm-right-arrow"><i class="fa-solid fa-circle-right tnm-right-arrow-icon"></i></div>
+                                            <div class="tnm-bookmark"><i class="fa-regular fa-bookmark"></i></div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-7 my-3 tnm-hotel-details-map">
+                                <div class="tnm-ellipsis"><a href="#" target="_blank">Hotel Palmyra Grand Suite
+                                        Tirunelveli</a>
+                                </div>
+                                <div class="tnm-font-weight"><b>Ad</b> · From Booking.com</div><br>
+                                <div class="tnm-font-weight">4.4 * <a href="#" target="_blank">(3210)</a> · Excellent
+                                    location</div>
+                                <div class="tnm-font-weight">3-star hotel · Free breakfast</div>
+                            </div>
+                        </div>
+                        <div class="row ms-1 my-3 tnm-hotel-details tnm-ellipsis  mx-1 tnm-cursor-pointer">
+                            <div class="col-5 ps-0 tnm-hotel-details-div">
+                                <a href="#" target="_blank">
+                                    <div id="carouselExampleSlidesOnly" class="carousel slide " data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img  src="image/istockphoto.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-reception-bell">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/hotel-bed-room.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-bed-room">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/hotel-room.jpg" class="d-block w-100 tnm-hotel-image" alt="hotel-room">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="tnm-hotel-amount">₹3,999</div>
+                                            <div class="tnm-left-arrow"><i class="fa-solid fa-circle-left tnm-left-arrow-icon"></i></div>
+                                            <div class="tnm-right-arrow"><i class="fa-solid fa-circle-right tnm-right-arrow-icon"></i></div>
+                                            <div class="tnm-bookmark"><i class="fa-regular fa-bookmark"></i></div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-7 my-3 tnm-hotel-details-map">
+                                <div class="tnm-ellipsis"><a href="#" target="_blank">Regency Tirunelveli By GRT
+                                        Hotels</a>
+                                </div>
+                                <div class="tnm-font-weight"><b>Ad</b> · From Booking.com</div><br>
+                                <div class="tnm-font-weight">4.4 * <a href="#" target="_blank">(3,999)</a> · Excellent
+                                    location</div>
+                                <div class="tnm-font-weight">3-star hotel · Free breakfast</div>
+                            </div>
+                        </div>
+                        <div class="row ms-1 my-3 tnm-hotel-details tnm-ellipsis  mx-1 tnm-cursor-pointer">
+                            <div class="col-5 ps-0 tnm-hotel-details-div">
+                                <a href="#" target="_blank">
+                                    <div id="carouselExampleSlidesOnly" class="carousel slide " data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img  src="image/hotel-reception-bell-modern.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-reception-bell">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/hotel-room.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-bed-room">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/istockphoto-1357690747-1024x1024.jpg"
+                                                    class="d-block w-100 tnm-hotel-image" alt="hotel-room">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="tnm-hotel-amount">₹3,500</div>
+                                            <div class="tnm-left-arrow"><i class="fa-solid fa-circle-left tnm-left-arrow-icon"></i></div>
+                                            <div class="tnm-right-arrow"><i class="fa-solid fa-circle-right tnm-right-arrow-icon"></i></div>
+                                            <div class="tnm-bookmark"><i class="fa-regular fa-bookmark"></i></div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-7 my-3 tnm-hotel-details-map">
+                                <div class="tnm-ellipsis"><a href="#" target="_blank">Chennai By GRT Hotels</a>
+                                </div>
+                                <div class="tnm-font-weight"><b>Ad</b> · From Booking.com</div><br>
+                                <div class="tnm-font-weight">4.4 * <a href="#" target="_blank">(3002)</a> · Excellent
+                                    location</div>
+                                <div class="tnm-font-weight">3-star hotel · Free parking</div>
+                            </div>
+                        </div>
+                        <div class="row ms-1 my-3 tnm-hotel-details tnm-ellipsis-1  mx-1 tnm-cursor-pointer">
+                            <div class="col-5 ps-0 tnm-hotel-details-div">
+                                <a href="#" target="_blank">
+                                    <div id="carouselExampleSlidesOnly" class="carousel slide " data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img  src="image/istockphoto-1357690747-1024x1024.jpg"
+                                                    class="d-block w-100 tnm-hotel-image" alt="hotel-reception-bell">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/istockphoto.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-bed-room">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/hotel-bed-room.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-room">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="tnm-hotel-amount">₹2,400</div>
+                                            <div class="tnm-left-arrow"><i class="fa-solid fa-circle-left tnm-left-arrow-icon"></i></div>
+                                            <div class="tnm-right-arrow"><i class="fa-solid fa-circle-right tnm-right-arrow-icon"></i></div>
+                                            <div class="tnm-bookmark"><i class="fa-regular fa-bookmark"></i></div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-7 my-3 tnm-hotel-details-map">
+                                <div class="tnm-ellipsis"><a href="#" target="_blank">Tirunelveli By GRT Hotels</a>
+                                </div>
+                                <div class="tnm-font-weight"><b>Ad</b> · From Booking.com</div><br>
+                                <div class="tnm-font-weight">4.4 * <a href="#" target="_blank">(1203)</a> · Excellent
+                                    location</div>
+                                <div class="tnm-font-weight">3-star hotel · Free breakfast</div>
+                            </div>
+                        </div>
+                        <div class="row ms-1 my-3 tnm-hotel-details tnm-ellipsis-1  mx-1 tnm-cursor-pointer">
+                            <div class="col-5 ps-0 tnm-hotel-details-div">
+                                <a href="#" target="_blank">
+                                    <div id="carouselExampleSlidesOnly" class="carousel slide " data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img  src="image/hotel-bed-room.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-reception-bell">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/hotel-reception-bell-modern.jpg" class="d-block w-100 tnm-hotel-image"
+                                                    alt="hotel-bed-room">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img  src="image/hotel-room.jpg" class="d-block w-100 tnm-hotel-image" alt="hotel-room">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="tnm-hotel-amount">₹1,300</div>
+                                            <div class="tnm-left-arrow"><i class="fa-solid fa-circle-left tnm-left-arrow-icon"></i></div>
+                                            <div class="tnm-right-arrow"><i class="fa-solid fa-circle-right tnm-right-arrow-icon"></i></div>
+                                            <div class="tnm-bookmark"><i class="fa-regular fa-bookmark"></i></div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-7 my-3 tnm-hotel-details-map">
+                                <div class="tnm-ellipsis"><a href="#" target="_blank">Regency Tirunelveli By GRT
+                                        Hotels</a>
+                                </div>
+                                <div class="tnm-font-weight"><b>Ad</b> · From Booking.com</div><br>
+                                <div class="tnm-font-weight">4.4 * <a href="#" target="_blank">(2943)</a> · Excellent
+                                    location</div>
+                                <div class="tnm-font-weight">3-star hotel · Free service</div>
+                            </div>
+                        </div>
+                    </div>
+
+            <!-- Location map -->
+                    <div class="col-12 col-md-6 col-lg-8 p-0 tnm-maplocation">
+                         @await Html.PartialAsync("_GoogleMapHome", null)
+                        <!--<img class="tnm-map-image" src="image/istockphoto-1357690747-1024x1024.jpg" alt="isrockimage">-->
+                        @*<div id="map" class="map" data-lat="43.6532" data-lng="-79.3832"></div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  popup menu item html -->
+    <div id="tnm-menuicon-nav" class="tnm-menuicon-nav tnm-hide">
+        <div class="tnm-menuicon-element p-2">
+            <i class="fa-solid fa-car tnm-menuicon-content"></i><span class="tnm-menuicon-content">Travel</span>
+        </div>
+        <div class="tnm-menuicon-element p-2">
+            <i class="fa-solid fa-globe tnm-menuicon-content"></i><span class="tnm-menuicon-content">Explore</span>
+        </div>
+        <div class="tnm-menuicon-element p-2">
+            <i class="fa-solid fa-camera tnm-menuicon-content"></i><span class="tnm-menuicon-content">Things to
+                do</span>
+        </div>
+        <div class="tnm-menuicon-element p-2">
+            <i class="fa-solid fa-plane tnm-menuicon-content"></i><span class="tnm-menuicon-content">Flights</span>
+        </div>
+        <div class="tnm-menuicon-hotelelement p-2">
+            <i class="fa-solid fa-bed tnm-menuicon-content"></i>
+            <sapn class="tnm-menuicon-content">Hotels</span>
+        </div>
+        <div class="tnm-menuicon-element p-2">
+            <i class="fa-sharp fa-solid fa-house tnm-menuicon-content"></i><span class="tnm-menuicon-content">Holiday
+                rentals</span>
+        </div>
+    </div>
+    <script>
+        function showHideSideNav() {
+            if (hasClass(document.getElementById('tnm-menuicon-nav'), 'tnm-hide'))
+                document.getElementById("tnm-menuicon-nav").classList.remove("tnm-hide");
+            else
+                document.getElementById("tnm-menuicon-nav").classList.add("tnm-hide");
+        }
+
+        function hasClass(element, clsName) {
+            return (' ' + element.className + ' ').indexOf(' ' + clsName + ' ') > -1;
+        }
+        
+    </script>
+</body>
+
+</html>
+<style>
+  
+@@media only screen and (min-width: 768px){
+    .tnm-main-dropdown {
+        position: sticky !important;
+        top: 68px !important;
+        background-color: white !important;
+        z-index: 1 !important;
+    }
+}
+
+@@media only screen and (max-width: 767px) {
+    .tnm-maplocation .tnm-map-image {
+        position: static;
+        width: 100%;
+    }
+    .tnm-slide-header-lgDevice {
+        display: none !important;
+    }    
+    .tnm-menuicon {
+        left: 5px !important;
+    }
+}
+
+@@media only screen and (min-width: 768px) {
+    .tnm-slide-header-mdDevice {
+        display: none !important;
+    }
+    .tnm-slide-header-lg-column {
+        margin-left: 100px !important;
+    }
+    .tnm-element {
+        margin-left: 100px;
+    }
+}
+
+@@media only screen and (min-width: 1200px) {
+    .tnm-slide-header-content {
+        white-space: nowrap;
+    }
+   
+}
+
+.tnm-form-control {
+    font-size: 12px !important;
+    height: 36px;
+}
+
+.tnm-cursor-pointer {
+    cursor: pointer;
+}
+
+.tnm-dropdowns {
+    opacity: 0.8;
+}
+
+.tnm-dropdowns:hover {
+    opacity: 1.0;
+}
+
+.tnm-main-dropdown {
+    position: sticky;
+    top: 80px;
+    background-color: white;
+    z-index: 1;
+}
+
+.tnm-select {
+    border: 1px solid rgb(189, 183, 183);
+    border-radius: 5px;
+}
+
+.tnm-filter {
+    font-size: 12px;
+}
+
+.tnm-search-relative {
+    position: relative;
+}
+
+.tnm-search-icon {
+    position: absolute;
+    top: 7px;
+    left: 17px;
+    font-size: 15px;
+}
+
+.tnm-delete-icon {
+    position: absolute;
+    top: 5px;
+    right: 35px;
+}
+
+.tnm-hotel-details {
+    border-radius: 14px;
+    border: 1px solid rgb(187, 185, 185);
+    position: relative;
+}
+
+.tnm-hotel-details .tnm-hotel-image {
+    transform: scale(1);
+    height: 10em;
+    transition: 10s all ease-in-out;
+    border-right: none;
+    border-radius: 10px 0px 0px 10px;
+}
+
+.tnm-hotel-details .tnm-hotel-image:hover {
+    transform: scale(1.5);
+}
+
+.tnm-left-arrow {
+    position: absolute;
+    left: 10px;
+    top: 60px;
+    display: none;
+    color: white;
+}
+
+.tnm-left-arrow{
+    font-size: 25px;
+}
+
+.tnm-right-arrow {
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    display: none;
+    color: white;
+}
+
+.tnm-right-arrow{
+    font-size: 25px;
+}
+
+.tnm-bookmark {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+}
+
+.tnm-bookmark i {
+    font-size: 20px;
+}
+
+.tnm-hotel-details:hover .tnm-left-arrow {
+    display: inline;
+}
+
+.tnm-hotel-details:hover .tnm-right-arrow {
+    display: inline;
+}
+
+.tnm-hotel-amount {
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    position: absolute;
+    right: 10px;
+    bottom: 5px;
+    padding: 8px 15px;
+    font-weight: 700;
+}
+
+.tnm-font-weight {
+    color: black;
+    font: 100 12px/25px Roboto, Arial, sans-serif;
+    letter-spacing: 0.tnm-3px;
+}
+
+.tnm-hotel-details-map .tnm-ellipsis a {
+    text-decoration: none;
+}
+
+.tnm-hotel-details-map .tnm-font-weight a {
+    text-decoration: none;
+}
+
+.tnm-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+    color: black;
+}
+
+.tnm-location-details {
+    font-weight: bold;
+}
+
+.tnm-hotel-details:hover .tnm-ellipsis a {
+    text-decoration: underline;
+}
+
+.tnm-font-weight a:hover {
+    text-decoration: underline;
+}
+
+.tnm-font-weight a:hover .tnm-hotel-details .tnm-ellipsis a {
+    text-decoration: none;
+}
+
+.tnm-map-image {
+    cursor: grab;
+    position: sticky;
+    top: 60px;
+    width: 100%;
+    height: 36em;
+}
+
+.tnm-slide-header-position {
+    background-color: white;
+    position: sticky;
+    top: 0px;
+    z-index: 2;
+}
+
+.tnm-slide-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tnm-slide-header-content .tnm-slide-header-img-size {
+    width: 35px;
+    height: 35px;
+}
+
+.tnm-slide-header-content .tnm-header-font-size {
+    font-size: 12px;
+}
+
+.tnm-slide-header-content:hover {
+    background-color: rgb(231, 229, 229);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#carouselExampleControlsNoTouching .tnm-slide-button-left {
+    color: black !important;
+    left: -25px;
+    width: auto;
+}
+
+#carouselExampleControlsNoTouching .tnm-slide-button-right {
+    color: black !important;
+    right: -25px;
+    width: auto;
+}
+
+.tnm-header-flexContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+.tnm-header-flexContainer::-webkit-scrollbar {
+    width: 10px;
+}
+
+.tnm-header-flexContainer::-webkit-scrollbar-thumb {
+    width: 10px;
+    background-color: white;
+    border-radius: 30px;
+}
+
+.tnm-slide-header-mdDevice {
+    position: sticky;
+    background-color: white;
+    top: 0px;
+    z-index: 1;
+}
+
+
+.tnm-sidenav-img {
+    font-size: 20px;
+}
+
+.tnm-sidenav-img:hover {
+    background-color: rgb(235, 231, 231);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tnm-sidenav-img-hotels {
+    font-size: 20px;
+    color: blue;
+}
+
+.tnm-sidenav-img-hotels:hover {
+    background-color: rgb(213, 226, 231);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tnm-sidenav-content {
+    font-size: 12px;
+}
+
+.tnm-show {
+    display: block;
+}
+
+.tnm-hide {
+    display: none;
+}
+
+.tnm-sidenav {
+    width: 100px;
+    position: fixed;
+    left: 0px;
+    justify-content: center;
+    text-align: center;
+}
+
+.tnm-menuicon {
+    border-radius: 40px;
+    color: black;
+    font-size: 20px;
+    position: fixed;
+    z-index: 3;
+    left: 25px;
+    top: 6px;
+}
+
+.tnm-menuicon:hover {
+    background-color: rgb(235, 231, 231);
+    cursor: pointer;
+}
+
+.tnm-menuicon-nav {
+    height: 100%;
+    width: 280px;
+    position: fixed;
+    top: 75px;
+    z-index: 2;
+    background-color: white;
+}
+
+.tnm-menuicon-element {
+    font-size: 15px;
+}
+
+.tnm-menuicon-element:hover {
+    background-color: rgb(235, 231, 231);
+    border-radius: 0 50px 50px 0;
+    width: 250px;
+    cursor: pointer;
+}
+
+.tnm-menuicon-content {
+    margin-left: 20px;
+}
+
+.tnm-menuicon-hotelelement {
+    color: blue;
+    background-color: rgb(213, 226, 231);
+    width: 250px;
+    border-radius: 0 50px 50px 0;
+    font-size: 15px;
+}
+
+.tnm-menuiconposition {
+    position: fixed;
+    top: 0px !important;
+    left: 0px;
+}
+</style>

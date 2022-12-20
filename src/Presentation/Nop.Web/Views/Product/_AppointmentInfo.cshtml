@@ -21,8 +21,8 @@
 
     var noService = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).noService)?.DefaultValue;
     var futureAllowedDaysForBooking = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).futureAllowedDaysForBooking)?.DefaultValue;
-    var lunchTimeEnd = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).lunchTimeEnd)?.DefaultValue;
-    var lunchTimeStart = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).lunchTimeStart)?.DefaultValue;
+    @*var lunchTimeEnd = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).lunchTimeEnd)?.DefaultValue;*@
+    @*var lunchTimeStart = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).lunchTimeStart)?.DefaultValue;*@
     var shopClosingTime = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).shopClosingTime)?.DefaultValue;
     var shopOpeningTime = Model.VendorModel.VendorAttributes.First(x => x.Id == ((dynamic)configSettings).shopOpeningTime)?.DefaultValue;
     var appointmentType = Model.VendorModel.VendorAttributes?.First(x => x.Id == ((dynamic)configSettings).appointmentType)?.Values?.First(x => x.IsPreSelected)?.Id;
@@ -121,7 +121,7 @@
             var maxTime = convertTime12to24("@shopClosingTime");
 
             let currentAppointments = [
-                { start_time: convertTime12to24("@lunchTimeStart"), end_time: convertTime12to24("@lunchTimeEnd") }
+                @*{ start_time: convertTime12to24("@lunchTimeStart"), end_time: convertTime12to24("@lunchTimeEnd") }*@
             ];
 
             function addMinMax() {
