@@ -138,14 +138,14 @@ namespace Nop.Services.Orders
         /// A task that represents the asynchronous operation
         /// The task result contains the order
         /// </returns>
-        public virtual async Task<IList<string>> GetOrdersByVendorId(int vendorId)
+        public virtual async Task<IList<appointmentJson>> GetOrdersByVendorId(int vendorId, int availableSlots = 1)
         {
             var queryVendorOrderItems = await (from orderItem in _orderItemRepository.Table
                                             join p in _productRepository.Table on orderItem.ProductId equals p.Id
                                             where p.VendorId == vendorId
                                             select  orderItem.AttributesXml ).Distinct().ToListAsync();
             
-            var oldConditionValues = _productAttributeParser.ParseAppointmentSlot(queryVendorOrderItems,0);
+            var oldConditionValues =  _productAttributeParser.ParseAppointmentSlot(queryVendorOrderItems,0, availableSlots);
                 
             return oldConditionValues;
         }

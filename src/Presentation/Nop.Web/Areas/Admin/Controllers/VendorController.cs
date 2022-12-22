@@ -3,10 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Vendors;
+using Nop.Core.Infrastructure;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
@@ -44,6 +47,8 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IVendorAttributeService _vendorAttributeService;
         private readonly IVendorModelFactory _vendorModelFactory;
         private readonly IVendorService _vendorService;
+        private readonly IDownloadService _downloadService;
+        private readonly INopFileProvider _fileProvider;
 
         #endregion
 
@@ -63,6 +68,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             IVendorAttributeParser vendorAttributeParser,
             IVendorAttributeService vendorAttributeService,
             IVendorModelFactory vendorModelFactory,
+            IDownloadService downloadService,
+            INopFileProvider fileProvider,
             IVendorService vendorService)
         {
             _addressAttributeParser = addressAttributeParser;
@@ -80,6 +87,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             _vendorAttributeService = vendorAttributeService;
             _vendorModelFactory = vendorModelFactory;
             _vendorService = vendorService;
+            _downloadService = downloadService;
+            _fileProvider = fileProvider;
         }
 
         #endregion
@@ -141,6 +150,49 @@ namespace Nop.Web.Areas.Admin.Controllers
                 StringValues ctrlAttributes;
                 switch (attribute.AttributeControlType)
                 {
+
+                    case AttributeControlType.FileUpload:
+                        var httpPostedFile = Request.Form.Files[controlId];
+                        if (!string.IsNullOrEmpty(httpPostedFile?.FileName))
+                        {
+                            var fileSizeOk = true;
+                            //TODO: high
+                            //if (attribute.ValidationFileMaximumSize.HasValue)
+                            //{
+                            //    //compare in bytes
+                            //    var maxFileSizeBytes = attribute.ValidationFileMaximumSize.Value * 1024;
+                            //    if (httpPostedFile.Length > maxFileSizeBytes)
+                            //    {
+                            //        warnings.Add(string.Format(
+                            //            await _localizationService.GetResourceAsync("ShoppingCart.MaximumUploadedFileSize"),
+                            //            attribute.ValidationFileMaximumSize.Value));
+                            //        fileSizeOk = false;
+                            //    }
+                       // }
+
+                        if (fileSizeOk)
+                        {
+                            //save an uploaded file
+                            var download = new Download
+                            {
+                                DownloadGuid = Guid.NewGuid(),
+                                UseDownloadUrl = false,
+                                DownloadUrl = string.Empty,
+                                DownloadBinary = await _downloadService.GetDownloadBitsAsync(httpPostedFile),
+                                ContentType = httpPostedFile.ContentType,
+                                Filename = _fileProvider.GetFileNameWithoutExtension(httpPostedFile.FileName),
+                                Extension = _fileProvider.GetFileExtension(httpPostedFile.FileName),
+                                IsNew = true
+                            };
+                            await _downloadService.InsertDownloadAsync(download);
+
+                            //save attribute
+                            attributesXml = _vendorAttributeParser.AddVendorAttribute(attributesXml,
+                                attribute, download.DownloadGuid.ToString());
+                        }
+                }
+
+                break;
                     case AttributeControlType.DropdownList:
                     case AttributeControlType.RadioList:
                         ctrlAttributes = form[controlId];
@@ -185,6 +237,8 @@ namespace Nop.Web.Areas.Admin.Controllers
                     case AttributeControlType.MultiDatepickerCalendar:
                     case AttributeControlType.DatepickerCalendar:
                     case AttributeControlType.TimepickerCalendar:
+                    case AttributeControlType.CustomMultiParams:
+
                         ctrlAttributes = form[controlId];
                         if (!StringValues.IsNullOrEmpty(ctrlAttributes))
                         {
@@ -197,7 +251,6 @@ namespace Nop.Web.Areas.Admin.Controllers
                     case AttributeControlType.Datepicker:
                     case AttributeControlType.ColorSquares:
                     case AttributeControlType.ImageSquares:
-                    case AttributeControlType.FileUpload:
                     //not supported vendor attributes
                     default:
                         break;

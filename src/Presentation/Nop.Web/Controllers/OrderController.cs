@@ -76,9 +76,9 @@ namespace Nop.Web.Controllers
             return View(model);
         }
         [HttpGet]
-        public virtual async Task<IActionResult> GetOrdersByVendorId(int vendorId = 0)
+        public virtual async Task<IActionResult> GetOrdersByVendorId(int vendorId = 0, int availableSlots = 1)
         {
-            var order = await _orderService.GetOrdersByVendorId(vendorId);
+            var order = await _orderService.GetOrdersByVendorId(vendorId, availableSlots);
             return Json(order);
         }
         //My account / Orders / Cancel recurring order

@@ -443,13 +443,15 @@ namespace Nop.Services.Catalog
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="productAttributeMappingId">Product attribute mapping identifier</param>
         /// <returns>Product attribute values</returns>
-        public virtual List<string> ParseAppointmentSlot(List<string> attributesXml, int productAttributeMappingId)
+        public virtual IList<appointmentJson> ParseAppointmentSlot(List<string> attributesXml, int productAttributeMappingId,int availableSlots)
         {
             var appointmentTimeValues = new List<string>();
             var appointmentDurationValues = new List<string>();
-            var jsonList = new List<string>();
-            var jsonString=string.Empty;
+            var jsonList = new List<appointmentJson>();
+           // var jsonListFinal = new List<appointmentJson>();
 
+            var jsonString =string.Empty;
+            //TODO: should enable multislot - nagendra
             try
             {
             
@@ -494,26 +496,23 @@ namespace Nop.Services.Catalog
                     string startTime = appointmentTimeValues[0].Substring(0, appointmentTimeValues[0].IndexOf("-")).Trim();
                     var res = new appointmentJson
                     {
-                        
-                       start = startTime,
+                        start = startTime,
                         duration = appointmentDurationValues[0],
                         date = n
                     };
 
-                    jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(res);
-                    jsonList.Add(jsonString);
+                   // jsonString = res;
+                    //Newtonsoft.Json.JsonConvert.SerializeObject(res);
+                    jsonList.Add(res);// jsonString);
                 }
-                        
-                
-                
-                
+              //  jsonListFinal.AddRange(jsonList);
             }
             catch (Exception exc)
             {
                 Debug.Write(exc.ToString());
+                return null;
             }
-
-            return jsonList;
+            return jsonList;        
         }
 
        

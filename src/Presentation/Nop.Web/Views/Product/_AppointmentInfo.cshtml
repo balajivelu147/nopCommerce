@@ -135,6 +135,38 @@
                     currentAppointments.push(res);
                 });
 
+                $.ajax({
+                    cache: false,
+                    type: "GET",
+                    url: "@(Url.Action("GetOrdersByVendorId", "Order"))",
+                    data: {
+                        "vendorId": 5,
+                        "availableSlots": 1
+                    },
+                    success: function (data, textStatus, jqXHR) {
+
+                        if (data) {
+
+                            data.forEach(x=>{
+                               x.date = '12/22/2022'
+                                let start = convertTime12to24(x.start);
+                               let end = sumOFHours(start, convertMinToHour(x.duration));
+                            //  var eee = moment("11:00").duration("02:45").asMinutes() + 300;
+                             //  let end=   moment.duration(convertTime12to24(x.start)).add(x.duration, 'minutes');
+                             //   moment.duration("02:45").asMinutes() + 300;
+                             //  console.log(11,data);
+                              // console.log(22,end);
+                               @*let end= convertTime12to24(x.start)+convertHours(x.duration);*@
+                                currentAppointments.push({ start_time: start, end_time: end, dates: x.date, weekdays: "" });
+                            });
+                            singleSlotAddSameSlots();
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                    }
+                });
+
+
                 var minTime = convertTime12to24("@shopOpeningTime");
                 var maxTime = convertTime12to24("@shopClosingTime");
                 
@@ -165,74 +197,6 @@
                     $("#tabs").tabs();
                 }
 
-                @*//auto add next 10 days*@
-                function GetDates(startDate, daysToAdd = 15) {
-                    var aryDates = [];
-                    //daysToAdd = 1;
-                    for (var i = 0; i <= daysToAdd; i++) {
-                        var currentDate = new Date();
-                        currentDate.setDate(startDate.getDate() + i);
-                        aryDates.push({ date: new Date(currentDate).toLocaleString().split(',')[0],dateStr: DayAsString(currentDate.getDay()) + ", " + currentDate.getDate() + " " + MonthAsString(currentDate.getMonth()) + " " + currentDate.getFullYear()});
-                    }
-                    return aryDates;
-                }
-
-                function MonthAsString(monthIndex) {
-                    var d = new Date();
-                    var month = new Array();
-                    month[0] = "Jan";
-                    month[1] = "Feb";
-                    month[2] = "Mar";
-                    month[3] = "Apr";
-                    month[4] = "May";
-                    month[5] = "June";
-                    month[6] = "July";
-                    month[7] = "Aug";
-                    month[8] = "Sept";
-                    month[9] = "Oct";
-                    month[10] = "Nov";
-                    month[11] = "Dec";
-
-                    return month[monthIndex];
-                }
-
-                function DayAsString(dayIndex) {
-                    var WeekDayss = new Array(7);
-                    WeekDayss[0] = "Sun";
-                    WeekDayss[1] = "Mon";
-                    WeekDayss[2] = "Tue";
-                    WeekDayss[3] = "Wed";
-                    WeekDayss[4] = "Thu";
-                    WeekDayss[5] = "Fri";
-                    WeekDayss[6] = "Sat";
-
-                    return WeekDayss[dayIndex];
-                }
-
-                function showHideRadioQuantity(id) {
-                    $('input[name=' + id + ']:radio').each(function () {
-                        $('#' + $(this).attr('id') + '_qty_box').hide();
-                    });
-                    $('#' + id + '_' + $('input[name=' + id + ']:radio:checked').val() + '_qty_box').css('display', 'inline-block');
-                };
-
-                function parseTime(s) {
-                    var c = s.split(':');
-                    return parseInt(c[0]) * 60 + parseInt(c[1]);
-                }
-
-                function convertHours(mins) {
-                    var hour = Math.floor(mins / 60);
-                    var mins = mins % 60;
-                    var converted = pad(hour, 2) + ':' + pad(mins, 2);
-                    return converted;
-                }
-
-                function pad(str, max) {
-                    str = str.toString();
-                    return str.length < max ? pad("0" + str, max) : str;
-                }
-
                 function addMinMax(date) {
                     console.log("currentAppointments", currentAppointments);
                     
@@ -240,41 +204,60 @@
                             .filter(x=> x.dates.indexOf(date.date)!= -1
                         || x.weekdays.indexOf(date.dateStr?.split(",")[0]) != -1);
                   @*// if(_currentAppointments.length == 0 ) return _currentAppointments;*@
-                    _currentAppointments.unshift({ start_time: minTime, end_time: minTime, dates: "", weekdays: "" });
+                    let _minTime = date.date == new Date(Date.now()).toLocaleString().split(',')[0] ? `${new Date().getHours()}:${new Date().getMinutes()}` : minTime;
+                    _currentAppointments.unshift({ start_time: _minTime, end_time: _minTime, dates: "", weekdays: "" });
                     _currentAppointments.push({ start_time: maxTime, end_time: maxTime, dates: "", weekdays: "" });
-                    return _currentAppointments.sort((a, b) => parseTime(a.start_time) - parseTime(b.start_time));
+                    console.log("_currentAppointments", _currentAppointments)
+                    return _currentAppointments.filter(x=>parseTime(x.start_time) >= parseTime( _minTime))
+                                .sort((a, b) => parseTime(a.start_time) - parseTime(b.start_time));
                 }
 
-                for (let i = end_time - interval; i >= start_time; i = i - interval) {
-                    formatted_time = convertHours(i);
-                    if ((end_time - i) >= interval)
-                        time_slots.push(formatted_time);
-                }
-                for (let i = start_time; i <= end_time; i = i + interval) {
-                    formatted_time = convertHours(i);
-                    if ((end_time - i) >= interval)
-                        time_slots.push(formatted_time);
-                }
-               // return time_slots;
-            }
-
-            var minTime = convertTime12to24("@shopOpeningTime");
-            var maxTime = convertTime12to24("@shopClosingTime");
-
-            let currentAppointments = [
-                { start_time: convertTime12to24("@lunchTimeStart"), end_time: convertTime12to24("@lunchTimeEnd") }
-            ];
-
+            
+                function  singleSlotAddSameSlots(){
+                    let startDate = new Date();
+                    let aryDates = GetDates(startDate, @maxAllowedBookingDays);
+                    for (let i = 0; i < aryDates.length - 1; i++) {
+                        let wrapper2 = document.getElementById("tabs-" + i);
+                        wrapper2.classList = "option-list radio-list";
+                        let _currentAppointments = addMinMax(aryDates[i]);
+                        @*let appointmentDuration =  document.getElementById("appointmentDuration");*@
+                        var slots = available_times(_currentAppointments,@durationByVendor, aryDates[i], i);
+                        let customHolidays = "@customHolidays";
+                        @*let weekleaves = "@weekleaves";*@
+                        if (customHolidays.indexOf(aryDates[i].date) != -1
+                            @*|| weekleaves.indexOf(aryDates[i].dateStr?.split(",")[0]) != -1*@
+                            ) {
+                            wrapper2.parentNode.innerHTML = `<p>sorry, no service available on ${aryDates[i].dateStr}</p>`
+                        }
+                        else if(slots.innerHTML === ""){
+                            wrapper2.parentNode.innerHTML = `<p>sorry booking is over, no slots available on ${aryDates[i].dateStr}</p>`
+                        }else{
+                            wrapper2.appendChild(slots);//todo);
+                        }
+                    }
+                };
                 function available_times(_currentAppointments, interval, date, i = 0) {
                     let _time_slots = [];
+                    let maxEndTimeOfDay = 0;
                     for (let i = 0; i < _currentAppointments.length - 1; i++) {
                        
-                      @*  if (
-                           _currentAppointments[i].weekdays.indexOf(date.dateStr?.split(",")[0])== -1
-                           ) {*@
                             console.log("_currentAppointments[i]", _currentAppointments[i])
-                        _time_slots = [..._time_slots, ...calculate_time_slot(parseTime(_currentAppointments[i].end_time), parseTime(_currentAppointments[i + 1].start_time), interval)];
-                        @*}*@
+                            let endTime = parseTime(_currentAppointments[i].end_time);
+                            let startTime = parseTime(_currentAppointments[i + 1].start_time);
+                            //(critical)if there is a nested blocker time, we need to avoid that... 
+                            //ex 1 appt --> at 2 to 4pm, one more appointment in same slot (3 to 4.30 pm)
+                            //complexity is more, if doubts reachout to balaji directly
+                            if(startTime >= maxEndTimeOfDay){
+                                _time_slots = [..._time_slots, ...calculate_time_slot(endTime, startTime, interval)];
+                            }else if(maxEndTimeOfDay < endTime){
+                                // if start time is less, but endtime is high
+                                //endTime = maxEndTimeOfDay;
+                                endTime = endTime < maxEndTimeOfDay ? maxEndTimeOfDay : endTime;
+                                 _time_slots = [..._time_slots, ...calculate_time_slot(endTime, startTime, interval)];
+                            }else {
+                            console.log(_currentAppointments[i]);
+                            }
+                            maxEndTimeOfDay = endTime < maxEndTimeOfDay ? maxEndTimeOfDay : endTime;
                     }
                     let timeSlots = [...new Set(_time_slots.sort((a, b) => parseTime(a) - parseTime(b)))];
                     let wrapper = document.createElement('div');
@@ -301,9 +284,9 @@
                         wrapper.appendChild(li);
                         // singleSlotAddSameSlots(li);
                     });
-                    if(timeSlots.length == 0){
+                 @*   if(timeSlots.length == 0){
                             
-                    }
+                    }*@
                     return wrapper;
                 }
 
@@ -312,11 +295,11 @@
                     let i, formatted_time;
                     let time_slots = [];
 
-                 @*   for (let i = end_time - interval; i >= start_time; i = i - interval) {
+                 for (let i = end_time - interval; i >= start_time; i = i - interval) {
                         formatted_time = convertHours(i);
                         if ((end_time - i) >= interval)
                             time_slots.push(formatted_time);
-                    }*@
+                    }
                     for (let i = start_time; i <= end_time; i = i + interval) {
                         formatted_time = convertHours(i);
                         if ((end_time - i) >= interval)
@@ -324,34 +307,149 @@
                     }
                      return time_slots;
                 }
-
-                function convertTime24to12(time) {
-                    // Check correct time format and split into components
-                    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-
-                    if (time.length > 1) { // If time format correct
-                        time = time.slice(1);  // Remove full string match value
-                        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
-                        time[0] = +time[0] % 12 || 12; // Adjust hours
+            @*//auto add next 10 days*@
+                function GetDates(startDate, daysToAdd = 15) {
+                    var aryDates = [];
+                    //daysToAdd = 1;
+                    for (var i = 0; i <= daysToAdd; i++) {
+                        var currentDate = new Date();
+                        currentDate.setDate(startDate.getDate() + i);
+                        aryDates.push({ date: new Date(currentDate).toLocaleString().split(',')[0], dateStr: DayAsString(currentDate.getDay()) + ", " + currentDate.getDate() + " " + MonthAsString(currentDate.getMonth()) + " " + currentDate.getFullYear() });
                     }
-                    return time.join(''); // return adjusted time or original string
+                    return aryDates;
                 }
 
-                convertTime24to12('18:00:00');
-
-                function convertTime12to24(time12h) {
-                    const [time, modifier] = time12h.split(' ');
-                    let [hours, minutes] = time.split(':');
-
-                    if (hours === '12') {
-                        hours = '00';
-                    }
-                    if (modifier === 'PM') {
-                        hours = parseInt(hours, 10) + 12;
-                    }
-                    return `${hours}:${minutes}`;
-                }
             });
+
+            //utility functions starts
+            function MonthAsString(monthIndex) {
+                var d = new Date();
+                var month = new Array();
+                month[0] = "Jan";
+                month[1] = "Feb";
+                month[2] = "Mar";
+                month[3] = "Apr";
+                month[4] = "May";
+                month[5] = "June";
+                month[6] = "July";
+                month[7] = "Aug";
+                month[8] = "Sept";
+                month[9] = "Oct";
+                month[10] = "Nov";
+                month[11] = "Dec";
+
+                return month[monthIndex];
+            }
+
+            function DayAsString(dayIndex) {
+                var WeekDayss = new Array(7);
+                WeekDayss[0] = "Sun";
+                WeekDayss[1] = "Mon";
+                WeekDayss[2] = "Tue";
+                WeekDayss[3] = "Wed";
+                WeekDayss[4] = "Thu";
+                WeekDayss[5] = "Fri";
+                WeekDayss[6] = "Sat";
+
+                return WeekDayss[dayIndex];
+            }
+
+            function showHideRadioQuantity(id) {
+                $('input[name=' + id + ']:radio').each(function () {
+                    $('#' + $(this).attr('id') + '_qty_box').hide();
+                });
+                $('#' + id + '_' + $('input[name=' + id + ']:radio:checked').val() + '_qty_box').css('display', 'inline-block');
+            };
+
+            function parseTime(s) {
+                var c = s.split(':');
+                return parseInt(c[0]) * 60 + parseInt(c[1]);
+            }
+
+            function convertHours(mins) {
+                var hour = Math.floor(mins / 60);
+                var mins = mins % 60;
+                var converted = pad(hour, 2) + ':' + pad(mins, 2);
+                return converted;
+            }
+
+            function pad(str, max) {
+                str = str.toString();
+                return str.length < max ? pad("0" + str, max) : str;
+            }
+
+            function convertTime24to12(time) {
+                // Check correct time format and split into components
+                time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+                if (time.length > 1) { // If time format correct
+                    time = time.slice(1);  // Remove full string match value
+                    time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+                    time[0] = +time[0] % 12 || 12; // Adjust hours
+                }
+                return time.join(''); // return adjusted time or original string
+            }
+
+            function convertTime12to24(time12h) {
+                const [time, modifier] = time12h.split(' ');
+                let [hours, minutes] = time.split(':');
+                if (hours === '12') {
+                    hours = '00';
+                }
+                if (modifier === 'PM') {
+                    hours = parseInt(hours, 10) + 12;
+                }
+                return `${hours}:${minutes}`;
+            }
+
+            function formatAMPM(date) {
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                minutes = minutes < 10 ? '0'+minutes : minutes;
+                let strTime = hours + ':' + minutes + ' ' + ampm;
+                return strTime;
+            }
+
+        @*    function convertHourToMin(timeInHour){
+                var timeParts = timeInHour.split(":");
+                return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+            }*@
+
+             function convertMinToHour(minutes) {
+                var h = Math.floor(minutes / 60);
+                var m = minutes % 60;
+                h = h < 10 ? '0' + h : h; 
+                m = m < 10 ? '0' + m : m; 
+                return h + ':' + m;
+            }
+            //not working fine if its crosses 24 hours
+            function sumOFHours(t1,t2){
+                var time1 = t1.split(':');
+                var time2 = t2.split(':');
+    
+                let secondSum = Number(time1[1]) + Number(time2[1]);
+                let minSum = Number(time1[0]) + Number(time2[0]);
+    
+                if(secondSum > 59){
+                  secondSum = Math.abs(60 - secondSum);
+                  minSum += 1;
+                }
+    
+                if(secondSum < 10){
+                  secondSum = `0${secondSum}`;
+                }
+    
+                if(minSum < 10){
+                  minSum = `0${minSum}`;
+                }
+    
+                return `${minSum}:${secondSum}`;   
+            }
+
+            //utility functions ends
         </script>
     }
     else if (@appointmentType == @valueMultiSlot)

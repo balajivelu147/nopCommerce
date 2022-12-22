@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Orders;
+using Nop.Services.Catalog;
 
 namespace Nop.Services.Orders
 {
@@ -23,7 +24,9 @@ namespace Nop.Services.Orders
         /// The task result contains the order
         /// </returns>
         Task<Order> GetOrderByIdAsync(int orderId);
-        Task<IList<string>> GetOrdersByVendorId(int vendorId);
+
+        Task<IList<appointmentJson>> GetOrdersByVendorId(int vendorId, int availableSlots = 1);
+        //Task<IList<string>> GetOrdersByVendorId(int vendorId);
         /// <summary>
         /// Gets an order
         /// </summary>
@@ -168,6 +171,7 @@ namespace Nop.Services.Orders
         /// The task result contains a value indicating whether an order has items to deliver
         /// </returns>
         Task<bool> HasItemsToDeliverAsync(Order order);
+
 
         #endregion
 

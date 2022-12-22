@@ -777,7 +777,7 @@ namespace Nop.Web.Controllers
             var quantity = _productAttributeParser.ParseEnteredQuantity(product, form);
 
             //product and gift card attributes
-              var attributes = await _productAttributeParser.ParseProductAttributesAsync(product, form, addToCartWarnings);
+                var attributes = await _productAttributeParser.ParseProductAttributesAsync(product, form, addToCartWarnings);
 
             //rental attributes
             _productAttributeParser.ParseRentalDates(product, form, out var rentalStartDate, out var rentalEndDate);

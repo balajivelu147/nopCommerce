@@ -198,8 +198,6 @@
                 }
                 break;
 
-
-
             case AttributeControlType.Datepicker:
             case AttributeControlType.ColorSquares:
             case AttributeControlType.ImageSquares:
@@ -361,7 +359,7 @@
                             </table>
                         </div>
                         @*//TODO: btn not required, should be removed along with scripts and styles*@
-                        <button id="export-btn" type="button" class="btn btn-primary">Export Data</button>
+                        <button id="export-btn" type="button" class="btn btn-primary">Validate and accept Timings</button>
                         @*<p id="export"></p>*@
                     </div>
                     <script>
@@ -393,14 +391,8 @@
                         $(this).find('.datepicker').focus();
                         });
                         });
-                        data = [
-                                {
-                                day: 'Mon',
-                                amstart: "11:30",
-                                amend: "12:30",
-                                dates: "12/20/2022,12/21/2022,11/28/2022"
-                                }
-                            ];
+                       let crrr = JSON.parse(document.getElementById("@(controlId)").textContent);
+                        data = [...crrr];
        
                                 drawTable(data);
                         function drawTable(data) {
@@ -416,11 +408,11 @@
  
 
 
-                        row.append($('<td contenteditable="true" class="time" ><input type="text" class="datepicker" value="'+rowData.amstart+'" type="text" /></td>'));
-                        row.append($('<td contenteditable="true" class="time"><input type="text" class="datepicker" value="'+rowData.amend+'" type="text" /></td>'));
-                       
-                        row.append($('<td contenteditable="true"><select name="daySelected" class="form-control"  id='+rowData.day+'>                              <option value="Mon">Monday</option>                <option value="Tue">Tuesday</option>                <option value="Wednesday">Wednesday</option>                <option value="Thu">Thursday</option>                <option value="Fri">Friday</option>                <option value="Sat">Saturday</option>                <option value="Sun">Sunday</option>            </select></td>')); 
-                        $("#"+rowData.day).val(rowData.day);  
+                        row.append($('<td contenteditable="true" class="time" ><input type="text" class="datepicker" value="'+rowData.start+'" type="text" /></td>'));
+                        row.append($('<td contenteditable="true" class="time"><input type="text" class="datepicker" value="'+rowData.end+'" type="text" /></td>'));
+
+                            row.append($('<td contenteditable="true"><select name="daySelected" class="form-control"  id=' + rowData.weekdays + '>       <option value="pick">Pick a day</option>                       <option value="Mon">Monday</option>                <option value="Tue">Tuesday</option>                <option value="Wednesday">Wednesday</option>                <option value="Thu">Thursday</option>                <option value="Fri">Friday</option>                <option value="Sat">Saturday</option>                <option value="Sun">Sunday</option>            </select></td>'));
+                            $("#"+rowData.weekdays).val(rowData.weekdays);  
                         row.append($('<td contenteditable="true" class="date"><input type="text" class="multidatepicker " value= "'+rowData.dates+'" type="text"></td>'));
                        
                         
@@ -440,11 +432,17 @@
                         });
 
                         $TABLE.find('table').append($clone).find("input.datepicker").addClass('datepicker');
+
+                        var minDate = new Date();
+                        minDate.setMinutes(minDate.getMinutes() + 20);
+
+  
                         $(".datepicker").bootstrapMaterialDatePicker({
                                 format: 'hh:mm A',
                                 shortTime: true,
                                 date: false,
                                 time: true,
+                                minDate: minDate,  
                                 monthPicker: false,
                                 year: true,
                                 clearButton: false,
@@ -477,6 +475,7 @@
                         jQuery.fn.shift = [].shift;
 
                         $BTN.click(function () {
+                        removeElementsByClass("table-error")
                         var $rows = $TABLE.find('tr:not(:hidden)');
                         var $tds = $TABLE.find('td:not(:hidden)');
                         var headers = [];
@@ -489,29 +488,58 @@
                         });
   
                         // Turn all existing rows into a loopable array
-
                         $rows.each(function () {
                         var $td = $(this).find('td');
                         var $td2 = $td.find('input'); 
                         var $td3 = $td.find('select');
-                        var h2 = {};  
+                        var h2 = {};
+  
                         // Use the headers from earlier to name our hash keys
                         headers.forEach(function (header, i) {
                             h2[header] = $td.eq(i).find('input,select').val() || $td.eq(i).text();
                             console.log(h2[header]);
-
                         }); 
+                        if(  convertTime12toHrs(h2.start) >  convertTime12toHrs(h2.end) ){
+                            let errorText = `<p class="table-error" style="color: red"><b>.</b> start time[${h2.start}]  should be smaller then end time[${h2.end}]↓</p>`;
+                                document.getElementsByTagName('table')[0].insertAdjacentHTML("beforebegin",errorText);
+                            return;
+                        }
                         //check if the day exists in json here
                         data.push(h2);
                         });
+                        if(document.getElementsByClassName("table-error").length == 0){
                             document.getElementById("@(controlId)").textContent = (JSON.stringify(data));
-                        // Output the result
-                      //  $EXPORT.value = (JSON.stringify(data));
+                        }
                         });
+
+                        function removeElementsByClass(className){
+                            const elements = document.getElementsByClassName(className);
+                            while(elements.length > 0){
+                                elements[0].parentNode.removeChild(elements[0]);
+                            }
+                        }
+
+                        function convertTime12toHrs(time12h) {
+                            const [time, modifier] = time12h.split(' ');
+                            let [hours, minutes] = time.split(':');
+                            if (hours === '12') {
+                                hours = '00';
+                            }
+                            if (modifier === 'PM') {
+                                hours = parseInt(hours, 10) + 12;
+                            }
+                            return `${hours}${minutes}`;
+                        }
+                        //this will throw error, wcch will allow you to access script, while pushing remove it
+                        debuggerEnabler();
                     </script>
                     //TODO: styles - entire style is taken from https://codepen.io/caim/pen/pggZOx
                     //this can be cleaned up, based on your interest
-                 
+                 <style>
+                     .hide{
+                        display:none;
+                     }
+                 </style>
                 
                 }
                 break;
