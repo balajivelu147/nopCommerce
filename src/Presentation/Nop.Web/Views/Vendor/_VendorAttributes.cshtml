@@ -279,6 +279,13 @@
                                     $("#@(controlId + "downloadurl")").html("<a href='" + responseJSON.downloadUrl + "'>@T("Common.FileUploader.DownloadUploadedFile")</a>");
                                     $("#@(controlId + "remove")").show();
                                 }
+                              @*  if (responseJSON.message) {
+                                    alert(responseJSON.message);
+                                }*@
+                                if (responseJSON.message) {
+                                    $('#uploadFileProductAttributeFailed-info').text((responseJSON.message).Text.replace(/<[^>]+>/g, ''));
+                                    $("#uploadFileProductAttributeFailed").click();
+                                }
                             });
 
                             $("#@(controlId + "remove")").on('click', function (e) {

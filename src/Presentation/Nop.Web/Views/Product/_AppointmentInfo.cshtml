@@ -159,7 +159,7 @@
                                @*let end= convertTime12to24(x.start)+convertHours(x.duration);*@
                                 currentAppointments.push({ start_time: start, end_time: end, dates: x.date, weekdays: "" });
                             });
-                            singleSlotAddSameSlots();
+                            addSameSlots();
                         }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
@@ -213,7 +213,7 @@
                 }
 
             
-                function  singleSlotAddSameSlots(){
+                function  addSameSlots(){
                     let startDate = new Date();
                     let aryDates = GetDates(startDate, @maxAllowedBookingDays);
                     for (let i = 0; i < aryDates.length - 1; i++) {
@@ -282,7 +282,7 @@
                         li.appendChild(label);
                                
                         wrapper.appendChild(li);
-                        // singleSlotAddSameSlots(li);
+                        // addSameSlots(li);
                     });
                  @*   if(timeSlots.length == 0){
                             

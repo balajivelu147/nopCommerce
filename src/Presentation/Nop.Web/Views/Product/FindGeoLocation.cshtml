@@ -48,23 +48,96 @@
 
 @*//TODO: replace will remove history, so we need to use "href" or other alternatives*@
     <button type="submit" id="clickcc" class="button-1 login-button" onclick="window.location.replace('@Context.Request.Query["returnUrl"]')" style="display:none">continue</button>
+@*//TODO: style this p tag*@
+<p>Fetching your location, please approve "location sharing" to provide more accurate solution</p>
+<script async>
 
-<p> get location, please approve the the location to provide you more accurate solution</p>
-<script>
-    $.ajax({
-        cache: false,
-        type: "GET",
-        url: "@(Url.Action("LatLong2", "Product"))",
-        data: {
-            "latitude": 11,
-            "longitude": 11,
-            "accuracy": 23
-        },
-        success: function (data, textStatus, jqXHR) {
-            document.getElementById("clickcc").click();
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            document.getElementById("clickcc").click();
+    getUserLocation();
+    /*Location functions here*/
+    function getUserLocation() {
+        //check if the geolocation object is supported, if so get position
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(displayLocation, displayError);
+        } else {
+            //if (currentUserLat != sessionStorage.getItem("geo-latitude")) {
+              
+            //}
+            //  document.getElementById("map").innerHTML = "Sorry - your browser doesn't support geolocation!";
         }
-    });
+    };
+
+    ////TODO: cleanup required
+    var currentUserLat = "";
+    var currentUserLong = "";
+    function displayLocation(position) {
+        var displayText = "User latitude is " + position.coords.latitude + " and longitude is " + position.coords.longitude;
+        currentUserLat = position.coords.latitude;
+        currentUserLong = position.coords.longitude;
+        if (currentUserLat != sessionStorage.getItem("geo-latitude")) {
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@(Url.Action("LatLong2", "Product"))",
+                data: {
+                    "latitude": currentUserLat,
+                    "longitude": currentUserLong,
+                    "accuracy": position.coords.accuracy//position.coords.accuracy,
+                },
+                success: function (data, textStatus, jqXHR) {
+                    document.getElementById("clickcc").click();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                        document.getElementById("clickcc").click();
+                }
+            });
+        }
+    };
+
+    function displayError(error) {
+            if(error.code){
+                $.ajax({
+                    cache: false,
+                    type: "GET",
+                    url: "@(Url.Action("LatLong2", "Product"))",
+                    data: {
+                        "latitude": 0,
+                        "longitude": 0,
+                        "accuracy": 0//position.coords.accuracy,
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        document.getElementById("clickcc").click();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        document.getElementById("clickcc").click();
+
+                        // $("#getOptionsByAttributeIdAlert").click();
+                    }
+                });
+            }
+
+       // get a reference to the HTML element for writing result
+       // var locationElement = document.getElementById("map");
+
+        //find out which error we have, output message accordingly
+        //switch (error.code) {
+        //    case error.PERMISSION_DENIED:
+        //       {
+        //           locationElement.innerHTML = "Permission was denied";
+          
+        //       }
+        //        break;
+        //    case error.POSITION_UNAVAILABLE:
+        //        locationElement.innerHTML = "Location data not available";
+        //        break;
+        //    case error.TIMEOUT:
+        //        locationElement.innerHTML = "Location request timeout";
+        //        break;
+        //    case error.UNKNOWN_ERROR:
+        //        locationElement.innerHTML = "An unspecified error occurred";
+        //        break;
+        //    default:
+        //        locationElement.innerHTML = "Who knows what happened...";
+        //        break;
+        //}
+    }
 </script>

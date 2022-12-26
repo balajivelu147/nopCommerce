@@ -174,7 +174,9 @@ namespace Nop.Web.Controllers
                         }
                         break;
                     case AttributeControlType.FileUpload:
+                        //var httpPostedFile2 = _httpContextAccessor.HttpContext.Request.Form.Files;
                         var httpPostedFile = Request.Form.Files[controlId];
+                        //TODO: saves without filename, should be fixed
                         if (!string.IsNullOrEmpty(httpPostedFile?.FileName))
                         {
                             var fileSizeOk = true;
@@ -192,27 +194,65 @@ namespace Nop.Web.Controllers
                             //    }
                             //}
 
-                            if (fileSizeOk)
-                            {
-                                //save an uploaded file
-                                var download = new Download
-                                {
-                                    DownloadGuid = Guid.NewGuid(),
-                                    UseDownloadUrl = false,
-                                    DownloadUrl = string.Empty,
-                                    DownloadBinary = await _downloadService.GetDownloadBitsAsync(httpPostedFile),
-                                    ContentType = httpPostedFile.ContentType,
-                                    Filename = _fileProvider.GetFileNameWithoutExtension(httpPostedFile.FileName),
-                                    Extension = _fileProvider.GetFileExtension(httpPostedFile.FileName),
-                                    IsNew = true
-                                };
-                                await _downloadService.InsertDownloadAsync(download);
+                            //if (fileSizeOk)
+                            //{
+                            //    //save an uploaded file
+                            //    var download = new Download
+                            //    {
+                            //        DownloadGuid = Guid.NewGuid(),
+                            //        UseDownloadUrl = false,
+                            //        DownloadUrl = string.Empty,
+                            //        DownloadBinary = await _downloadService.GetDownloadBitsAsync(httpPostedFile),
+                            //        ContentType = httpPostedFile.ContentType,
+                            //        Filename = _fileProvider.GetFileNameWithoutExtension(httpPostedFile?.FileName),
+                            //        Extension = _fileProvider.GetFileExtension(httpPostedFile?.FileName),
+                            //        IsNew = true
+                            //    };
+                            //    await _downloadService.InsertDownloadAsync(download);
 
-                                //save attribute
-                                attributesXml = _vendorAttributeParser.AddVendorAttribute(attributesXml,
-                                                     attribute, download.DownloadGuid.ToString());
-                            }
+                            //    //save attribute
+                            //    attributesXml = _vendorAttributeParser.AddVendorAttribute(attributesXml,
+                            //                         attribute, download.DownloadGuid.ToString());
+                            //}
+                            //special case
+                            //if (!string.IsNullOrEmpty(attributesXml))
+                            //{
+                            //var downloadGuidStr = _vendorAttributeParser.ParseValues(attributesXml, attribute.Id).FirstOrDefault();
+                            //_ = Guid.TryParse(downloadGuidStr, out var downloadGuid);
+                            //var download2 = await _downloadService.GetDownloadByGuidAsync(downloadGuid);
+                            //if (download != null)
+                            //    attributeModel.DefaultValue = download.DownloadGuid.ToString();
+                            //}
+
+                            //special case
+                            //_ = Guid.TryParse(form[controlId], out var downloadGuid);
+                            //var download2 = await _downloadService.GetDownloadByGuidAsync(downloadGuid);
+                            //if (download2 != null)
+                            //{
+                            //    attributesXml = _vendorAttributeParser.AddVendorAttribute(attributesXml,
+                            //               attribute, download2.DownloadGuid.ToString());
+                            //}
                         }
+
+                        //var qqFileNameParameter = "qqfilename";
+                        //var fileName = httpPostedFile?.FileName;
+                        //if (string.IsNullOrEmpty(fileName) && Request.Form.ContainsKey(qqFileNameParameter))
+                        //    fileName = Request.Form[qqFileNameParameter].ToString();
+                        //remove path (passed in IE)
+                        //fileName = _fileProvider.GetFileName(fileName);
+
+                        //var contentType = httpPostedFile?.ContentType;
+
+                        //var fileExtension = _fileProvider.GetFileExtension(fileName);
+                        //if (!string.IsNullOrEmpty(fileExtension))
+                         //   fileExtension = fileExtension.ToLowerInvariant();
+
+                        _ = Guid.TryParse(form[controlId], out var downloadGuid);
+                        var download = await _downloadService.GetDownloadByGuidAsync(downloadGuid);
+                        if (download != null)
+                            attributesXml = _vendorAttributeParser.AddVendorAttribute(attributesXml,
+                                attribute, download.DownloadGuid.ToString());
+
 
                         break;
                     case AttributeControlType.Datepicker:
@@ -288,7 +328,6 @@ namespace Nop.Web.Controllers
                     ModelState.AddModelError("", await _localizationService.GetResourceAsync("Vendors.ApplyAccount.Picture.ErrorMessage"));
                 }
             }
-
             //vendor attributes
             var vendorAttributesXml = await ParseVendorAttributesAsync(form);
             (await _vendorAttributeParser.GetAttributeWarningsAsync(vendorAttributesXml)).ToList()
@@ -402,7 +441,7 @@ namespace Nop.Web.Controllers
             }
 
             var prevPicture = await _pictureService.GetPictureByIdAsync(vendor.PictureId);
-
+           
             //vendor attributes
             var vendorAttributesXml = await ParseVendorAttributesAsync(form);
             (await _vendorAttributeParser.GetAttributeWarningsAsync(vendorAttributesXml)).ToList()
@@ -498,7 +537,6 @@ namespace Nop.Web.Controllers
             }
 
             var prevPicture = await _pictureService.GetPictureByIdAsync(vendor.PictureId);
-
             //vendor attributes
             var vendorAttributesXml = await ParseVendorAttributesAsync(form);
             (await _vendorAttributeParser.GetAttributeWarningsAsync(vendorAttributesXml)).ToList()
