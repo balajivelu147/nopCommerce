@@ -1,4 +1,6 @@
-﻿namespace Nop.Core.Domain.Messages
+﻿using System;
+
+namespace Nop.Core.Domain.Messages
 {
     /// <summary>
     /// Represents an email account
@@ -44,5 +46,28 @@
         /// Gets or sets a value that controls whether the default system credentials of the application are sent with requests.
         /// </summary>
         public bool UseDefaultCredentials { get; set; }
+    }
+
+    /// <summary>
+    /// Represents an calendar email
+    /// </summary>
+    public partial class CalendarEmail : BaseEntity
+    {
+        /// <summary>
+        /// Gets or sets an email address
+        /// </summary>
+        public DateTime StartTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets an email display name
+        /// </summary>
+        public DateTime EndTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets an email host
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        public int Duration { get; set; }
     }
 }

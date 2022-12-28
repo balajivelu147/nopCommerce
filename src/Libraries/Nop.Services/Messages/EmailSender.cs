@@ -132,7 +132,7 @@ namespace Nop.Services.Messages
         /// <param name="attachedDownloadId">Attachment download ID (another attachment)</param>
         /// <param name="headers">Headers</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task SendEmailAsync(EmailAccount emailAccount, string subject, string body,
+        public virtual async Task SendCalendarEmailAsync(EmailAccount emailAccount, string subject, string body,
             string fromAddress, string fromName, string toAddress, string toName,
             string replyTo = null, string replyToName = null,
             IEnumerable<string> bcc = null, IEnumerable<string> cc = null,
@@ -173,9 +173,9 @@ namespace Nop.Services.Messages
                 str.AppendLine("VERSION:2.0");
                 str.AppendLine("METHOD:REQUEST");
                 str.AppendLine("BEGIN:VEVENT");
-                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", DateTime.Now.AddMinutes(+330)));
+                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", DateTime.Now.AddMinutes(+1330)));
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
-                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", DateTime.Now.AddMinutes(+660)));
+                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", DateTime.Now.AddMinutes(+1660)));
                 //str.AppendLine("LOCATION: " + this.Location);
                 str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
                 str.AppendLine(string.Format("DESCRIPTION:{0}", objMailMsg.Body));
@@ -193,12 +193,7 @@ namespace Nop.Services.Messages
                 str.AppendLine("END:VEVENT");
                 str.AppendLine("END:VCALENDAR");
 
-                //Now sending a mail with attachment ICS file.                     
-                System.Net.Mail.SmtpClient smtpclient = new System.Net.Mail.SmtpClient();
-              //  smtpclient.Host = "localhost"; //-------this has to given the Mailserver IP
-
-                smtpclient.Credentials = System.Net.CredentialCache.DefaultNetworkCredentials;
-
+              
                 System.Net.Mime.ContentType contype = new System.Net.Mime.ContentType("text/calendar");
                 contype.Parameters.Add("method", "REQUEST");
                 contype.Parameters.Add("name", "Meeting.ics");
@@ -245,36 +240,131 @@ namespace Nop.Services.Messages
                     {
                         message.Headers.Add(header.Key, header.Value);
                     }
-
-                var multipart = new Multipart("mixed")
-            {
-                new TextPart(TextFormat.Html) { Text = body }
-            };
+                //TODO: if there is an attachment, it will not be binded, for now out of scope
+                //    var multipart = new Multipart("mixed")
+                //{
+                //    new TextPart(TextFormat.Html) { Text = body }
+                //};
 
                 //create the file attachment for this e-mail message
-                if (!string.IsNullOrEmpty(attachmentFilePath) && _fileProvider.FileExists(attachmentFilePath))
-                {
-                    multipart.Add(await CreateMimeAttachmentAsync(attachmentFilePath, attachmentFileName));
-                }
+                //if (!string.IsNullOrEmpty(attachmentFilePath) && _fileProvider.FileExists(attachmentFilePath))
+                //{
+                //    multipart.Add(await CreateMimeAttachmentAsync(attachmentFilePath, attachmentFileName));
+                //}
 
-                //another attachment?
-                if (attachedDownloadId > 0)
-                {
-                    var download = await _downloadService.GetDownloadByIdAsync(attachedDownloadId);
-                    //we do not support URLs as attachments
-                    if (!download?.UseDownloadUrl ?? false)
-                    {
-                        multipart.Add(CreateMimeAttachment(download));
-                    }
-                }
+                ////another attachment?
+                //if (attachedDownloadId > 0)
+                //{
+                //    var download = await _downloadService.GetDownloadByIdAsync(attachedDownloadId);
+                //    //we do not support URLs as attachments
+                //    if (!download?.UseDownloadUrl ?? false)
+                //    {
+                //        multipart.Add(CreateMimeAttachment(download));
+                //    }
+                //}
 
-                message.Body = multipart;
+               // message.Body = multipart;
 
                 //send email
                 using var smtpClient = await _smtpBuilder.BuildAsync(emailAccount);
                 await smtpClient.SendAsync(message);
                 await smtpClient.DisconnectAsync(true);
             }
+        }
+
+
+        /// <summary>
+        /// Sends an email
+        /// </summary>
+        /// <param name="emailAccount">Email account to use</param>
+        /// <param name="subject">Subject</param>
+        /// <param name="body">Body</param>
+        /// <param name="fromAddress">From address</param>
+        /// <param name="fromName">From display name</param>
+        /// <param name="toAddress">To address</param>
+        /// <param name="toName">To display name</param>
+        /// <param name="replyTo">ReplyTo address</param>
+        /// <param name="replyToName">ReplyTo display name</param>
+        /// <param name="bcc">BCC addresses list</param>
+        /// <param name="cc">CC addresses list</param>
+        /// <param name="attachmentFilePath">Attachment file path</param>
+        /// <param name="attachmentFileName">Attachment file name. If specified, then this file name will be sent to a recipient. Otherwise, "AttachmentFilePath" name will be used.</param>
+        /// <param name="attachedDownloadId">Attachment download ID (another attachment)</param>
+        /// <param name="headers">Headers</param>
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public virtual async Task SendEmailAsync( EmailAccount emailAccount, string subject, string body,
+            string fromAddress, string fromName, string toAddress, string toName,
+            string replyTo = null, string replyToName = null,
+            IEnumerable<string> bcc = null, IEnumerable<string> cc = null,
+            string attachmentFilePath = null, string attachmentFileName = null,
+            int attachedDownloadId = 0, IDictionary<string, string> headers = null)
+        {
+            var message = new MimeMessage();
+
+            message.From.Add(new MailboxAddress(fromName, fromAddress));
+            message.To.Add(new MailboxAddress(toName, toAddress));
+
+            if (!string.IsNullOrEmpty(replyTo))
+            {
+                message.ReplyTo.Add(new MailboxAddress(replyToName, replyTo));
+            }
+
+            //BCC
+            if (bcc != null)
+            {
+                foreach (var address in bcc.Where(bccValue => !string.IsNullOrWhiteSpace(bccValue)))
+                {
+                    message.Bcc.Add(new MailboxAddress("", address.Trim()));
+                }
+            }
+
+            //CC
+            if (cc != null)
+            {
+                foreach (var address in cc.Where(ccValue => !string.IsNullOrWhiteSpace(ccValue)))
+                {
+                    message.Cc.Add(new MailboxAddress("", address.Trim()));
+                }
+            }
+
+            //content
+            message.Subject = subject;
+
+            //headers
+            if (headers != null)
+                foreach (var header in headers)
+                {
+                    message.Headers.Add(header.Key, header.Value);
+                }
+
+            var multipart = new Multipart("mixed")
+            {
+                new TextPart(TextFormat.Html) { Text = body }
+            };
+
+            //create the file attachment for this e-mail message
+            if (!string.IsNullOrEmpty(attachmentFilePath) && _fileProvider.FileExists(attachmentFilePath))
+            {
+                multipart.Add(await CreateMimeAttachmentAsync(attachmentFilePath, attachmentFileName));
+            }
+
+            //another attachment?
+            if (attachedDownloadId > 0)
+            {
+                var download = await _downloadService.GetDownloadByIdAsync(attachedDownloadId);
+                //we do not support URLs as attachments
+                if (!download?.UseDownloadUrl ?? false)
+                {
+                    multipart.Add(CreateMimeAttachment(download));
+                }
+            }
+
+            message.Body = multipart;
+
+            //send email
+            using var smtpClient = await _smtpBuilder.BuildAsync(emailAccount);
+            await smtpClient.SendAsync(message);
+            await smtpClient.DisconnectAsync(true);
         }
 
 

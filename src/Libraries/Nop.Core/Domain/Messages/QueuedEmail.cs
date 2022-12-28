@@ -102,6 +102,8 @@ namespace Nop.Core.Domain.Messages
         /// </summary>
         public int EmailAccountId { get; set; }
 
+        public CalendarEmail CalendarEmail { get; set; }
+
         /// <summary>
         /// Gets or sets the priority
         /// </summary>
